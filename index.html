@@ -234,12 +234,12 @@
     <aside id="sidebar" class="w-64 tac-panel flex flex-col flex-shrink-0 z-20 border-r transition-all duration-300 bg-opacity-95">
         <div class="h-16 flex items-center justify-between px-4 border-b tac-border">
             <div class="flex items-center space-x-3">
-                <img id="sidebarLogoImg" src="U3.png" alt="Logo" class="w-10 h-10 rounded-full object-cover border border-cyan-500/30 bg-cyan-500/10" onerror="this.style.display='none'; document.getElementById('sidebarFallbackIcon').style.display='flex';">
+                <img id="sidebarLogoImg" src="sidebar_logo.png" alt="Logo" class="w-10 h-10 rounded-full object-cover border border-cyan-500/30 bg-cyan-500/10" onerror="this.style.display='none'; document.getElementById('sidebarFallbackIcon').style.display='flex';">
                 <div id="sidebarFallbackIcon" class="p-2 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hidden items-center justify-center w-10 h-10">
                     <i class="ph-bold ph-shield-star text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-sm tracking-wider uppercase">OFFICE OF THE ACUCS FOR OPPERATIONS, U3</h1>
+                    <h1 class="font-bold text-sm tracking-wider uppercase">OFFICE OF THE ACUCS</h1>
                     <p class="text-[10px] text-gray-400 tracking-widest">COMMAND & CONTROL</p>
                 </div>
             </div>
@@ -372,11 +372,7 @@
                 <span class="text-[10px] text-gray-400">Custom Background Color</span>
             </div>
             <div class="flex items-center justify-between pt-2 border-t tac-border text-xs">
-                <div class="flex items-center space-x-2">
-                    <button onclick="openSettingsModal('help')" class="text-cyan-400 hover:underline flex items-center space-x-1"><i class="ph-bold ph-question"></i><span>Help</span></button>
-                    <span class="text-gray-600">|</span>
-                    <button onclick="openSettingsModal('privacy')" class="text-cyan-400 hover:underline flex items-center space-x-1"><i class="ph-bold ph-shield-check"></i><span>Privacy</span></button>
-                </div>
+                <button onclick="openSettingsModal('help')" class="text-cyan-400 hover:underline flex items-center space-x-1"><i class="ph-bold ph-question"></i><span>Help Center</span></button>
                 <button onclick="handleLogout()" class="text-rose-400 hover:underline flex items-center space-x-1 font-bold cursor-pointer"><i class="ph-bold ph-sign-out"></i><span>Sign Out</span></button>
             </div>
         </div>
@@ -423,7 +419,7 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-2 pl-2 border-l tac-border">
-                    <img id="headerLogoImg" src="U3.png" alt="HQ" class="w-8 h-8 rounded-lg object-cover border border-cyan-500/50" onerror="this.style.display='none'; document.getElementById('headerFallbackPlaceholder').style.display='flex';">
+                    <img id="headerLogoImg" src="header_logo.png" alt="HQ" class="w-8 h-8 rounded-lg object-cover border border-cyan-500/50" onerror="this.style.display='none'; document.getElementById('headerFallbackPlaceholder').style.display='flex';">
                     <div id="headerFallbackPlaceholder" class="w-8 h-8 rounded-lg bg-cyan-600/30 border border-cyan-500/50 hidden items-center justify-center font-bold text-cyan-300 text-xs">
                         HQ
                     </div>
@@ -550,7 +546,7 @@
                         <h3 class="font-bold text-sm tracking-wide uppercase">Recent Operational Field Activities</h3>
                         <button onclick="switchTab('activities')" class="text-xs text-cyan-400 hover:underline">View All Activities</button>
                     </div>
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto rounded-lg border border-cyan-900/40">
                         <table class="w-full text-left text-xs">
                             <thead class="bg-cyan-950 text-cyan-300 border-b-2 border-cyan-500 uppercase font-mono shadow-xl">
                                 <tr>
@@ -563,6 +559,14 @@
                                 </tr>
                             </thead>
                             <tbody id="dash-recent-activities-table" class="divide-y tac-border"></tbody>
+                            <tfoot class="bg-cyan-950/80 text-cyan-400 font-mono text-[11px] border-t-2 border-cyan-500/60">
+                                <tr>
+                                    <td colspan="6" class="p-3 flex items-center justify-between">
+                                        <span>STATUS: SECURE • LIVE TELEMETRY SYNCED</span>
+                                        <span class="text-gray-400">TAC-COM COMMAND DESK</span>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -592,6 +596,14 @@
                                 </tr>
                             </thead>
                             <tbody id="table-outgoing" class="divide-y tac-border"></tbody>
+                            <tfoot class="bg-cyan-950/80 text-cyan-400 font-mono text-[11px] border-t-2 border-cyan-500/60">
+                                <tr>
+                                    <td colspan="8" class="p-3 flex items-center justify-between">
+                                        <span>SECURE CHANNEL: OUTGOING LOGS ACTIVE</span>
+                                        <span class="text-gray-400">ACUCS COMMAND CENTER</span>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -620,6 +632,14 @@
                                 </tr>
                             </thead>
                             <tbody id="table-incoming" class="divide-y tac-border"></tbody>
+                            <tfoot class="bg-cyan-950/80 text-cyan-400 font-mono text-[11px] border-t-2 border-cyan-500/60">
+                                <tr>
+                                    <td colspan="7" class="p-3 flex items-center justify-between">
+                                        <span>INCOMING FEED: SYNCHRONIZED</span>
+                                        <span class="text-gray-400">ACUCS COMMAND CENTER</span>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -648,6 +668,14 @@
                                 </tr>
                             </thead>
                             <tbody id="table-activities" class="divide-y tac-border"></tbody>
+                            <tfoot class="bg-cyan-950/80 text-cyan-400 font-mono text-[11px] border-t-2 border-cyan-500/60">
+                                <tr>
+                                    <td colspan="7" class="p-3 flex items-center justify-between">
+                                        <span>FIELD ACTIVITIES: LOGGED & MONITORED</span>
+                                        <span class="text-gray-400">ACUCS COMMAND CENTER</span>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -675,6 +703,14 @@
                                 </tr>
                             </thead>
                             <tbody id="table-iso_branch" class="divide-y tac-border"></tbody>
+                            <tfoot class="bg-cyan-950/80 text-cyan-400 font-mono text-[11px] border-t-2 border-cyan-500/60">
+                                <tr>
+                                    <td colspan="6" class="p-3 flex items-center justify-between">
+                                        <span>ISO BRANCH: ACTIVE MONITORING</span>
+                                        <span class="text-gray-400">ACUCS COMMAND CENTER</span>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -702,6 +738,14 @@
                                 </tr>
                             </thead>
                             <tbody id="table-ops_branch" class="divide-y tac-border"></tbody>
+                            <tfoot class="bg-cyan-950/80 text-cyan-400 font-mono text-[11px] border-t-2 border-cyan-500/60">
+                                <tr>
+                                    <td colspan="6" class="p-3 flex items-center justify-between">
+                                        <span>OPERATIONS BRANCH: ACTIVE</span>
+                                        <span class="text-gray-400">ACUCS COMMAND CENTER</span>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -729,6 +773,14 @@
                                 </tr>
                             </thead>
                             <tbody id="table-hadr_branch" class="divide-y tac-border"></tbody>
+                            <tfoot class="bg-cyan-950/80 text-cyan-400 font-mono text-[11px] border-t-2 border-cyan-500/60">
+                                <tr>
+                                    <td colspan="6" class="p-3 flex items-center justify-between">
+                                        <span>HADR BRANCH: DISASTER RESPONSE READY</span>
+                                        <span class="text-gray-400">ACUCS COMMAND CENTER</span>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -756,6 +808,14 @@
                                 </tr>
                             </thead>
                             <tbody id="table-peace_branch" class="divide-y tac-border"></tbody>
+                            <tfoot class="bg-cyan-950/80 text-cyan-400 font-mono text-[11px] border-t-2 border-cyan-500/60">
+                                <tr>
+                                    <td colspan="6" class="p-3 flex items-center justify-between">
+                                        <span>PEACE DEVELOPMENT: ACTIVE DIALOGUES</span>
+                                        <span class="text-gray-400">ACUCS COMMAND CENTER</span>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -783,6 +843,14 @@
                             </tr>
                         </thead>
                         <tbody id="table-cmd_movements" class="divide-y tac-border"></tbody>
+                        <tfoot class="bg-cyan-950/80 text-cyan-400 font-mono text-[11px] border-t-2 border-cyan-500/60">
+                            <tr>
+                                <td colspan="7" class="p-3 flex items-center justify-between">
+                                    <span>COMMANDER MOVEMENTS: SECURE TRACKING</span>
+                                    <span class="text-gray-400">ACUCS COMMAND CENTER</span>
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -809,6 +877,14 @@
                             </tr>
                         </thead>
                         <tbody id="table-dep_movements" class="divide-y tac-border"></tbody>
+                        <tfoot class="bg-cyan-950/80 text-cyan-400 font-mono text-[11px] border-t-2 border-cyan-500/60">
+                            <tr>
+                                <td colspan="7" class="p-3 flex items-center justify-between">
+                                    <span>DEPUTY COMMANDER MOVEMENTS: LOGGED</span>
+                                    <span class="text-gray-400">ACUCS COMMAND CENTER</span>
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -835,6 +911,14 @@
                             </tr>
                         </thead>
                         <tbody id="table-aircraft" class="divide-y tac-border"></tbody>
+                        <tfoot class="bg-cyan-950/80 text-cyan-400 font-mono text-[11px] border-t-2 border-cyan-500/60">
+                            <tr>
+                                <td colspan="7" class="p-3 flex items-center justify-between">
+                                    <span>AIR ASSETS: LOGISTICS & RECON ACTIVE</span>
+                                    <span class="text-gray-400">ACUCS COMMAND CENTER</span>
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -861,6 +945,14 @@
                             </tr>
                         </thead>
                         <tbody id="table-vessels" class="divide-y tac-border"></tbody>
+                        <tfoot class="bg-cyan-950/80 text-cyan-400 font-mono text-[11px] border-t-2 border-cyan-500/60">
+                            <tr>
+                                <td colspan="7" class="p-3 flex items-center justify-between">
+                                    <span>MARITIME PATROL: DIRECTIVES ACTIVE</span>
+                                    <span class="text-gray-400">ACUCS COMMAND CENTER</span>
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -889,6 +981,14 @@
                             </tr>
                         </thead>
                         <tbody id="table-jtf_deploy" class="divide-y tac-border"></tbody>
+                        <tfoot class="bg-cyan-950/80 text-cyan-400 font-mono text-[11px] border-t-2 border-cyan-500/60">
+                            <tr>
+                                <td colspan="9" class="p-3 flex items-center justify-between">
+                                    <span>JTF ROSTER: DEPLOYED UNITS SYNCED</span>
+                                    <span class="text-gray-400">ACUCS COMMAND CENTER</span>
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -917,6 +1017,14 @@
                             </tr>
                         </thead>
                         <tbody id="table-jtf_realign" class="divide-y tac-border"></tbody>
+                        <tfoot class="bg-cyan-950/80 text-cyan-400 font-mono text-[11px] border-t-2 border-cyan-500/60">
+                            <tr>
+                                <td colspan="9" class="p-3 flex items-center justify-between">
+                                    <span>FORCE REALIGNMENT: ORDERS TRACKED</span>
+                                    <span class="text-gray-400">ACUCS COMMAND CENTER</span>
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -973,6 +1081,9 @@
     </div>
     <!-- JAVASCRIPT LOGIC -->
     <script>
+        // PALITAN ITO NG TOTOONG RENDER SERVER URL MO ONCE NA-DEPLOY MO NA SA RENDER.COM
+        const API_URL = 'https://taccom-backend-api.onrender.com/api';
+
         let store = {
             outgoing: [], incoming: [], activities: [], iso_branch: [],
             ops_branch: [], hadr_branch: [], peace_branch: [],
@@ -1026,10 +1137,13 @@
             setInterval(updateLiveClock, 1000);
             setupSidebarToggle();
         });
+
         function checkAuthSession() {
+            const token = localStorage.getItem('tacToken');
             const currentUser = localStorage.getItem('tacCurrentOperator');
             const authContainer = document.getElementById('authContainer');
-            if (currentUser) {
+
+            if (token && currentUser) {
                 authContainer.classList.add('hidden');
                 const opEl = document.getElementById('headerOperatorName');
                 if (opEl) opEl.innerText = currentUser.toUpperCase();
@@ -1075,57 +1189,62 @@
             alertBox.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i> <span>${message}</span>`;
             alertBox.classList.remove('hidden');
         }
-        function handleSignup(event) {
+        async function handleSignup(event) {
             event.preventDefault();
+            const name = document.getElementById('signupName').value.trim();
+            const username = document.getElementById('signupUsername').value.trim();
+            const password = document.getElementById('signupPassword').value;
+
             try {
-                const name = document.getElementById('signupName').value.trim();
-                const username = document.getElementById('signupUsername').value.trim().toLowerCase();
-                const password = document.getElementById('signupPassword').value;
-                let operators = [];
-                const saved = localStorage.getItem('tacOperators');
-                if (saved) { operators = JSON.parse(saved); }
-                if (operators.find(o => o.username === username)) {
-                    showAuthAlert('error', 'Username is already taken. Choose another one.', 'signup');
-                    return;
+                const res = await fetch(`${API_URL}/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, username, password })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    showAuthAlert('success', 'Account registered in MongoDB! Redirecting to login...', 'signup');
+                    setTimeout(() => {
+                        switchAuthTab('login');
+                        document.getElementById('loginUsername').value = username;
+                    }, 1200);
+                } else {
+                    showAuthAlert('error', data.message || 'Signup failed.', 'signup');
                 }
-                operators.push({ name, username, password });
-                localStorage.setItem('tacOperators', JSON.stringify(operators));
-                
-                showAuthAlert('success', 'Account registered successfully! Redirecting...', 'signup');
-                setTimeout(() => {
-                    switchAuthTab('login');
-                    document.getElementById('loginUsername').value = username;
-                    showAuthAlert('success', 'You can now sign in with your credentials.', 'login');
-                }, 1200);
             } catch (err) {
-                console.error("Signup error:", err);
-                showAuthAlert('error', 'An error occurred while saving the account.', 'signup');
+                showAuthAlert('error', 'Cannot connect to backend server. Make sure your API is live.', 'signup');
             }
         }
-        function handleLogin(event) {
+        async function handleLogin(event) {
             event.preventDefault();
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
             try {
-                const username = document.getElementById('loginUsername').value.trim().toLowerCase();
-                const password = document.getElementById('loginPassword').value;
-                let operators = [];
-                const saved = localStorage.getItem('tacOperators');
-                if (saved) { operators = JSON.parse(saved); }
-                const validOp = operators.find(o => o.username === username && o.password === password);
-                if (validOp) {
-                    localStorage.setItem('tacCurrentOperator', validOp.name);
+                const res = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    localStorage.setItem('tacToken', data.token);
+                    localStorage.setItem('tacCurrentOperator', data.name);
                     checkAuthSession();
-                    showToast(`Welcome back, operator ${validOp.name}`, 'success');
+                    showToast(`Authenticated via MongoDB: Welcome, ${data.name}`, 'success');
                 } else {
-                    showAuthAlert('error', 'Invalid username or password.', 'login');
+                    showAuthAlert('error', data.message || 'Login failed.', 'login');
                 }
             } catch (err) {
-                console.error("Login error:", err);
-                showAuthAlert('error', 'An error occurred during sign in.', 'login');
+                showAuthAlert('error', 'Cannot connect to backend server. Make sure your API is live.', 'login');
             }
         }
         function handleLogout() {
             showConfirmModal('SIGN OUT', 'Are you sure you want to log out of TAC-COM Command?').then(confirmed => {
                 if (confirmed) {
+                    localStorage.removeItem('tacToken');
                     localStorage.removeItem('tacCurrentOperator');
                     checkAuthSession();
                 }
@@ -1191,27 +1310,11 @@
             const content = document.getElementById('settings-modal-content');
             modal.classList.remove('hidden');
             if (type === 'help') {
-                title.innerText = 'TAC-COM Help Center & Guide';
+                title.innerText = 'TAC-COM Help Center';
                 content.innerHTML = `
-                    <div class="space-y-3 max-h-[60vh] overflow-y-auto pr-2 text-xs">
-                        <h4 class="font-bold text-cyan-300 uppercase tracking-wide">I. HELP CENTER (Guide & Quick Solutions)</h4>
-                        <p>The <strong>TAC-COM Operational Command & Monitoring Dashboard</strong> provides real-time situational awareness, secure communications, and unit management for U3 operations.</p>
-                        <p><strong>1. Authentication & Access Control:</strong> Sign in with your registered Username and Password. Register new operator accounts as needed. Always click Sign Out before leaving your terminal.</p>
-                        <p><strong>2. Export & Print Options:</strong> Use Export Options at the top right to download current operational views as PDF, print reports, or export/import JSON data backups.</p>
-                        <p><strong>3. Record Management:</strong> Each tab features Add, Edit, and Delete action buttons on table rows for full operational CRUD tracking.</p>
-                    </div>
-                `;
-            } else if (type === 'privacy') {
-                title.innerText = 'TAC-COM Privacy Policy & Security';
-                content.innerHTML = `
-                    <div class="space-y-3 max-h-[60vh] overflow-y-auto pr-2 text-xs">
-                        <h4 class="font-bold text-emerald-300 uppercase tracking-wide">II. PRIVACY POLICY (Data Protection & Security)</h4>
-                        <p>The Office of the <strong>ACUCS for Operations (U3)</strong> is strictly committed to protecting confidential information, official data, and operator identities.</p>
-                        <p><strong>1. Types of Data Collected:</strong> Operator credentials (name, username, encrypted password) and operational/communication records (messages, movements, aircraft requests, PN vessel directives, JTF deployments).</p>
-                        <p><strong>2. Use of Data:</strong> All data is used exclusively for operational planning, situational monitoring, command coordination, and secure reporting within command jurisdiction.</p>
-                        <p><strong>3. Data Storage & Security:</strong> Uses local storage and encrypted browser sessions accessible only to authorized operators, with secure JSON backup export/import.</p>
-                        <p><strong>4. Operator Rights:</strong> Authorized operators can update records, log out securely, and verify dashboard entries.</p>
-                    </div>
+                    <p><strong>1. PDF Export:</strong> Click Export Options at the top right to download current operational views as PDF.</p>
+                    <p><strong>2. Printing:</strong> Select Print Report in the Export menu to instantly launch printable document layout.</p>
+                    <p><strong>3. Direct Import:</strong> Click Import Data to upload JSON backups directly into the system dashboard.</p>
                 `;
             }
         }
