@@ -1081,9 +1081,8 @@
     </div>
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // PALITAN ITO NG TOTOONG RENDER SERVER URL MO ONCE NA-DEPLOY MO NA SA RENDER.COM
-        const API_URL = 'https://taccom-backend-api.onrender.com/api';
-
+        // API URL para sa Live Render Backend (gumagamit ng relative path '/api' para direktang kumonekta sa host domain)
+        const API_URL = '/api';
         let store = {
             outgoing: [], incoming: [], activities: [], iso_branch: [],
             ops_branch: [], hadr_branch: [], peace_branch: [],
@@ -1137,12 +1136,10 @@
             setInterval(updateLiveClock, 1000);
             setupSidebarToggle();
         });
-
         function checkAuthSession() {
             const token = localStorage.getItem('tacToken');
             const currentUser = localStorage.getItem('tacCurrentOperator');
             const authContainer = document.getElementById('authContainer');
-
             if (token && currentUser) {
                 authContainer.classList.add('hidden');
                 const opEl = document.getElementById('headerOperatorName');
@@ -1194,7 +1191,6 @@
             const name = document.getElementById('signupName').value.trim();
             const username = document.getElementById('signupUsername').value.trim();
             const password = document.getElementById('signupPassword').value;
-
             try {
                 const res = await fetch(`${API_URL}/signup`, {
                     method: 'POST',
@@ -1202,7 +1198,6 @@
                     body: JSON.stringify({ name, username, password })
                 });
                 const data = await res.json();
-
                 if (res.ok) {
                     showAuthAlert('success', 'Account registered in MongoDB! Redirecting to login...', 'signup');
                     setTimeout(() => {
@@ -1220,7 +1215,6 @@
             event.preventDefault();
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
-
             try {
                 const res = await fetch(`${API_URL}/login`, {
                     method: 'POST',
@@ -1228,7 +1222,6 @@
                     body: JSON.stringify({ username, password })
                 });
                 const data = await res.json();
-
                 if (res.ok) {
                     localStorage.setItem('tacToken', data.token);
                     localStorage.setItem('tacCurrentOperator', data.name);
