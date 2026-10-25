@@ -239,7 +239,7 @@
                     <i class="ph-bold ph-shield-star text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-sm tracking-wider uppercase">OFFICE OF THE ACUCS FOR OPERATIONS, U3</h1>
+                    <h1 class="font-bold text-sm tracking-wider uppercase">OFFICE OF THE ACUCS FOR OPPERATIONS, U3</h1>
                     <p class="text-[10px] text-gray-400 tracking-widest">COMMAND & CONTROL</p>
                 </div>
             </div>
@@ -667,6 +667,7 @@
                             <thead class="bg-cyan-950 text-cyan-300 border-b-2 border-cyan-500 uppercase font-mono shadow-xl">
                                 <tr>
                                     <th class="p-3 bg-cyan-950/90 border-r border-cyan-900/50">Timestamp</th>
+                                    <th class="p-3 bg-cyan-950/90 border-r border-cyan-900/50">Activity Date</th>
                                     <th class="p-3 bg-cyan-950/90 border-r border-cyan-900/50">ISO Title</th>
                                     <th class="p-3 bg-cyan-950/90 border-r border-cyan-900/50">AOR / Location</th>
                                     <th class="p-3 bg-cyan-950/90 border-r border-cyan-900/50">Status</th>
@@ -895,7 +896,7 @@
             <!-- TAB: JTF FORCE REALIGNMENT -->
             <div id="tab-jtf_realign" class="tab-content hidden space-y-4">
                 <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-sm uppercase">Joint Task Force Realignment Roster</h3>
+                    <h3 class="font-bold text-sm uppercase">Joint Task Force Force Realignment Roster</h3>
                     <button onclick="openModal('jtf_realign')" class="tac-btn-accent font-bold px-4 py-2 rounded-lg text-xs flex items-center space-x-2">
                         <i class="ph-bold ph-plus-circle text-base"></i>
                         <span>Add Realignment Log</span>
@@ -1395,10 +1396,11 @@
         function renderIsoTable() {
             const tbody = document.getElementById('table-iso_branch');
             if (!tbody) return;
-            if (store.iso_branch.length === 0) { tbody.innerHTML = renderEmptyRow(6); return; }
+            if (store.iso_branch.length === 0) { tbody.innerHTML = renderEmptyRow(7); return; }
             tbody.innerHTML = store.iso_branch.map((item, idx) => `
                 <tr class="hover:bg-white/5">
                     <td class="p-3 font-mono text-gray-400">${item.time}</td>
+                    <td class="p-3 font-mono text-cyan-300 font-bold">${item.date || '-'}</td>
                     <td class="p-3 font-semibold text-rose-300">${item.title}</td>
                     <td class="p-3 text-gray-300">${item.location}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
@@ -1587,8 +1589,9 @@
                     { name: 'status', label: 'Activity Status', type: 'select', options: STANDARD_ACTIVITY_STATUSES, val: currentObj.status || 'ONGOING' }
                 ],
                 iso_branch: [
-                    { name: 'title', label: 'ISO Activity Title', type: 'text', val: currentObj.title || '' },
-                    { name: 'location', label: 'AOR / Location', type: 'text', val: currentObj.location || '' },
+                    { name: 'title', label: 'ISO Activity Title', type: 'text', val: currentObj.title || '', required: true },
+                    { name: 'location', label: 'AOR / Location', type: 'text', val: currentObj.location || '', required: true },
+                    { name: 'date', label: 'Activity Date', type: 'date', val: currentObj.date || '', required: true },
                     { name: 'status', label: 'ISO Status', type: 'select', options: STANDARD_ACTIVITY_STATUSES, val: currentObj.status || 'ONGOING' }
                 ],
                 ops_branch: [
