@@ -1653,25 +1653,25 @@
                     { name: 'recipient', label: 'Recipient Unit', type: 'text', val: currentObj.recipient || '' },
                     { name: 'subject', label: 'Subject / Directives', type: 'text', val: currentObj.subject || '' },
                     { name: 'classification', label: 'Classification', type: 'select', options: ['RESTRICTED', 'CONFIDENTIAL', 'SECRET', 'TOP SECRET'], val: currentObj.classification || 'SECRET' },
-                    { name: 'status', label: 'Transmission Status', type: 'select', options: ['RECEIVED', 'FOR ACTION', 'FOR APPROVAL', 'APPROVAL', 'FORWADED'], val: currentObj.status || 'TRANSMITTED' }
+                    { name: 'status', label: 'Transmission Status', type: 'select', options: ['FORWARDED', 'WITH DIRECTIVE'], val: currentObj.status || 'TRANSMITTED' }
                 ],
                 incoming: [
                     { name: 'id', label: 'Control #', type: 'text', val: currentObj.id || `MSG-INC-${Math.floor(100 + Math.random()*900)}` },
                     { name: 'origin', label: 'Originating Unit', type: 'text', val: currentObj.origin || '' },
                     { name: 'subject', label: 'Subject / Summary', type: 'text', val: currentObj.subject || '' },
-                    { name: 'status', label: 'Processing Status', type: 'select', options: ['FORWARDED', 'WITH DIRECTIVE'], val: currentObj.status || 'PENDING ACTION' }
+                    { name: 'status', label: 'Processing Status', type: 'select', options: ['RECEIVED', 'FOR ACTION', 'FOR APPROVAL', 'APPROVAL', 'FORWADED'], val: currentObj.status || 'PENDING ACTION' }
                 ],
                 activities: [
                     { name: 'title', label: 'Activity Title', type: 'text', val: currentObj.title || '' },
                     { name: 'location', label: 'Field Location', type: 'text', val: currentObj.location || '' },
                     { name: 'jtf', label: 'JTF Sector', type: 'select', options: ['JTF Zampelan', 'JTF Orion', 'JTF Poseidon', 'JTF Central'], val: currentObj.jtf || 'JTF Zampelan' },
-                    { name: 'status', label: 'Activity Status', type: 'select', options: ['ONGOING', 'COMPLETED', 'UPCOMING', 'PLANNING', 'HALYED'], val: currentObj.status || 'ONGOING' }
+                    { name: 'status', label: 'Activity Status', type: 'select', options: ['ONGOING', 'COMPLETED', 'UPCOMING', 'PLANNING', 'HALTED'], val: currentObj.status || 'ONGOING' }
                 ],
                 iso_branch: [
                     { name: 'title', label: 'ISO Activity Title', type: 'text', val: currentObj.title || '', required: true },
                     { name: 'location', label: 'AOR / Location', type: 'text', val: currentObj.location || '', required: true },
                     { name: 'date', label: 'Activity Date', type: 'date', val: currentObj.date || '', required: true },
-                    { name: 'status', label: 'ISO Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLECATED', 'PLANNING', 'UPCOMMING'], val: currentObj.status || 'ONGOING' }
+                    { name: 'status', label: 'ISO Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLECATED', 'PLANNING', 'UPCOMING'], val: currentObj.status || 'ONGOING' }
                 ],
                 ops_branch: [
                     { name: 'title', label: 'Operation Title', type: 'text', val: currentObj.title || '' },
@@ -1681,7 +1681,7 @@
                 hadr_branch: [
                     { name: 'title', label: 'Relief / Rescue Mission', type: 'text', val: currentObj.title || '' },
                     { name: 'location', label: 'Affected Area', type: 'text', val: currentObj.location || '' },
-                    { name: 'status', label: 'Mission Status', type: 'select', options: ['ACTIVE', 'ONGOING', 'COMPLICATED', 'COMPLETED', 'SUSPENDED', 'CANCELLED', 'STANDBY'], val: currentObj.status || 'ACTIVE' }
+                    { name: 'status', label: 'Mission Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLECATED', 'PLANNING', 'UPCOMING', 'ON ROUTE'], val: currentObj.status || 'ACTIVE' }
                 ],
                 peace_branch: [
                     { name: 'title', label: 'Dialogue / Initiative', type: 'text', val: currentObj.title || '' },
