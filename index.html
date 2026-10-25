@@ -239,7 +239,7 @@
                     <i class="ph-bold ph-shield-star text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-sm tracking-wider uppercase">OFFICE OF THE ACUCS FOR OPPERATIONS, U3</h1>
+                    <h1 class="font-bold text-sm tracking-wider uppercase">OFFICE OF THE ACUCS FOR OPERATIONS, U3</h1>
                     <p class="text-[10px] text-gray-400 tracking-widest">COMMAND & CONTROL</p>
                 </div>
             </div>
@@ -972,14 +972,18 @@
             </div>
         </div>
     </div>
+
     <!-- JAVASCRIPT LOGIC -->
     <script>
+        const API_URL = window.location.origin;
+
         let store = {
             outgoing: [], incoming: [], activities: [], iso_branch: [],
             ops_branch: [], hadr_branch: [], peace_branch: [],
             cmd_movements: [], dep_movements: [], aircraft: [],
             vessels: [], jtf_deploy: [], jtf_realign: []
         };
+
         const STATUS_BADGE_MAP = {
             'ONGOING': 'bg-amber-900/60 text-amber-200 border-amber-700/50',
             'COMPLETED': 'bg-emerald-900/60 text-emerald-200 border-emerald-700/50',
@@ -1014,32 +1018,37 @@
             'DOCKED': 'bg-gray-800 text-gray-300 border-gray-700',
             'REPLENISHING': 'bg-amber-900/60 text-amber-200 border-amber-700/50'
         };
+
         function renderStatusBadge(status) {
             const style = STATUS_BADGE_MAP[status] || 'bg-gray-800 text-gray-300 border-gray-700';
             return `<span class="px-2 py-0.5 text-[10px] rounded font-bold border ${style}">${status || 'N/A'}</span>`;
         }
+
         let jtfChartInstance = null;
         let confirmResolver = null;
-        window.addEventListener('DOMContentLoaded', () => {
-            checkAuthSession();
-            loadFromLocalStorage();
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await checkAuthSession();
             updateLiveClock();
             setInterval(updateLiveClock, 1000);
             setupSidebarToggle();
         });
-        function checkAuthSession() {
+
+        async function checkAuthSession() {
             const currentUser = localStorage.getItem('tacCurrentOperator');
             const authContainer = document.getElementById('authContainer');
             if (currentUser) {
                 authContainer.classList.add('hidden');
                 const opEl = document.getElementById('headerOperatorName');
                 if (opEl) opEl.innerText = currentUser.toUpperCase();
+                await loadFromLocalStorage();
                 renderAllTables();
                 if (!jtfChartInstance) initChart();
             } else {
                 authContainer.classList.remove('hidden');
             }
         }
+
         function switchAuthTab(tab) {
             const loginSec = document.getElementById('loginSection');
             const signupSec = document.getElementById('signupSection');
@@ -1055,6 +1064,7 @@
                 loginSec.classList.remove('hidden');
             }
         }
+
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -1068,6 +1078,7 @@
                 icon.classList.add('fa-eye');
             }
         }
+
         function showAuthAlert(type, message, section) {
             const alertBox = document.getElementById(section + 'Alert');
             alertBox.className = `mb-4 px-4 py-3 rounded-lg text-sm flex items-center gap-2 ${
@@ -1076,54 +1087,60 @@
             alertBox.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i> <span>${message}</span>`;
             alertBox.classList.remove('hidden');
         }
-        function handleSignup(event) {
+
+        async function handleSignup(event) {
             event.preventDefault();
+            const name = document.getElementById('signupName').value.trim();
+            const username = document.getElementById('signupUsername').value.trim();
+            const password = document.getElementById('signupPassword').value;
+
             try {
-                const name = document.getElementById('signupName').value.trim();
-                const username = document.getElementById('signupUsername').value.trim().toLowerCase();
-                const password = document.getElementById('signupPassword').value;
-                let operators = [];
-                const saved = localStorage.getItem('tacOperators');
-                if (saved) { operators = JSON.parse(saved); }
-                if (operators.find(o => o.username === username)) {
-                    showAuthAlert('error', 'Username is already taken. Choose another one.', 'signup');
-                    return;
-                }
-                operators.push({ name, username, password });
-                localStorage.setItem('tacOperators', JSON.stringify(operators));
-                
-                showAuthAlert('success', 'Account registered successfully! Redirecting...', 'signup');
-                setTimeout(() => {
-                    switchAuthTab('login');
-                    document.getElementById('loginUsername').value = username;
-                    showAuthAlert('success', 'You can now sign in with your credentials.', 'login');
-                }, 1200);
-            } catch (err) {
-                console.error("Signup error:", err);
-                showAuthAlert('error', 'An error occurred while saving the account.', 'signup');
-            }
-        }
-        function handleLogin(event) {
-            event.preventDefault();
-            try {
-                const username = document.getElementById('loginUsername').value.trim().toLowerCase();
-                const password = document.getElementById('loginPassword').value;
-                let operators = [];
-                const saved = localStorage.getItem('tacOperators');
-                if (saved) { operators = JSON.parse(saved); }
-                const validOp = operators.find(o => o.username === username && o.password === password);
-                if (validOp) {
-                    localStorage.setItem('tacCurrentOperator', validOp.name);
-                    checkAuthSession();
-                    showToast(`Welcome back, operator ${validOp.name}`, 'success');
+                const response = await fetch(`${API_URL}/api/auth/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, username, password })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    showAuthAlert('success', result.message, 'signup');
+                    setTimeout(() => {
+                        switchAuthTab('login');
+                        document.getElementById('loginUsername').value = username;
+                    }, 1200);
                 } else {
-                    showAuthAlert('error', 'Invalid username or password.', 'login');
+                    showAuthAlert('error', result.message, 'signup');
                 }
             } catch (err) {
-                console.error("Login error:", err);
-                showAuthAlert('error', 'An error occurred during sign in.', 'login');
+                showAuthAlert('error', 'Server error during registration.', 'signup');
             }
         }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    localStorage.setItem('tacCurrentOperator', result.name);
+                    await checkAuthSession();
+                    showToast(`Welcome back, operator ${result.name}`, 'success');
+                } else {
+                    showAuthAlert('error', result.message, 'login');
+                }
+            } catch (err) {
+                showAuthAlert('error', 'Server error during sign in.', 'login');
+            }
+        }
+
         function handleLogout() {
             showConfirmModal('SIGN OUT', 'Are you sure you want to log out of TAC-COM Command?').then(confirmed => {
                 if (confirmed) {
@@ -1132,6 +1149,7 @@
                 }
             });
         }
+
         function setupSidebarToggle() {
             const sidebar = document.getElementById('sidebar');
             const openBtn = document.getElementById('open-sidebar-btn');
@@ -1139,17 +1157,50 @@
             if (openBtn) openBtn.addEventListener('click', () => { sidebar.classList.remove('-translate-x-full'); sidebar.classList.add('translate-x-0'); });
             if (closeBtn) closeBtn.addEventListener('click', () => { sidebar.classList.add('-translate-x-full'); sidebar.classList.remove('translate-x-0'); });
         }
+
         function updateLiveClock() {
             const now = new Date();
             document.getElementById('live-clock').innerText = now.toISOString().substring(11, 19) + ' Z';
         }
-        function saveToLocalStorage() {
-            localStorage.setItem('tac_com_store_clean', JSON.stringify(store));
+
+        async function saveToLocalStorage() {
+            try {
+                await fetch(`${API_URL}/api/data`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(store)
+                });
+            } catch (err) {
+                console.error('Failed to sync data with server:', err);
+            }
         }
-        function loadFromLocalStorage() {
-            const saved = localStorage.getItem('tac_com_store_clean');
-            if (saved) { try { store = JSON.parse(saved); } catch(e){ console.error(e); } }
+
+        async function loadFromLocalStorage() {
+            try {
+                const response = await fetch(`${API_URL}/api/data`);
+                const data = await response.json();
+                if (data && typeof data === 'object') {
+                    store = {
+                        outgoing: data.outgoing || [],
+                        incoming: data.incoming || [],
+                        activities: data.activities || [],
+                        iso_branch: data.iso_branch || [],
+                        ops_branch: data.ops_branch || [],
+                        hadr_branch: data.hadr_branch || [],
+                        peace_branch: data.peace_branch || [],
+                        cmd_movements: data.cmd_movements || [],
+                        dep_movements: data.dep_movements || [],
+                        aircraft: data.aircraft || [],
+                        vessels: data.vessels || [],
+                        jtf_deploy: data.jtf_deploy || [],
+                        jtf_realign: data.jtf_realign || []
+                    };
+                }
+            } catch (err) {
+                console.error('Failed to load data from server:', err);
+            }
         }
+
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             if (!container) return;
@@ -1165,6 +1216,7 @@
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
+
         function showConfirmModal(title, message, isDanger = true) {
             return new Promise((resolve) => {
                 confirmResolver = resolve;
@@ -1182,10 +1234,12 @@
                 document.getElementById('confirm-modal').classList.remove('hidden');
             });
         }
+
         function closeConfirmModal(result) {
             document.getElementById('confirm-modal').classList.add('hidden');
             if (confirmResolver) { confirmResolver(result); confirmResolver = null; }
         }
+
         function openSettingsModal(type) {
             const modal = document.getElementById('settings-modal');
             const title = document.getElementById('settings-modal-title');
@@ -1216,7 +1270,9 @@
                 `;
             }
         }
+
         function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('text-cyan-400', 'bg-cyan-500/10', 'border', 'border-cyan-500/20'));
@@ -1248,17 +1304,21 @@
                 document.getElementById('page-subtitle').innerText = titles[tabId][1];
             }
         }
+
         function setTheme(themeName) {
             document.body.className = "h-full flex overflow-hidden";
             document.body.style.backgroundColor = "";
             if (themeName !== 'default') { document.body.classList.add(`theme-${themeName}`); }
             showToast(`Theme changed to ${themeName.toUpperCase()}`, 'info');
         }
+
         function applyCustomBgColor(colorHex) { document.body.style.backgroundColor = colorHex; }
+
         function toggleExportMenu() {
             const dropdown = document.getElementById('export-dropdown');
             dropdown.classList.toggle('hidden');
         }
+
         function downloadAsPDF() {
             const element = document.getElementById('printable-area');
             const opt = {
@@ -1273,9 +1333,11 @@
                 showToast('PDF Report downloaded successfully!', 'success');
             });
         }
+
         function printCurrentModule() {
             window.print();
         }
+
         function renderAllTables() {
             renderOutgoingTable(); renderIncomingTable(); renderActivitiesTable();
             renderIsoTable(); renderOpsTable(); renderHadrTable(); renderPeaceTable();
@@ -1283,6 +1345,7 @@
             renderVesselsTable(); renderJtfDeployTable(); renderJtfRealignTable();
             updateDashboardCounters();
         }
+
         function updateDashboardCounters() {
             document.getElementById('cnt-outgoing').innerText = store.outgoing.length;
             document.getElementById('cnt-incoming').innerText = store.incoming.length;
@@ -1333,6 +1396,7 @@
             }
             if (jtfChartInstance) updateChartData();
         }
+
         function getActionButtons(module, index) {
             return `
                 <div class="flex items-center justify-end space-x-1">
@@ -1341,9 +1405,11 @@
                 </div>
             `;
         }
+
         function renderEmptyRow(colspan, text = "No logs available. Click Add button above to create entry.") {
             return `<tr><td colspan="${colspan}" class="p-6 text-center text-gray-500 italic font-mono">${text}</td></tr>`;
         }
+
         function renderOutgoingTable() {
             const tbody = document.getElementById('table-outgoing');
             if (!tbody) return;
@@ -1361,6 +1427,7 @@
                 </tr>
             `).join('');
         }
+
         function renderIncomingTable() {
             const tbody = document.getElementById('table-incoming');
             if (!tbody) return;
@@ -1377,6 +1444,7 @@
                 </tr>
             `).join('');
         }
+
         function renderActivitiesTable() {
             const tbody = document.getElementById('table-activities');
             if (!tbody) return;
@@ -1393,6 +1461,7 @@
                 </tr>
             `).join('');
         }
+
         function renderIsoTable() {
             const tbody = document.getElementById('table-iso_branch');
             if (!tbody) return;
@@ -1409,6 +1478,7 @@
                 </tr>
             `).join('');
         }
+
         function renderOpsTable() {
             const tbody = document.getElementById('table-ops_branch');
             if (!tbody) return;
@@ -1424,6 +1494,7 @@
                 </tr>
             `).join('');
         }
+
         function renderHadrTable() {
             const tbody = document.getElementById('table-hadr_branch');
             if (!tbody) return;
@@ -1439,6 +1510,7 @@
                 </tr>
             `).join('');
         }
+
         function renderPeaceTable() {
             const tbody = document.getElementById('table-peace_branch');
             if (!tbody) return;
@@ -1454,6 +1526,7 @@
                 </tr>
             `).join('');
         }
+
         function renderCmdMovementsTable() {
             const tbody = document.getElementById('table-cmd_movements');
             if (!tbody) return;
@@ -1470,6 +1543,7 @@
                 </tr>
             `).join('');
         }
+
         function renderDepMovementsTable() {
             const tbody = document.getElementById('table-dep_movements');
             if (!tbody) return;
@@ -1486,6 +1560,7 @@
                 </tr>
             `).join('');
         }
+
         function renderAircraftTable() {
             const tbody = document.getElementById('table-aircraft');
             if (!tbody) return;
@@ -1502,6 +1577,7 @@
                 </tr>
             `).join('');
         }
+
         function renderVesselsTable() {
             const tbody = document.getElementById('table-vessels');
             if (!tbody) return;
@@ -1518,6 +1594,7 @@
                 </tr>
             `).join('');
         }
+
         function renderJtfDeployTable() {
             const tbody = document.getElementById('table-jtf_deploy');
             if (!tbody) return;
@@ -1536,6 +1613,7 @@
                 </tr>
             `).join('');
         }
+
         function renderJtfRealignTable() {
             const tbody = document.getElementById('table-jtf_realign');
             if (!tbody) return;
@@ -1554,6 +1632,7 @@
                 </tr>
             `).join('');
         }
+
         function openModal(module, editIndex = null) {
             document.getElementById('crud-modal').classList.remove('hidden');
             document.getElementById('form-module').value = module;
@@ -1641,7 +1720,7 @@
                     { name: 'count', label: 'Personnel Count', type: 'text', val: currentObj.count || '100', required: true },
                     { name: 'location', label: 'Assigned Location', type: 'text', val: currentObj.location || '', required: true },
                     { name: 'date_deployed', label: 'Date Deployed', type: 'date', val: currentObj.date_deployed || '', required: true },
-                    { name: 'date_realigned', label: 'Date Re-deployed (Opsyonal - Pwedeng blangko muna)', type: 'date', val: currentObj.date_realigned || '', required: false },
+                    { name: 'date_realigned', label: 'Date Re-deployed (Optional - Can be left blank)', type: 'date', val: currentObj.date_realigned || '', required: false },
                     { name: 'status', label: 'Deployment Status', type: 'select', options: ['DEPLOYED', 'STANDBY', 'RE_DEPLOYING', 'STAND_DOWN', 'CANCELLED'], val: currentObj.status || 'DEPLOYED' }
                 ],
                 jtf_realign: [
@@ -1649,7 +1728,7 @@
                     { name: 'unit', label: 'Unit Realigned', type: 'text', val: currentObj.unit || '', required: true },
                     { name: 'route', label: 'From JTF -> To JTF', type: 'text', val: currentObj.route || 'JTF Orion -> JTF Zampelan', required: true },
                     { name: 'date_deployed', label: 'Date Deployed', type: 'date', val: currentObj.date_deployed || '', required: true },
-                    { name: 'date_realigned', label: 'Date Re-deployed (Opsyonal - Pwedeng blangko muna)', type: 'date', val: currentObj.date_realigned || '', required: false },
+                    { name: 'date_realigned', label: 'Date Re-deployed (Optional - Can be left blank)', type: 'date', val: currentObj.date_realigned || '', required: false },
                     { name: 'auth', label: 'Authorization', type: 'text', val: currentObj.auth || 'COMMANDER', required: true },
                     { name: 'status', label: 'Realignment Status', type: 'select', options: ['APPROVED', 'PENDING', 'EXECUTED', 'CANCELLED'], val: currentObj.status || 'APPROVED' }
                 ]
@@ -1679,8 +1758,10 @@
             });
             document.getElementById('form-field-remarks').value = currentObj.remarks || '';
         }
+
         function closeModal() { document.getElementById('crud-modal').classList.add('hidden'); }
-        function handleFormSubmit(e) {
+
+        async function handleFormSubmit(e) {
             e.preventDefault();
             const module = document.getElementById('form-module').value;
             const editIdxStr = document.getElementById('form-edit-index').value;
@@ -1698,25 +1779,29 @@
                 store[module].unshift(newObj);
                 showToast(`New record added to ${module.toUpperCase()}`, 'success');
             }
-            saveToLocalStorage();
+            await saveToLocalStorage();
             renderAllTables();
             closeModal();
         }
+
         function editRecord(module, index) { openModal(module, index); }
+
         async function deleteRecord(module, index) {
             const confirmed = await showConfirmModal('DELETE OPERATIONAL LOG', 'Are you sure you want to permanently delete this record?');
             if (confirmed) {
                 store[module].splice(index, 1);
-                saveToLocalStorage();
+                await saveToLocalStorage();
                 renderAllTables();
                 showToast('Record deleted permanently', 'error');
             }
         }
+
         function filterTable(module, query) {
             const trs = document.querySelectorAll(`#table-${module} tr`);
             const q = query.toLowerCase();
             trs.forEach(tr => { tr.style.display = tr.innerText.toLowerCase().includes(q) ? '' : 'none'; });
         }
+
         function exportDashboardData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(store, null, 2));
             const dlAnchor = document.createElement('a');
@@ -1727,16 +1812,17 @@
             dlAnchor.remove();
             showToast('Operational data exported as JSON successfully!', 'success');
         }
+
         function importDashboardData(event) {
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = async function(e) {
                 try {
                     const imported = JSON.parse(e.target.result);
                     if (typeof imported === 'object' && imported !== null) {
                         store = imported;
-                        saveToLocalStorage();
+                        await saveToLocalStorage();
                         renderAllTables();
                         showToast('Operational data imported successfully!', 'success');
                     } else {
@@ -1748,6 +1834,7 @@
             };
             reader.readAsText(file);
         }
+
         function initChart() {
             const ctx = document.getElementById('jtfChart');
             if (!ctx) return;
@@ -1781,6 +1868,7 @@
                 }
             });
         }
+
         function updateChartData() {
             if (!jtfChartInstance) return;
             const jtfSectors = ['JTF Zampelan', 'JTF Orion', 'JTF Poseidon', 'JTF Central'];
