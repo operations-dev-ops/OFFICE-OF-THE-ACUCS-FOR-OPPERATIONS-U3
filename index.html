@@ -1671,22 +1671,22 @@
                     { name: 'title', label: 'ISO Activity Title', type: 'text', val: currentObj.title || '', required: true },
                     { name: 'location', label: 'AOR / Location', type: 'text', val: currentObj.location || '', required: true },
                     { name: 'date', label: 'Activity Date', type: 'date', val: currentObj.date || '', required: true },
-                    { name: 'status', label: 'ISO Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLECATED', 'PLANNING', 'UPCOMING'], val: currentObj.status || 'ONGOING' }
+                    { name: 'status', label: 'ISO Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLETED', 'PLANNING', 'UPCOMING', 'ON ROUTE'], val: currentObj.status || 'ONGOING' }
                 ],
                 ops_branch: [
                     { name: 'title', label: 'Operation Title', type: 'text', val: currentObj.title || '' },
                     { name: 'location', label: 'Target / Sector', type: 'text', val: currentObj.location || '' },
-                    { name: 'status', label: 'Operation Status', type: 'select', options: STANDARD_ACTIVITY_STATUSES, val: currentObj.status || 'ONGOING' }
+                    { name: 'status', label: 'Operation Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLETED', 'PLANNING', 'UPCOMING', 'ON ROUTE'], val: currentObj.status || 'ONGOING' }
                 ],
                 hadr_branch: [
                     { name: 'title', label: 'Relief / Rescue Mission', type: 'text', val: currentObj.title || '' },
                     { name: 'location', label: 'Affected Area', type: 'text', val: currentObj.location || '' },
-                    { name: 'status', label: 'Mission Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLECATED', 'PLANNING', 'UPCOMING', 'ON ROUTE'], val: currentObj.status || 'ACTIVE' }
+                    { name: 'status', label: 'Mission Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLETED', 'PLANNING', 'UPCOMING', 'ON ROUTE'], val: currentObj.status || 'ACTIVE' }
                 ],
                 peace_branch: [
                     { name: 'title', label: 'Dialogue / Initiative', type: 'text', val: currentObj.title || '' },
                     { name: 'location', label: 'Community / Venue', type: 'text', val: currentObj.location || '' },
-                    { name: 'status', label: 'Peace Status', type: 'select', options: ['SCHEDULED', 'ONGOING', 'COMPLICATED', 'COMPLETED', 'CANCELLED', 'SUSPENDED'], val: currentObj.status || 'SCHEDULED' }
+                    { name: 'status', label: 'Peace Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLETED', 'PLANNING', 'UPCOMING', 'ON ROUTE'], val: currentObj.status || 'SCHEDULED' }
                 ],
                 cmd_movements: [
                     { name: 'name', label: 'Commander Name', type: 'text', val: currentObj.name || 'COMMANDER' },
