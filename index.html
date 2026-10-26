@@ -585,25 +585,53 @@
                 </div>
             </div>
 
-            <!-- TAB: OPERATIONAL CALENDAR -->
+            <!-- TAB: OPERATIONAL CALENDAR (REDESIGNED) -->
             <div id="tab-calendar" class="tab-content hidden space-y-4">
-                <div class="tac-panel p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div class="flex items-center space-x-3">
-                        <button onclick="changeMonth(-1)" class="p-2 rounded-lg bg-black/40 border tac-border hover:bg-cyan-500/25 text-cyan-400"><i class="ph-bold ph-caret-left text-base"></i></button>
-                        <h3 id="calendar-month-year" class="font-bold text-sm sm:text-base uppercase tracking-wider text-white">Month Year</h3>
-                        <button onclick="changeMonth(1)" class="p-2 rounded-lg bg-black/40 border tac-border hover:bg-cyan-500/25 text-cyan-400"><i class="ph-bold ph-caret-right text-base"></i></button>
+                <div class="tac-panel p-5 rounded-2xl border bg-gradient-to-r from-slate-900 via-slate-900/90 to-cyan-950/40 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 shadow-inner">
+                            <i class="ph-bold ph-calendar-check text-xl sm:text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 id="calendar-month-year" class="font-black text-base sm:text-xl tracking-wider text-white uppercase font-mono">Month Year</h3>
+                            <p class="text-xs text-cyan-400/80 font-mono mt-0.5">Tactical Schedule & Event Planner</p>
+                        </div>
                     </div>
-                    <button onclick="goToCurrentMonth()" class="px-3 py-2 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/40 text-xs font-bold">Today</button>
-                </div>
-                <div class="tac-panel rounded-xl border p-4 space-y-3">
-                    <div class="grid grid-cols-7 gap-1 text-center font-mono text-[10px] sm:text-xs text-gray-400 font-bold border-b tac-border pb-2">
-                        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="changeMonth(-1)" class="px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-cyan-500/20 text-cyan-400 border border-slate-700 hover:border-cyan-500/50 transition-all font-bold flex items-center gap-1.5 shadow">
+                            <i class="ph-bold ph-caret-left"></i> Prev
+                        </button>
+                        <button onclick="goToCurrentMonth()" class="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-black font-extrabold text-xs tracking-wide shadow-lg shadow-cyan-600/20 transition-all">
+                            TODAY
+                        </button>
+                        <button onclick="changeMonth(1)" class="px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-cyan-500/20 text-cyan-400 border border-slate-700 hover:border-cyan-500/50 transition-all font-bold flex items-center gap-1.5 shadow">
+                            Next <i class="ph-bold ph-caret-right"></i>
+                        </button>
                     </div>
-                    <div id="calendar-grid" class="grid grid-cols-7 gap-1.5"></div>
                 </div>
-                <div id="calendar-day-details" class="tac-panel rounded-xl border p-4 space-y-3 hidden">
-                    <h4 id="calendar-selected-date" class="font-bold text-xs sm:text-sm text-cyan-400 uppercase border-b tac-border pb-2">Selected Date Entries</h4>
-                    <div id="calendar-day-entries-list" class="space-y-2 text-xs"></div>
+
+                <div class="tac-panel rounded-2xl border p-4 sm:p-6 shadow-2xl space-y-4">
+                    <div class="grid grid-cols-7 gap-2 text-center font-mono text-[11px] sm:text-xs text-cyan-300 font-extrabold uppercase bg-cyan-950/40 p-2.5 rounded-xl border border-cyan-900/50">
+                        <div class="text-rose-400">Sun</div>
+                        <div>Mon</div>
+                        <div>Tue</div>
+                        <div>Wed</div>
+                        <div>Thu</div>
+                        <div>Fri</div>
+                        <div class="text-cyan-400">Sat</div>
+                    </div>
+                    <div id="calendar-grid" class="grid grid-cols-7 gap-2"></div>
+                </div>
+
+                <div id="calendar-day-details" class="tac-panel rounded-2xl border p-5 space-y-3 shadow-xl hidden border-cyan-500/30 bg-slate-900/90">
+                    <div class="flex items-center justify-between border-b tac-border pb-3">
+                        <div class="flex items-center space-x-2.5">
+                            <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></div>
+                            <h4 id="calendar-selected-date" class="font-bold text-xs sm:text-sm text-cyan-300 uppercase tracking-wide">Selected Date Briefing</h4>
+                        </div>
+                        <span id="calendar-selected-count" class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 font-mono">0 events</span>
+                    </div>
+                    <div id="calendar-day-entries-list" class="space-y-2.5 text-xs max-h-60 overflow-y-auto pr-1"></div>
                 </div>
             </div>
 
@@ -1108,7 +1136,7 @@
         };
         
         let registeredAccounts = JSON.parse(localStorage.getItem('tacRegisteredAccounts')) || [];
-        let calendarDate = new Date(); // Current date view for calendar
+        let calendarDate = new Date();
 
         const STATUS_BADGE_MAP = {
             'ONGOING': 'bg-amber-900/60 text-amber-200 border-amber-700/50',
@@ -1565,7 +1593,7 @@
             }
         }
 
-        // ================= CALENDAR LOGIC =================
+        // ================= ROBUST CALENDAR LOGIC =================
         function changeMonth(direction) {
             calendarDate.setMonth(calendarDate.getMonth() + direction);
             renderCalendar();
@@ -1578,15 +1606,40 @@
 
         function parseItemDate(dateStr) {
             if (!dateStr) return null;
+            dateStr = dateStr.toString().trim();
+            // Try standard Date parsing
             let d = new Date(dateStr);
-            if (!isNaN(d)) return d;
+            if (!isNaN(d.getTime())) return d;
+
+            // Handle mm/dd/yyyy or yyyy-mm-dd or similar splits
+            if (dateStr.includes('/')) {
+                let parts = dateStr.split('/');
+                if (parts.length === 3) {
+                    if (parts[0].length === 4) {
+                        d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+                    } else {
+                        d = new Date(parseInt(parts[2]), parseInt(parts[0])-1, parseInt(parts[1]));
+                    }
+                    if (!isNaN(d.getTime())) return d;
+                }
+            } else if (dateStr.includes('-')) {
+                let parts = dateStr.split('-');
+                if (parts.length === 3) {
+                    if (parts[0].length === 4) {
+                        d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+                    } else {
+                        d = new Date(parseInt(parts[2]), parseInt(parts[0])-1, parseInt(parts[1]));
+                    }
+                    if (!isNaN(d.getTime())) return d;
+                }
+            }
             return null;
         }
 
         function getEventsOnDate(targetDate) {
             let events = [];
             const checkAndPush = (list, titleKey, modName, badgeColor) => {
-                if (!list) return;
+                if (!list || !Array.isArray(list)) return;
                 list.forEach(item => {
                     let dtStr = item.entry_date || item.date || item.date_deployed;
                     let d = parseItemDate(dtStr);
@@ -1639,7 +1692,7 @@
             // Previous month trailing days
             for (let i = firstDayIndex; i > 0; i--) {
                 const dayNum = prevTotalDays - i + 1;
-                html += `<div class="h-20 sm:h-28 bg-black/20 border tac-border rounded-lg p-1.5 opacity-30 flex flex-col justify-between"><span class="text-[10px] font-mono text-gray-500">${dayNum}</span></div>`;
+                html += `<div class="h-24 sm:h-32 bg-black/10 border tac-border rounded-xl p-2 opacity-25 flex flex-col justify-between"><span class="text-[10px] font-mono text-gray-500">${dayNum}</span></div>`;
             }
 
             // Current month days
@@ -1650,29 +1703,29 @@
                 totalEventsCount += dayEvents.length;
 
                 const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
-                const todayClass = isToday ? 'border-cyan-400 bg-cyan-950/20 shadow-lg shadow-cyan-500/10' : 'bg-black/30 tac-border';
+                const todayClass = isToday ? 'border-cyan-400 bg-cyan-950/30 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-400/50' : 'bg-slate-900/60 tac-border hover:border-cyan-500/40';
 
                 html += `
-                    <div onclick="selectCalendarDate(${year}, ${month}, ${day})" class="h-20 sm:h-28 border rounded-lg p-1.5 flex flex-col justify-between cursor-pointer hover:bg-white/5 transition-all ${todayClass}">
+                    <div onclick="selectCalendarDate(${year}, ${month}, ${day})" class="h-24 sm:h-32 border rounded-xl p-2 flex flex-col justify-between cursor-pointer transition-all duration-200 group ${todayClass}">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-mono font-bold ${isToday ? 'text-cyan-400 bg-cyan-950/80 px-1.5 py-0.5 rounded' : 'text-gray-300'}">${day}</span>
-                            ${dayEvents.length > 0 ? `<span class="text-[9px] px-1.5 py-0.2 rounded-full bg-cyan-600 text-black font-bold">${dayEvents.length}</span>` : ''}
+                            <span class="text-xs font-mono font-bold ${isToday ? 'text-cyan-300 bg-cyan-900 px-2 py-0.5 rounded-md' : 'text-gray-300 group-hover:text-cyan-400'}">${day}</span>
+                            ${dayEvents.length > 0 ? `<span class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500 text-black font-extrabold shadow">${dayEvents.length}</span>` : ''}
                         </div>
-                        <div class="space-y-1 overflow-y-auto max-h-14 pr-0.5">
+                        <div class="space-y-1 overflow-y-auto max-h-16 pr-0.5">
                             ${dayEvents.slice(0, 2).map(ev => `
-                                <div class="text-[9px] px-1 py-0.5 rounded truncate border ${ev.color}">${ev.title}</div>
+                                <div class="text-[9px] px-1.5 py-0.5 rounded truncate border font-medium ${ev.color}">${ev.title}</div>
                             `).join('')}
-                            ${dayEvents.length > 2 ? `<div class="text-[8px] text-gray-400 font-mono text-center">+${dayEvents.length - 2} more</div>` : ''}
+                            ${dayEvents.length > 2 ? `<div class="text-[8px] text-cyan-400/80 font-mono text-center font-bold bg-black/40 rounded py-0.5">+${dayEvents.length - 2} more</div>` : ''}
                         </div>
                     </div>
                 `;
             }
 
-            // Next month leading days to complete grid (42 cells total)
+            // Next month leading days to complete 35 or 42 grid cells
             const totalCellsSoFar = firstDayIndex + totalDays;
             const nextDaysCount = totalCellsSoFar <= 35 ? (35 - totalCellsSoFar) : (42 - totalCellsSoFar);
             for (let i = 1; i <= nextDaysCount; i++) {
-                html += `<div class="h-20 sm:h-28 bg-black/20 border tac-border rounded-lg p-1.5 opacity-30 flex flex-col justify-between"><span class="text-[10px] font-mono text-gray-500">${i}</span></div>`;
+                html += `<div class="h-24 sm:h-32 bg-black/10 border tac-border rounded-xl p-2 opacity-25 flex flex-col justify-between"><span class="text-[10px] font-mono text-gray-500">${i}</span></div>`;
             }
 
             grid.innerHTML = html;
@@ -1685,25 +1738,27 @@
             const events = getEventsOnDate(selectedDate);
             const detailsBox = document.getElementById('calendar-day-details');
             const dateTitle = document.getElementById('calendar-selected-date');
+            const countEl = document.getElementById('calendar-selected-count');
             const listEl = document.getElementById('calendar-day-entries-list');
 
             detailsBox.classList.remove('hidden');
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            dateTitle.innerText = `Entries for ${monthNames[month]} ${day}, ${year} (${events.length} Found)`;
+            dateTitle.innerText = `Briefing Logs for ${monthNames[month]} ${day}, ${year}`;
+            countEl.innerText = `${events.length} event(s)`;
 
             if (events.length === 0) {
-                listEl.innerHTML = `<div class="text-gray-500 italic p-3 text-center">No operational entries recorded for this date.</div>`;
+                listEl.innerHTML = `<div class="text-gray-500 italic p-4 text-center bg-black/30 rounded-xl border tac-border">No operational events or schedules logged for this date.</div>`;
                 return;
             }
 
             listEl.innerHTML = events.map(ev => `
-                <div class="p-2.5 rounded-lg bg-black/40 border tac-border flex items-center justify-between">
-                    <div class="space-y-0.5">
+                <div class="p-3 rounded-xl bg-slate-950/60 border tac-border flex items-center justify-between hover:border-cyan-500/50 transition-all">
+                    <div class="space-y-1">
                         <div class="flex items-center space-x-2">
-                            <span class="px-1.5 py-0.5 text-[9px] rounded font-bold border ${ev.color}">${ev.module}</span>
+                            <span class="px-2 py-0.5 text-[9px] rounded font-bold uppercase border ${ev.color}">${ev.module}</span>
                             <span class="font-bold text-white text-xs">${ev.title}</span>
                         </div>
-                        <div class="text-[11px] text-gray-400 italic">Details/Location: ${ev.remarks}</div>
+                        <div class="text-[11px] text-gray-400">Context/Location: <span class="text-gray-200 italic">${ev.remarks}</span></div>
                     </div>
                     <div>${renderStatusBadge(ev.status)}</div>
                 </div>
