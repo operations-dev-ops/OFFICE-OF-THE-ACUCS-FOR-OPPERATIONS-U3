@@ -134,6 +134,7 @@
     <!-- ================= AUTHENTICATION MODAL OVERLAY ================= -->
     <div id="authContainer" class="fixed inset-0 z-50 bg-slate-900/95 backdrop-blur-md flex items-center justify-center p-4 font-sans overflow-y-auto">
         <div class="max-w-md w-full bg-slate-800 rounded-2xl shadow-2xl overflow-hidden border border-slate-700 my-auto">
+            
             <!-- LOGIN SECTION -->
             <div id="loginSection" class="p-6 sm:p-8">
                 <div class="text-center mb-6">
@@ -143,23 +144,10 @@
                     <h2 class="text-xl sm:text-2xl font-bold text-white tracking-wide">TAC-COM Access</h2>
                     <p class="text-slate-400 text-xs sm:text-sm mt-1">Sign in to Operations Command</p>
                 </div>
+                
                 <div id="loginAlert" class="hidden mb-4 px-4 py-3 rounded-lg text-xs sm:text-sm flex items-center gap-2"></div>
+                
                 <form id="loginForm" class="space-y-4" onsubmit="handleLogin(event)">
-                    <!-- ACCESS ROLE SELECTION -->
-                    <div>
-                        <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-1.5">Select Access Role</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <label class="flex items-center justify-center p-2.5 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer hover:border-cyan-500 text-xs text-slate-300 font-bold has-[:checked]:border-cyan-500 has-[:checked]:bg-cyan-950/40 has-[:checked]:text-cyan-400">
-                                <input type="radio" name="loginRole" value="admin" checked class="hidden">
-                                <i class="ph-bold ph-shield-check text-base mr-1.5"></i> Admin / Operator
-                            </label>
-                            <label class="flex items-center justify-center p-2.5 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer hover:border-cyan-500 text-xs text-slate-300 font-bold has-[:checked]:border-cyan-500 has-[:checked]:bg-cyan-950/40 has-[:checked]:text-cyan-400">
-                                <input type="radio" name="loginRole" value="client" class="hidden">
-                                <i class="ph-bold ph-eye text-base mr-1.5"></i> Client / Viewer
-                            </label>
-                        </div>
-                    </div>
-
                     <div>
                         <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-1.5">Username</label>
                         <div class="relative">
@@ -183,7 +171,7 @@
                     </div>
                     <button type="submit" id="loginBtn"
                         class="w-full py-3 px-4 bg-cyan-600 hover:bg-cyan-500 text-black font-bold rounded-lg shadow-lg shadow-cyan-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer text-sm">
-                        <span>Enter Command Dashboard</span>
+                        <span>Sign In</span>
                         <i class="fa-solid fa-arrow-right text-sm"></i>
                     </button>
                 </form>
@@ -191,6 +179,7 @@
                     Need command access? <button type="button" onclick="switchAuthTab('signup')" class="text-cyan-400 hover:text-cyan-300 font-medium cursor-pointer">Register Account</button>
                 </div>
             </div>
+
             <!-- SIGN UP SECTION -->
             <div id="signupSection" class="p-6 sm:p-8 hidden">
                 <div class="text-center mb-6">
@@ -198,10 +187,27 @@
                         <i class="ph-bold ph-user-plus"></i>
                     </div>
                     <h2 class="text-xl sm:text-2xl font-bold text-white tracking-wide">Request Access</h2>
-                    <p class="text-slate-400 text-xs sm:text-sm mt-1">Create operator account</p>
+                    <p class="text-slate-400 text-xs sm:text-sm mt-1">Create user account</p>
                 </div>
+                
                 <div id="signupAlert" class="hidden mb-4 px-4 py-3 rounded-lg text-xs sm:text-sm flex items-center gap-2"></div>
+                
                 <form id="signupForm" class="space-y-4" onsubmit="handleSignup(event)">
+                    <!-- ACCOUNT ROLE SELECTION FOR REGISTRATION -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-1.5">Account Role</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="flex items-center justify-center p-2.5 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer hover:border-emerald-500 text-xs text-slate-300 font-bold has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-950/40 has-[:checked]:text-emerald-400">
+                                <input type="radio" name="signupRole" value="admin" checked class="hidden">
+                                <i class="ph-bold ph-shield-check text-base mr-1.5"></i> Admin / Operator
+                            </label>
+                            <label class="flex items-center justify-center p-2.5 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer hover:border-emerald-500 text-xs text-slate-300 font-bold has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-950/40 has-[:checked]:text-emerald-400">
+                                <input type="radio" name="signupRole" value="client" class="hidden">
+                                <i class="ph-bold ph-eye text-base mr-1.5"></i> Client (View Only)
+                            </label>
+                        </div>
+                    </div>
+
                     <div>
                         <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-1.5">Full Name</label>
                         <div class="relative">
@@ -217,7 +223,7 @@
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400"><i class="fa-regular fa-user"></i></span>
                             <input type="text" id="signupUsername" required autocomplete="username"
                                 class="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 text-sm"
-                                placeholder="Choose operator username">
+                                placeholder="Choose username">
                         </div>
                     </div>
                     <div>
@@ -1135,11 +1141,13 @@
             const name = document.getElementById('signupName').value.trim();
             const username = document.getElementById('signupUsername').value.trim();
             const password = document.getElementById('signupPassword').value;
+            const role = document.querySelector('input[name="signupRole"]:checked').value;
+
             try {
                 const response = await fetch(`${API_URL}/api/auth/signup`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, username, password })
+                    body: JSON.stringify({ name, username, password, role })
                 });
                 const result = await response.json();
                 if (result.success) {
@@ -1160,7 +1168,6 @@
             event.preventDefault();
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
-            const selectedRole = document.querySelector('input[name="loginRole"]:checked').value;
 
             try {
                 const response = await fetch(`${API_URL}/api/auth/login`, {
@@ -1170,10 +1177,11 @@
                 });
                 const result = await response.json();
                 if (result.success) {
+                    // Save user credentials & actual registered role
                     localStorage.setItem('tacCurrentOperator', result.name);
-                    localStorage.setItem('tacCurrentRole', selectedRole);
+                    localStorage.setItem('tacCurrentRole', result.role || 'admin');
                     await checkAuthSession();
-                    showToast(`Welcome back, ${selectedRole === 'client' ? 'Viewer' : 'Operator'} ${result.name}`, 'success');
+                    showToast(`Welcome back, ${result.role === 'client' ? 'Client' : 'Operator'} ${result.name}`, 'success');
                 } else {
                     showAuthAlert('error', result.message, 'login');
                 }
@@ -1199,7 +1207,7 @@
 
         async function saveToLocalStorage() {
             const role = localStorage.getItem('tacCurrentRole');
-            if (role === 'client') return; // Prevents clients from saving/overwriting data
+            if (role === 'client') return; // Prevents clients from saving or overwriting data
 
             try {
                 await fetch(`${API_URL}/api/data`, {
@@ -1288,8 +1296,8 @@
                     <div class="space-y-3 max-h-[60vh] overflow-y-auto pr-2 text-xs">
                         <h4 class="font-bold text-cyan-300 uppercase tracking-wide">I. HELP CENTER (Guide & Quick Solutions)</h4>
                         <p>The <strong>TAC-COM Operational Command Dashboard</strong> provides real-time situational awareness and unit management for U3 operations.</p>
-                        <p><strong>1. Access Roles:</strong> Admin mode allows editing/adding records. Client mode allows view-only access to operational logs.</p>
-                        <p><strong>2. Mobile Optimization:</strong> Accessible on mobile browsers. Use top navigation drawer for switching operational modules.</p>
+                        <p><strong>1. Access Roles:</strong> Admin accounts have full management permissions. Client accounts are granted view-only access.</p>
+                        <p><strong>2. Mobile Optimization:</strong> Accessible on mobile browsers. Use the top navigation drawer for switching operational modules.</p>
                     </div>
                 `;
             } else if (type === 'privacy') {
@@ -1428,7 +1436,7 @@
 
         function getActionButtons(module, index) {
             const role = localStorage.getItem('tacCurrentRole');
-            if (role === 'client') return ''; // Returns empty string for client view
+            if (role === 'client') return '';
             return `
                 <td class="p-3 text-right admin-only">
                     <div class="flex items-center justify-end space-x-1">
