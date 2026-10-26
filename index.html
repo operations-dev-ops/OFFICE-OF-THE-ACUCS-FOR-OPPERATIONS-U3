@@ -585,7 +585,7 @@
                 </div>
             </div>
 
-            <!-- TAB: OPERATIONAL CALENDAR (REDESIGNED) -->
+            <!-- TAB: OPERATIONAL CALENDAR -->
             <div id="tab-calendar" class="tab-content hidden space-y-4">
                 <div class="tac-panel p-5 rounded-2xl border bg-gradient-to-r from-slate-900 via-slate-900/90 to-cyan-950/40 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div class="flex items-center space-x-4">
@@ -1132,10 +1132,11 @@
             outgoing: [], incoming: [], activities: [], iso_branch: [],
             ops_branch: [], hadr_branch: [], peace_branch: [],
             cmd_movements: [], dep_movements: [], aircraft: [],
-            vessels: [], jtf_deploy: [], jtf_realign: []
+            vessels: [], jtf_deploy: [], jtf_realign: [],
+            accounts: []
         };
         
-        let registeredAccounts = JSON.parse(localStorage.getItem('tacRegisteredAccounts')) || [];
+        let registeredAccounts = [];
         let calendarDate = new Date();
 
         const STATUS_BADGE_MAP = {
@@ -1168,14 +1169,15 @@
         let confirmResolver = null;
 
         window.addEventListener('DOMContentLoaded', async () => {
-            saveAccountsToStorage();
+            await loadFromLocalStorage();
             await checkAuthSession();
             updateLiveClock();
             setInterval(updateLiveClock, 1000);
         });
 
-        function saveAccountsToStorage() {
-            localStorage.setItem('tacRegisteredAccounts', JSON.stringify(registeredAccounts));
+        async function saveAccountsToStorage() {
+            store.accounts = registeredAccounts;
+            await saveToLocalStorage();
         }
 
         function openSidebar() {
@@ -1207,7 +1209,6 @@
                 }
 
                 applyRolePermissions(userRole);
-                await loadFromLocalStorage();
                 renderAllTables();
                 renderCalendar();
                 if (!jtfChartInstance) initChart();
@@ -1278,7 +1279,7 @@
             }
 
             registeredAccounts.push({ name, username, password, role, registeredAt: new Date().toLocaleDateString() });
-            saveAccountsToStorage();
+            await saveAccountsToStorage();
 
             showAuthAlert('success', `Account created for ${name} (${role.toUpperCase()})!`, 'signup');
             setTimeout(() => {
@@ -1292,6 +1293,7 @@
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
 
+            await loadFromLocalStorage(); // Fresh sync
             const user = registeredAccounts.find(acc => acc.username.toLowerCase() === username.toLowerCase() && acc.password === password);
 
             if (user) {
@@ -1324,6 +1326,7 @@
             if (role === 'client') return;
 
             try {
+                store.accounts = registeredAccounts;
                 await fetch(`${API_URL}/api/data`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1352,8 +1355,10 @@
                         aircraft: data.aircraft || [],
                         vessels: data.vessels || [],
                         jtf_deploy: data.jtf_deploy || [],
-                        jtf_realign: data.jtf_realign || []
+                        jtf_realign: data.jtf_realign || [],
+                        accounts: data.accounts || []
                     };
+                    registeredAccounts = store.accounts;
                 }
             } catch (err) {
                 console.error('Failed to load data from server:', err);
@@ -1399,8 +1404,9 @@
             if (confirmResolver) { confirmResolver(result); confirmResolver = null; }
         }
 
-        function openSettingsModal(defaultTab = 'main') {
+        async function openSettingsModal(defaultTab = 'main') {
             const role = localStorage.getItem('tacCurrentRole');
+            await loadFromLocalStorage(); // Fresh sync for accounts list
             document.getElementById('settings-modal').classList.remove('hidden');
             
             if (role === 'client') {
@@ -1441,7 +1447,7 @@
                         <h4 class="font-bold text-cyan-300 uppercase tracking-wide">I. HELP CENTER & QUICK GUIDE</h4>
                         <p>The <strong>TAC-COM Operational Command Dashboard</strong> provides real-time situational awareness and unit management for U3 operations.</p>
                         <p><strong>1. Access Portals:</strong> Admin accounts have full management permissions. Client accounts are assigned view-only privileges.</p>
-                        <p><strong>2. Account Management:</strong> Only Admin accounts can view, edit credentials, or delete registered user accounts.</p>
+                        <p><strong>2. Account Management:</strong> Only Admin accounts can view, edit credentials, or delete registered user accounts across devices.</p>
                     </div>
                 `;
             } else if (tab === 'privacy') {
@@ -1522,7 +1528,7 @@
             document.getElementById('edit-account-modal').classList.add('hidden');
         }
 
-        function saveAccountEdit(e) {
+        async function saveAccountEdit(e) {
             e.preventDefault();
             const idx = parseInt(document.getElementById('editAccIndex').value);
             const name = document.getElementById('editAccName').value.trim();
@@ -1537,7 +1543,7 @@
             }
 
             registeredAccounts[idx] = { ...registeredAccounts[idx], name, username, password, role };
-            saveAccountsToStorage();
+            await saveAccountsToStorage();
             showToast('Account credentials updated successfully!', 'success');
             closeEditAccountModal();
             renderAccountsListTable();
@@ -1548,7 +1554,7 @@
             const confirmed = await showConfirmModal('DELETE ACCOUNT', `Are you sure you want to delete user "${targetAcc.username}" (${targetAcc.name})?`);
             if (confirmed) {
                 registeredAccounts.splice(index, 1);
-                saveAccountsToStorage();
+                await saveAccountsToStorage();
                 showToast('Account deleted permanently.', 'error');
                 renderAccountsListTable();
             }
@@ -1607,11 +1613,9 @@
         function parseItemDate(dateStr) {
             if (!dateStr) return null;
             dateStr = dateStr.toString().trim();
-            // Try standard Date parsing
             let d = new Date(dateStr);
             if (!isNaN(d.getTime())) return d;
 
-            // Handle mm/dd/yyyy or yyyy-mm-dd or similar splits
             if (dateStr.includes('/')) {
                 let parts = dateStr.split('/');
                 if (parts.length === 3) {
@@ -1689,13 +1693,11 @@
             let html = '';
             let totalEventsCount = 0;
 
-            // Previous month trailing days
             for (let i = firstDayIndex; i > 0; i--) {
                 const dayNum = prevTotalDays - i + 1;
                 html += `<div class="h-24 sm:h-32 bg-black/10 border tac-border rounded-xl p-2 opacity-25 flex flex-col justify-between"><span class="text-[10px] font-mono text-gray-500">${dayNum}</span></div>`;
             }
 
-            // Current month days
             const today = new Date();
             for (let day = 1; day <= totalDays; day++) {
                 const currentDate = new Date(year, month, day);
@@ -1721,7 +1723,6 @@
                 `;
             }
 
-            // Next month leading days to complete 35 or 42 grid cells
             const totalCellsSoFar = firstDayIndex + totalDays;
             const nextDaysCount = totalCellsSoFar <= 35 ? (35 - totalCellsSoFar) : (42 - totalCellsSoFar);
             for (let i = 1; i <= nextDaysCount; i++) {
@@ -2317,6 +2318,7 @@
                     const imported = JSON.parse(e.target.result);
                     if (typeof imported === 'object' && imported !== null) {
                         store = imported;
+                        registeredAccounts = store.accounts || [];
                         await saveToLocalStorage();
                         renderAllTables();
                         showToast('Data imported successfully!', 'success');
