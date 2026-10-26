@@ -179,7 +179,6 @@
                     Need command access? <button type="button" onclick="switchAuthTab('signup')" class="text-cyan-400 hover:text-cyan-300 font-medium cursor-pointer">Register Account</button>
                 </div>
             </div>
-
             <!-- SIGN UP SECTION -->
             <div id="signupSection" class="p-6 sm:p-8 hidden">
                 <div class="text-center mb-6">
@@ -206,7 +205,6 @@
                             </label>
                         </div>
                     </div>
-
                     <div>
                         <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-1.5">Full Name</label>
                         <div class="relative">
@@ -249,7 +247,6 @@
             </div>
         </div>
     </div>
-
     <!-- ================= TAC-COM OPERATIONAL COMMAND DASHBOARD ================= -->
     <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2 pointer-events-none max-w-xs sm:max-w-sm"></div>
     <div id="mobile-backdrop" class="fixed inset-0 bg-black/60 z-20 md:hidden hidden transition-opacity" onclick="closeSidebar()"></div>
@@ -294,7 +291,6 @@
                 </div>
                 <span class="badge-count px-1.5 py-0.5 text-[10px] rounded bg-cyan-900 text-cyan-200" id="cnt-calendar">0</span>
             </a>
-
             <div class="pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-gray-500 px-3">COMMUNICATIONS</div>
             <a href="#" onclick="switchTab('outgoing')" id="nav-outgoing" class="nav-item flex items-center justify-between px-3 py-2 rounded-lg text-gray-400 hover:bg-white/5 hover:text-gray-200">
                 <div class="flex items-center space-x-3">
@@ -414,7 +410,6 @@
             </div>
         </div>
     </aside>
-
     <!-- MAIN CONTENT AREA -->
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header class="h-16 tac-panel border-b tac-border flex items-center justify-between px-3 sm:px-6 z-10 bg-opacity-90">
@@ -466,7 +461,6 @@
                 </div>
             </div>
         </header>
-
         <!-- MAIN SCROLLABLE BODY -->
         <main class="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6" id="printable-area">
             <!-- TAB 1: DASHBOARD OVERVIEW -->
@@ -584,7 +578,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- TAB: OPERATIONAL CALENDAR -->
             <div id="tab-calendar" class="tab-content hidden space-y-4">
                 <div class="tac-panel p-5 rounded-2xl border bg-gradient-to-r from-slate-900 via-slate-900/90 to-cyan-950/40 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -609,7 +602,6 @@
                         </button>
                     </div>
                 </div>
-
                 <div class="tac-panel rounded-2xl border p-4 sm:p-6 shadow-2xl space-y-4">
                     <div class="grid grid-cols-7 gap-2 text-center font-mono text-[11px] sm:text-xs text-cyan-300 font-extrabold uppercase bg-cyan-950/40 p-2.5 rounded-xl border border-cyan-900/50">
                         <div class="text-rose-400">Sun</div>
@@ -622,7 +614,6 @@
                     </div>
                     <div id="calendar-grid" class="grid grid-cols-7 gap-2"></div>
                 </div>
-
                 <div id="calendar-day-details" class="tac-panel rounded-2xl border p-5 space-y-3 shadow-xl hidden border-cyan-500/30 bg-slate-900/90">
                     <div class="flex items-center justify-between border-b tac-border pb-3">
                         <div class="flex items-center space-x-2.5">
@@ -634,7 +625,6 @@
                     <div id="calendar-day-entries-list" class="space-y-2.5 text-xs max-h-60 overflow-y-auto pr-1"></div>
                 </div>
             </div>
-
             <!-- TAB: OUTGOING MESSAGES -->
             <div id="tab-outgoing" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -664,7 +654,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- TAB: INCOMING MESSAGES -->
             <div id="tab-incoming" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -693,7 +682,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- TAB: INCOMING ACTIVITIES -->
             <div id="tab-activities" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -722,7 +710,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- TAB: ISO BRANCH ACTIVITIES -->
             <div id="tab-iso_branch" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -750,7 +737,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- TAB: OPERATIONS BRANCH ACTIVITIES -->
             <div id="tab-ops_branch" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -778,7 +764,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- TAB: HADR BRANCH ACTIVITIES -->
             <div id="tab-hadr_branch" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -806,7 +791,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- TAB: PEACE DEVELOPMENT BRANCH -->
             <div id="tab-peace_branch" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -834,7 +818,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- TAB: COMMANDER MOVEMENTS -->
             <div id="tab-cmd_movements" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -863,7 +846,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- TAB: DEPUTY COMMANDER MOVEMENTS -->
             <div id="tab-dep_movements" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -892,7 +874,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- TAB: AIRCRAFT REQUESTS -->
             <div id="tab-aircraft" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -922,7 +903,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- TAB: PN VESSEL DIRECTIVES -->
             <div id="tab-vessels" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -952,7 +932,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- TAB: JTF FORCE DEPLOYMENT -->
             <div id="tab-jtf_deploy" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -983,7 +962,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- TAB: JTF FORCE REALIGNMENT -->
             <div id="tab-jtf_realign" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -1016,7 +994,6 @@
             </div>
         </main>
     </div>
-
     <!-- DYNAMIC FORM MODAL -->
     <div id="crud-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
         <div class="tac-panel w-full max-w-lg rounded-2xl border shadow-2xl p-4 sm:p-6 space-y-4 my-auto max-h-[92vh] overflow-y-auto">
@@ -1040,7 +1017,6 @@
             </form>
         </div>
     </div>
-
     <!-- CONFIRM MODAL -->
     <div id="confirm-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="tac-panel w-full max-w-sm rounded-2xl border shadow-2xl p-6 space-y-4 text-center">
@@ -1055,7 +1031,6 @@
             </div>
         </div>
     </div>
-
     <!-- SETTINGS MASTER MODAL -->
     <div id="settings-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="tac-panel w-full max-w-2xl rounded-2xl border shadow-2xl p-6 space-y-4 my-auto max-h-[90vh] overflow-y-auto">
@@ -1079,16 +1054,13 @@
                     <i class="ph-bold ph-shield-check text-sm"></i> Privacy & Security
                 </button>
             </div>
-
             <!-- SETTINGS CONTAINER CONTENT -->
             <div id="settings-sub-content" class="text-xs text-gray-300 space-y-3 leading-relaxed min-h-[250px]"></div>
-
             <div class="flex justify-end pt-3 border-t tac-border">
                 <button onclick="closeSettingsModal()" class="tac-btn-accent font-bold px-5 py-2 rounded-lg text-xs shadow-lg">Close Settings</button>
             </div>
         </div>
     </div>
-
     <!-- EDIT ACCOUNT SUB-MODAL -->
     <div id="edit-account-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
         <div class="tac-panel w-full max-w-sm rounded-2xl border shadow-2xl p-5 space-y-4">
@@ -1124,7 +1096,6 @@
             </form>
         </div>
     </div>
-
     <!-- JAVASCRIPT LOGIC -->
     <script>
         const API_URL = window.location.origin;
@@ -1138,7 +1109,6 @@
         
         let registeredAccounts = [];
         let calendarDate = new Date();
-
         const STATUS_BADGE_MAP = {
             'ONGOING': 'bg-amber-900/60 text-amber-200 border-amber-700/50',
             'COMPLETED': 'bg-emerald-900/60 text-emerald-200 border-emerald-700/50',
@@ -1160,26 +1130,22 @@
             'IN TRANSIT': 'bg-emerald-900/80 text-emerald-300 border-emerald-500/50',
             'STATIONARY': 'bg-gray-800 text-gray-300 border-gray-700'
         };
-
         function renderStatusBadge(status) {
             const style = STATUS_BADGE_MAP[status] || 'bg-gray-800 text-gray-300 border-gray-700';
             return `<span class="px-2 py-0.5 text-[10px] rounded font-bold border ${style}">${status || 'N/A'}</span>`;
         }
         let jtfChartInstance = null;
         let confirmResolver = null;
-
         window.addEventListener('DOMContentLoaded', async () => {
             await loadFromLocalStorage();
             await checkAuthSession();
             updateLiveClock();
             setInterval(updateLiveClock, 1000);
         });
-
         async function saveAccountsToStorage() {
             store.accounts = registeredAccounts;
             await saveToLocalStorage();
         }
-
         function openSidebar() {
             document.getElementById('sidebar').classList.remove('-translate-x-full');
             document.getElementById('mobile-backdrop').classList.remove('hidden');
@@ -1188,7 +1154,6 @@
             document.getElementById('sidebar').classList.add('-translate-x-full');
             document.getElementById('mobile-backdrop').classList.add('hidden');
         }
-
         async function checkAuthSession() {
             const currentUser = localStorage.getItem('tacCurrentOperator');
             const userRole = localStorage.getItem('tacCurrentRole') || 'admin';
@@ -1198,7 +1163,6 @@
                 authContainer.classList.add('hidden');
                 const opEl = document.getElementById('headerOperatorName');
                 if (opEl) opEl.innerText = currentUser.toUpperCase();
-
                 const roleBadge = document.getElementById('headerRoleBadge');
                 if (roleBadge) {
                     if (userRole === 'client') {
@@ -1207,7 +1171,6 @@
                         roleBadge.innerHTML = '<span class="text-emerald-400 font-semibold">ADMIN (FULL ACCESS)</span>';
                     }
                 }
-
                 applyRolePermissions(userRole);
                 renderAllTables();
                 renderCalendar();
@@ -1216,7 +1179,6 @@
                 authContainer.classList.remove('hidden');
             }
         }
-
         function applyRolePermissions(role) {
             const adminElements = document.querySelectorAll('.admin-only, #btn-import-data');
             if (role === 'client') {
@@ -1225,7 +1187,6 @@
                 adminElements.forEach(el => el.classList.remove('hidden'));
             }
         }
-
         function switchAuthTab(tab) {
             const loginSec = document.getElementById('loginSection');
             const signupSec = document.getElementById('signupSection');
@@ -1241,7 +1202,6 @@
                 loginSec.classList.remove('hidden');
             }
         }
-
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -1255,7 +1215,6 @@
                 icon.classList.add('fa-eye');
             }
         }
-
         function showAuthAlert(type, message, section) {
             const alertBox = document.getElementById(section + 'Alert');
             alertBox.className = `mb-4 px-4 py-3 rounded-lg text-xs sm:text-sm flex items-center gap-2 ${
@@ -1264,38 +1223,31 @@
             alertBox.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i> <span>${message}</span>`;
             alertBox.classList.remove('hidden');
         }
-
         async function handleSignup(event) {
             event.preventDefault();
             const name = document.getElementById('signupName').value.trim();
             const username = document.getElementById('signupUsername').value.trim();
             const password = document.getElementById('signupPassword').value;
             const role = document.querySelector('input[name="signupRole"]:checked').value;
-
             const exists = registeredAccounts.some(acc => acc.username.toLowerCase() === username.toLowerCase());
             if (exists) {
                 showAuthAlert('error', 'Username already taken. Please choose another.', 'signup');
                 return;
             }
-
             registeredAccounts.push({ name, username, password, role, registeredAt: new Date().toLocaleDateString() });
             await saveAccountsToStorage();
-
             showAuthAlert('success', `Account created for ${name} (${role.toUpperCase()})!`, 'signup');
             setTimeout(() => {
                 switchAuthTab('login');
                 document.getElementById('loginUsername').value = username;
             }, 1200);
         }
-
         async function handleLogin(event) {
             event.preventDefault();
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
-
             await loadFromLocalStorage(); // Fresh sync
             const user = registeredAccounts.find(acc => acc.username.toLowerCase() === username.toLowerCase() && acc.password === password);
-
             if (user) {
                 localStorage.setItem('tacCurrentOperator', user.name);
                 localStorage.setItem('tacCurrentRole', user.role || 'admin');
@@ -1305,7 +1257,6 @@
                 showAuthAlert('error', 'Invalid username or password credentials.', 'login');
             }
         }
-
         function handleLogout() {
             showConfirmModal('SIGN OUT', 'Are you sure you want to log out of TAC-COM Command?').then(confirmed => {
                 if (confirmed) {
@@ -1315,16 +1266,13 @@
                 }
             });
         }
-
         function updateLiveClock() {
             const now = new Date();
             document.getElementById('live-clock').innerText = now.toISOString().substring(11, 19) + ' Z';
         }
-
         async function saveToLocalStorage() {
             const role = localStorage.getItem('tacCurrentRole');
             if (role === 'client') return;
-
             try {
                 store.accounts = registeredAccounts;
                 await fetch(`${API_URL}/api/data`, {
@@ -1336,7 +1284,6 @@
                 console.error('Failed to sync data with server:', err);
             }
         }
-
         async function loadFromLocalStorage() {
             try {
                 const response = await fetch(`${API_URL}/api/data`);
@@ -1364,7 +1311,6 @@
                 console.error('Failed to load data from server:', err);
             }
         }
-
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             if (!container) return;
@@ -1380,7 +1326,6 @@
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
-
         function showConfirmModal(title, message, isDanger = true) {
             return new Promise((resolve) => {
                 confirmResolver = resolve;
@@ -1398,12 +1343,10 @@
                 document.getElementById('confirm-modal').classList.remove('hidden');
             });
         }
-
         function closeConfirmModal(result) {
             document.getElementById('confirm-modal').classList.add('hidden');
             if (confirmResolver) { confirmResolver(result); confirmResolver = null; }
         }
-
         async function openSettingsModal(defaultTab = 'main') {
             const role = localStorage.getItem('tacCurrentRole');
             await loadFromLocalStorage(); // Fresh sync for accounts list
@@ -1415,7 +1358,6 @@
                 switchSettingsSubTab(defaultTab === 'main' ? 'accounts' : defaultTab);
             }
         }
-
         function switchSettingsSubTab(tab) {
             const role = localStorage.getItem('tacCurrentRole');
             const btns = {
@@ -1423,17 +1365,14 @@
                 help: document.getElementById('setTabBtn-help'),
                 privacy: document.getElementById('setTabBtn-privacy')
             };
-
             Object.keys(btns).forEach(k => {
                 if (btns[k]) {
                     btns[k].className = "px-4 py-2 text-gray-400 hover:text-white flex items-center gap-1.5";
                 }
             });
-
             if (btns[tab]) {
                 btns[tab].className = "px-4 py-2 text-cyan-400 border-b-2 border-cyan-500 font-bold flex items-center gap-1.5";
             }
-
             const content = document.getElementById('settings-sub-content');
             if (tab === 'accounts') {
                 if (role !== 'admin') {
@@ -1459,7 +1398,6 @@
                 `;
             }
         }
-
         function renderAccountsListTable() {
             const content = document.getElementById('settings-sub-content');
             if (registeredAccounts.length === 0) {
@@ -1468,7 +1406,6 @@
                 `;
                 return;
             }
-
             content.innerHTML = `
                 <div class="space-y-3 max-h-[60vh] overflow-y-auto pr-1 text-xs">
                     <div class="flex items-center justify-between">
@@ -1513,7 +1450,6 @@
                 </div>
             `;
         }
-
         function openEditAccountModal(index) {
             const acc = registeredAccounts[index];
             document.getElementById('editAccIndex').value = index;
@@ -1523,11 +1459,9 @@
             document.getElementById('editAccRole').value = acc.role || 'admin';
             document.getElementById('edit-account-modal').classList.remove('hidden');
         }
-
         function closeEditAccountModal() {
             document.getElementById('edit-account-modal').classList.add('hidden');
         }
-
         async function saveAccountEdit(e) {
             e.preventDefault();
             const idx = parseInt(document.getElementById('editAccIndex').value);
@@ -1535,20 +1469,17 @@
             const username = document.getElementById('editAccUsername').value.trim();
             const password = document.getElementById('editAccPassword').value;
             const role = document.getElementById('editAccRole').value;
-
             const isDuplicate = registeredAccounts.some((acc, i) => i !== idx && acc.username.toLowerCase() === username.toLowerCase());
             if (isDuplicate) {
                 showToast('Username is already used by another account.', 'error');
                 return;
             }
-
             registeredAccounts[idx] = { ...registeredAccounts[idx], name, username, password, role };
             await saveAccountsToStorage();
             showToast('Account credentials updated successfully!', 'success');
             closeEditAccountModal();
             renderAccountsListTable();
         }
-
         async function deleteAccount(index) {
             const targetAcc = registeredAccounts[index];
             const confirmed = await showConfirmModal('DELETE ACCOUNT', `Are you sure you want to delete user "${targetAcc.username}" (${targetAcc.name})?`);
@@ -1559,9 +1490,7 @@
                 renderAccountsListTable();
             }
         }
-
         function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
-
         function switchTab(tabId) {
             closeSidebar();
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -1598,24 +1527,20 @@
                 renderCalendar();
             }
         }
-
         // ================= ROBUST CALENDAR LOGIC =================
         function changeMonth(direction) {
             calendarDate.setMonth(calendarDate.getMonth() + direction);
             renderCalendar();
         }
-
         function goToCurrentMonth() {
             calendarDate = new Date();
             renderCalendar();
         }
-
         function parseItemDate(dateStr) {
             if (!dateStr) return null;
             dateStr = dateStr.toString().trim();
             let d = new Date(dateStr);
             if (!isNaN(d.getTime())) return d;
-
             if (dateStr.includes('/')) {
                 let parts = dateStr.split('/');
                 if (parts.length === 3) {
@@ -1639,7 +1564,6 @@
             }
             return null;
         }
-
         function getEventsOnDate(targetDate) {
             let events = [];
             const checkAndPush = (list, titleKey, modName, badgeColor) => {
@@ -1658,7 +1582,6 @@
                     }
                 });
             };
-
             checkAndPush(store.activities, 'title', 'Field Activity', 'bg-amber-900/60 text-amber-200 border-amber-700');
             checkAndPush(store.iso_branch, 'title', 'ISO Branch', 'bg-rose-900/60 text-rose-200 border-rose-700');
             checkAndPush(store.ops_branch, 'title', 'Operations', 'bg-cyan-900/60 text-cyan-200 border-cyan-700');
@@ -1671,42 +1594,32 @@
             checkAndPush(store.jtf_deploy, 'unit', 'JTF Deployment', 'bg-emerald-700/60 text-emerald-100 border-emerald-500');
             checkAndPush(store.outgoing, 'subject', 'Outgoing Message', 'bg-gray-800 text-gray-300 border-gray-700');
             checkAndPush(store.incoming, 'subject', 'Incoming Message', 'bg-blue-950 text-blue-300 border-blue-800');
-
             return events;
         }
-
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             const monthYearLabel = document.getElementById('calendar-month-year');
             if (!grid || !monthYearLabel) return;
-
             const year = calendarDate.getFullYear();
             const month = calendarDate.getMonth();
-
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             monthYearLabel.innerText = `${monthNames[month]} ${year}`;
-
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
             const prevTotalDays = new Date(year, month, 0).getDate();
-
             let html = '';
             let totalEventsCount = 0;
-
             for (let i = firstDayIndex; i > 0; i--) {
                 const dayNum = prevTotalDays - i + 1;
                 html += `<div class="h-24 sm:h-32 bg-black/10 border tac-border rounded-xl p-2 opacity-25 flex flex-col justify-between"><span class="text-[10px] font-mono text-gray-500">${dayNum}</span></div>`;
             }
-
             const today = new Date();
             for (let day = 1; day <= totalDays; day++) {
                 const currentDate = new Date(year, month, day);
                 const dayEvents = getEventsOnDate(currentDate);
                 totalEventsCount += dayEvents.length;
-
                 const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
                 const todayClass = isToday ? 'border-cyan-400 bg-cyan-950/30 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-400/50' : 'bg-slate-900/60 tac-border hover:border-cyan-500/40';
-
                 html += `
                     <div onclick="selectCalendarDate(${year}, ${month}, ${day})" class="h-24 sm:h-32 border rounded-xl p-2 flex flex-col justify-between cursor-pointer transition-all duration-200 group ${todayClass}">
                         <div class="flex items-center justify-between">
@@ -1722,18 +1635,15 @@
                     </div>
                 `;
             }
-
             const totalCellsSoFar = firstDayIndex + totalDays;
             const nextDaysCount = totalCellsSoFar <= 35 ? (35 - totalCellsSoFar) : (42 - totalCellsSoFar);
             for (let i = 1; i <= nextDaysCount; i++) {
                 html += `<div class="h-24 sm:h-32 bg-black/10 border tac-border rounded-xl p-2 opacity-25 flex flex-col justify-between"><span class="text-[10px] font-mono text-gray-500">${i}</span></div>`;
             }
-
             grid.innerHTML = html;
             const cntEl = document.getElementById('cnt-calendar');
             if (cntEl) cntEl.innerText = totalEventsCount;
         }
-
         function selectCalendarDate(year, month, day) {
             const selectedDate = new Date(year, month, day);
             const events = getEventsOnDate(selectedDate);
@@ -1741,17 +1651,14 @@
             const dateTitle = document.getElementById('calendar-selected-date');
             const countEl = document.getElementById('calendar-selected-count');
             const listEl = document.getElementById('calendar-day-entries-list');
-
             detailsBox.classList.remove('hidden');
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             dateTitle.innerText = `Briefing Logs for ${monthNames[month]} ${day}, ${year}`;
             countEl.innerText = `${events.length} event(s)`;
-
             if (events.length === 0) {
                 listEl.innerHTML = `<div class="text-gray-500 italic p-4 text-center bg-black/30 rounded-xl border tac-border">No operational events or schedules logged for this date.</div>`;
                 return;
             }
-
             listEl.innerHTML = events.map(ev => `
                 <div class="p-3 rounded-xl bg-slate-950/60 border tac-border flex items-center justify-between hover:border-cyan-500/50 transition-all">
                     <div class="space-y-1">
@@ -1765,19 +1672,16 @@
                 </div>
             `).join('');
         }
-
         function setTheme(themeName) {
             document.body.className = "h-full flex overflow-hidden";
             document.body.style.backgroundColor = "";
             if (themeName !== 'default') { document.body.classList.add(`theme-${themeName}`); }
             showToast(`Theme changed to ${themeName.toUpperCase()}`, 'info');
         }
-
         function toggleExportMenu() {
             const dropdown = document.getElementById('export-dropdown');
             dropdown.classList.toggle('hidden');
         }
-
         function downloadAsPDF() {
             const element = document.getElementById('printable-area');
             const opt = {
@@ -1792,9 +1696,7 @@
                 showToast('PDF Report downloaded!', 'success');
             });
         }
-
         function printCurrentModule() { window.print(); }
-
         function renderAllTables() {
             renderOutgoingTable(); renderIncomingTable(); renderActivitiesTable();
             renderIsoTable(); renderOpsTable(); renderHadrTable(); renderPeaceTable();
@@ -1803,7 +1705,6 @@
             updateDashboardCounters();
             renderCalendar();
         }
-
         function updateDashboardCounters() {
             document.getElementById('cnt-outgoing').innerText = store.outgoing.length;
             document.getElementById('cnt-incoming').innerText = store.incoming.length;
@@ -1854,7 +1755,6 @@
             }
             if (jtfChartInstance) updateChartData();
         }
-
         function getActionButtons(module, index) {
             const role = localStorage.getItem('tacCurrentRole');
             if (role === 'client') return '';
@@ -1867,11 +1767,9 @@
                 </td>
             `;
         }
-
         function renderEmptyRow(colspan, text = "No logs available. Click Add button to create entry.") {
             return `<tr><td colspan="${colspan}" class="p-6 text-center text-gray-500 italic font-mono text-xs">${text}</td></tr>`;
         }
-
         function renderOutgoingTable() {
             const tbody = document.getElementById('table-outgoing');
             if (!tbody) return;
@@ -1889,7 +1787,6 @@
                 </tr>
             `).join('');
         }
-
         function renderIncomingTable() {
             const tbody = document.getElementById('table-incoming');
             if (!tbody) return;
@@ -1906,7 +1803,6 @@
                 </tr>
             `).join('');
         }
-
         function renderActivitiesTable() {
             const tbody = document.getElementById('table-activities');
             if (!tbody) return;
@@ -1923,7 +1819,6 @@
                 </tr>
             `).join('');
         }
-
         function renderIsoTable() {
             const tbody = document.getElementById('table-iso_branch');
             if (!tbody) return;
@@ -1939,7 +1834,6 @@
                 </tr>
             `).join('');
         }
-
         function renderOpsTable() {
             const tbody = document.getElementById('table-ops_branch');
             if (!tbody) return;
@@ -1955,7 +1849,6 @@
                 </tr>
             `).join('');
         }
-
         function renderHadrTable() {
             const tbody = document.getElementById('table-hadr_branch');
             if (!tbody) return;
@@ -1971,7 +1864,6 @@
                 </tr>
             `).join('');
         }
-
         function renderPeaceTable() {
             const tbody = document.getElementById('table-peace_branch');
             if (!tbody) return;
@@ -1987,7 +1879,6 @@
                 </tr>
             `).join('');
         }
-
         function renderCmdMovementsTable() {
             const tbody = document.getElementById('table-cmd_movements');
             if (!tbody) return;
@@ -2004,7 +1895,6 @@
                 </tr>
             `).join('');
         }
-
         function renderDepMovementsTable() {
             const tbody = document.getElementById('table-dep_movements');
             if (!tbody) return;
@@ -2021,7 +1911,6 @@
                 </tr>
             `).join('');
         }
-
         function renderAircraftTable() {
             const tbody = document.getElementById('table-aircraft');
             if (!tbody) return;
@@ -2039,7 +1928,6 @@
                 </tr>
             `).join('');
         }
-
         function renderVesselsTable() {
             const tbody = document.getElementById('table-vessels');
             if (!tbody) return;
@@ -2057,7 +1945,6 @@
                 </tr>
             `).join('');
         }
-
         function renderJtfDeployTable() {
             const tbody = document.getElementById('table-jtf_deploy');
             if (!tbody) return;
@@ -2076,7 +1963,6 @@
                 </tr>
             `).join('');
         }
-
         function renderJtfRealignTable() {
             const tbody = document.getElementById('table-jtf_realign');
             if (!tbody) return;
@@ -2095,14 +1981,12 @@
                 </tr>
             `).join('');
         }
-
         function openModal(module, editIndex = null) {
             const role = localStorage.getItem('tacCurrentRole');
             if (role === 'client') {
                 showToast('Client account has view-only access.', 'error');
                 return;
             }
-
             document.getElementById('crud-modal').classList.remove('hidden');
             document.getElementById('form-module').value = module;
             document.getElementById('form-edit-index').value = editIndex !== null ? editIndex : '';
@@ -2236,9 +2120,7 @@
             });
             document.getElementById('form-field-remarks').value = currentObj.remarks || '';
         }
-
         function closeModal() { document.getElementById('crud-modal').classList.add('hidden'); }
-
         async function handleFormSubmit(e) {
             e.preventDefault();
             const role = localStorage.getItem('tacCurrentRole');
@@ -2246,7 +2128,6 @@
                 showToast('Client account is not allowed to edit or add data.', 'error');
                 return;
             }
-
             const module = document.getElementById('form-module').value;
             const editIdxStr = document.getElementById('form-edit-index').value;
             const isEdit = editIdxStr !== '';
@@ -2267,16 +2148,13 @@
             renderAllTables();
             closeModal();
         }
-
         function editRecord(module, index) { openModal(module, index); }
-
         async function deleteRecord(module, index) {
             const role = localStorage.getItem('tacCurrentRole');
             if (role === 'client') {
                 showToast('Client account cannot delete records.', 'error');
                 return;
             }
-
             const confirmed = await showConfirmModal('DELETE OPERATIONAL LOG', 'Are you sure you want to permanently delete this record?');
             if (confirmed) {
                 store[module].splice(index, 1);
@@ -2285,13 +2163,11 @@
                 showToast('Record deleted permanently', 'error');
             }
         }
-
         function filterTable(module, query) {
             const trs = document.querySelectorAll(`#table-${module} tr`);
             const q = query.toLowerCase();
             trs.forEach(tr => { tr.style.display = tr.innerText.toLowerCase().includes(q) ? '' : 'none'; });
         }
-
         function exportDashboardData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(store, null, 2));
             const dlAnchor = document.createElement('a');
@@ -2302,14 +2178,12 @@
             dlAnchor.remove();
             showToast('Operational data exported as JSON!', 'success');
         }
-
         function importDashboardData(event) {
             const role = localStorage.getItem('tacCurrentRole');
             if (role === 'client') {
                 showToast('Client account cannot import data.', 'error');
                 return;
             }
-
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
@@ -2331,7 +2205,6 @@
             };
             reader.readAsText(file);
         }
-
         function initChart() {
             const ctx = document.getElementById('jtfChart');
             if (!ctx) return;
@@ -2365,7 +2238,6 @@
                 }
             });
         }
-
         function updateChartData() {
             if (!jtfChartInstance) return;
             const jtfSectors = ['JTF Zampelan', 'JTF Orion', 'JTF Poseidon', 'JTF Central'];
