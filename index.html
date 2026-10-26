@@ -1275,18 +1275,7 @@
             if (role === 'client') return;
             try {
                 store.accounts = registeredAccounts;
-                await fetch(`${API_URL}/api/data`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(store)
-                });
-            } catch (err) {
-                console.error('Failed to sync data with server:', err);
-            }
-        }
-        async function loadFromLocalStorage() {
-            try {
-                const response = await fetch(`${API_URL}/api/data`);
+                await fetch(`${API_URL}/api/data`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(store) }); } catch (err) { console.error('Failed to sync data with server:', err); } } async function loadFromLocalStorage() { try { const response = await fetch(`${API_URL}/api/data`);
                 const data = await response.json();
                 if (data && typeof data === 'object') {
                     store = {
@@ -1482,113 +1471,27 @@
         }
         async function deleteAccount(index) {
             const targetAcc = registeredAccounts[index];
-            const confirmed = await showConfirmModal('DELETE ACCOUNT', `Are you sure you want to delete user "${targetAcc.username}" (${targetAcc.name})?`);
-            if (confirmed) {
-                registeredAccounts.splice(index, 1);
-                await saveAccountsToStorage();
-                showToast('Account deleted permanently.', 'error');
-                renderAccountsListTable();
-            }
-        }
-        function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
-        function switchTab(tabId) {
-            closeSidebar();
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('text-cyan-400', 'bg-cyan-500/10', 'border', 'border-cyan-500/20'));
-            
-            const targetTab = document.getElementById(`tab-${tabId}`);
+            const confirmed = await showConfirmModal('DELETE ACCOUNT', `Are you sure you want to delete user "${targetAcc.username}" (${targetAcc.name})?`); if (confirmed) { registeredAccounts.splice(index, 1); await saveAccountsToStorage(); showToast('Account deleted permanently.', 'error'); renderAccountsListTable(); } } function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); } function switchTab(tabId) { closeSidebar(); document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('text-cyan-400', 'bg-cyan-500/10', 'border', 'border-cyan-500/20'));  const targetTab = document.getElementById(`tab-${tabId}`);
             if (targetTab) targetTab.classList.remove('hidden');
             
-            const navItem = document.getElementById(`nav-${tabId}`);
-            if (navItem) navItem.classList.add('text-cyan-400', 'bg-cyan-500/10', 'border', 'border-cyan-500/20');
-            
-            const titles = {
-                dashboard: ['Dashboard Overview', 'Real-time situational awareness & operational tracking'],
-                calendar: ['Operational Calendar', 'Schedule & date-based operational events tracking'],
-                outgoing: ['Outgoing Messages', 'Log and track sent encrypted communications'],
-                incoming: ['Incoming Messages', 'Receive and process incoming headquarters messages'],
-                activities: ['Incoming Activities', 'Field operations, incidents, and situational logs'],
-                iso_branch: ['ISO Branch Activities', 'Internal Security Operations monitoring & status logs'],
-                ops_branch: ['Operations Branch', 'Tactical planning, execution, and branch coordination'],
-                hadr_branch: ['HADR Branch Activities', 'Humanitarian Assistance and Disaster Relief missions'],
-                peace_branch: ['Peace Development', 'Community dialogues, peace agreements, and initiatives'],
-                cmd_movements: ['Movement of Commander', 'High-level movement tracking for Commander'],
-                dep_movements: ['Movement of Deputy Commander', 'Movement tracking for Deputy Commander'],
-                aircraft: ['Aircraft Requests', 'Air support, recon, and transport logistics'],
-                vessels: ['PN Vessel Directives', 'Philippine Navy vessel operations and deployments'],
-                jtf_deploy: ['JTF Force Deployment', 'JTF Zampelan, Orion, Poseidon, and Central roster'],
-                jtf_realign: ['JTF Force Realignment', 'Force repositioning orders across sectors']
-            };
-            if (titles[tabId]) {
-                document.getElementById('page-title').innerText = titles[tabId][0];
-                document.getElementById('page-subtitle').innerText = titles[tabId][1];
-            }
-            if (tabId === 'calendar') {
-                renderCalendar();
-            }
-        }
-        // ================= ADVANCED MULTI-YEAR CALENDAR ENGINE =================
-        function changeMonth(direction) {
-            calendarDate.setMonth(calendarDate.getMonth() + direction);
-            renderCalendar();
-        }
-        function goToCurrentMonth() {
-            calendarDate = new Date();
-            renderCalendar();
-        }
-        function parseItemDate(dateStr) {
-            if (!dateStr) return [];
-            dateStr = dateStr.toString().trim();
-            
-            let dates = [];
-
-            // 1. Mag-handle ng multiple dates tulad ng "26, 27, 28 and 31 October 2026"
-            if (dateStr.toLowerCase().includes('and') || dateStr.includes(',')) {
-                let cleaned = dateStr.replace(/\sand\s/gi, ', ');
-                let parts = cleaned.split(',').map(s => s.trim());
-                let lastPart = parts[parts.length - 1];
-                let matchMonthYear = lastPart.match(/([A-Za-z]+)\s+(\d{4})/);
-                if (matchMonthYear) {
-                    let monthYear = `${matchMonthYear[1]} ${matchMonthYear[2]}`;
-                    parts.forEach(p => {
-                        let dayMatch = p.match(/^(\d{1,2})/);
-                        if (dayMatch) {
-                            let fullStr = `${dayMatch[1]} ${monthYear}`;
-                            let d = new Date(fullStr);
-                            if (!isNaN(d.getTime())) dates.push(d);
-                        }
-                    });
-                    if (dates.length > 0) return dates;
+            const navItem = document.getElementById(`nav-${tabId}`); if (navItem) navItem.classList.add('text-cyan-400', 'bg-cyan-500/10', 'border', 'border-cyan-500/20');  const titles = { dashboard: ['Dashboard Overview', 'Real-time situational awareness & operational tracking'], calendar: ['Operational Calendar', 'Schedule & date-based operational events tracking'], outgoing: ['Outgoing Messages', 'Log and track sent encrypted communications'], incoming: ['Incoming Messages', 'Receive and process incoming headquarters messages'], activities: ['Incoming Activities', 'Field operations, incidents, and situational logs'], iso_branch: ['ISO Branch Activities', 'Internal Security Operations monitoring & status logs'], ops_branch: ['Operations Branch', 'Tactical planning, execution, and branch coordination'], hadr_branch: ['HADR Branch Activities', 'Humanitarian Assistance and Disaster Relief missions'], peace_branch: ['Peace Development', 'Community dialogues, peace agreements, and initiatives'], cmd_movements: ['Movement of Commander', 'High-level movement tracking for Commander'], dep_movements: ['Movement of Deputy Commander', 'Movement tracking for Deputy Commander'], aircraft: ['Aircraft Requests', 'Air support, recon, and transport logistics'], vessels: ['PN Vessel Directives', 'Philippine Navy vessel operations and deployments'], jtf_deploy: ['JTF Force Deployment', 'JTF Zampelan, Orion, Poseidon, and Central roster'], jtf_realign: ['JTF Force Realignment', 'Force repositioning orders across sectors'] }; if (titles[tabId]) { document.getElementById('page-title').innerText = titles[tabId][0]; document.getElementById('page-subtitle').innerText = titles[tabId][1]; } if (tabId === 'calendar') { renderCalendar(); } } // ================= ADVANCED MULTI-YEAR CALENDAR ENGINE ================= function changeMonth(direction) { calendarDate.setMonth(calendarDate.getMonth() + direction); renderCalendar(); } function goToCurrentMonth() { calendarDate = new Date(); renderCalendar(); } function parseItemDate(dateStr) { if (!dateStr) return []; let str = dateStr.toString().trim(); let dates = [];  try { // 1. Multiple dates format: "26, 27, 28 and 31 October 2026" if (str.toLowerCase().includes('and') \vert{}\vert{} str.includes(',')) { let cleaned = str.replace(/and/gi, ','); let parts = cleaned.split(',').map(s => s.trim()).filter(Boolean); let lastPart = parts[parts.length - 1]; let matchMonthYear = lastPart.match(/([A-Za-z]+)\s+(\d{4})/); if (matchMonthYear) { let monthYear = matchMonthYear[0]; parts.forEach(p => { let dayMatch = p.match(/^(\d{1,2})/); if (dayMatch) { let d = new Date(`${dayMatch[1]} ${monthYear}`); if (!isNaN(d.getTime())) dates.push(d); } }); if (dates.length > 0) return dates; } }  // 2. Custom Military format: "27 1300 October 2026" let milMatch = str.match(/^(\d{1,2})\s+\d{4}\s+([A-Za-z]+)\s+(\d{4})$/); if (milMatch) { let d = new Date(`${milMatch[2]} ${milMatch[1]},${milMatch[3]}`);
+                    if (!isNaN(d.getTime())) return [d];
                 }
-            }
 
-            // 2. Mag-handle ng custom format tulad ng "27 1300 October 2026" (Day Time Month Year)
-            const customRegex = /^(\d{1,2})\s+(?:\d{4}\s+)?([A-Za-z]+)\s+(\d{4})$/;
-            const matchCustom = dateStr.match(customRegex);
-            if (matchCustom) {
-                let day = matchCustom[1];
-                let month = matchCustom[2];
-                let year = matchCustom[3];
-                let parsed = new Date(`${month} ${day}, ${year}`);
-                if (!isNaN(parsed.getTime())) return [parsed];
-            }
+                // 3. Standard JS parsing
+                let d = new Date(str);
+                if (!isNaN(d.getTime())) return [d];
 
-            // 3. Standard single date parsing
-            let d = new Date(dateStr);
-            if (!isNaN(d.getTime())) return [d];
-
-            // 4. Standard YYYY-MM-DD o MM-DD-YYYY
-            const re = /^(\d{1,4})[\/\-](\d{1,2})[\/\-](\d{1,4})$/;
-            const match = dateStr.match(re);
-            if (match) {
-                let p1 = parseInt(match[1]), p2 = parseInt(match[2]), p3 = parseInt(match[3]);
-                let parsed;
-                if (p1 > 1000) {
-                    parsed = new Date(p1, p2 - 1, p3);
-                } else if (p3 > 1000) {
-                    parsed = new Date(p3, p1 - 1, p2);
+                // 4. Slash / Dash parsing (YYYY-MM-DD or MM/DD/YYYY)
+                let re = /^(\d{1,4})[\/\-](\d{1,2})[\/\-](\d{1,4})$/;
+                let match = str.match(re);
+                if (match) {
+                    let p1 = parseInt(match[1]), p2 = parseInt(match[2]), p3 = parseInt(match[3]);
+                    let parsed = p1 > 1000 ? new Date(p1, p2 - 1, p3) : new Date(p3, p1 - 1, p2);
+                    if (!isNaN(parsed.getTime())) return [parsed];
                 }
-                if (parsed && !isNaN(parsed.getTime())) return [parsed];
+            } catch (err) {
+                console.error("Error parsing date:", err);
             }
 
             return [];
@@ -1641,7 +1544,7 @@
             const month = calendarDate.getMonth();
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             
-            monthYearLabel.innerText = `${monthNames[month]} ${year}`;
+            monthYearLabel.innerText = `${monthNames[month]}${year}`;
             
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
@@ -1665,10 +1568,9 @@
                 const todayClass = isToday ? 'border-cyan-400 bg-cyan-950/30 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-400/50' : 'bg-slate-900/60 tac-border hover:border-cyan-500/40';
                 
                 html += `
-                    <div onclick="selectCalendarDate(${year}, ${month}, ${day})" class="h-24 sm:h-32 border rounded-xl p-2 flex flex-col justify-between cursor-pointer transition-all duration-200 group ${todayClass}">
+                    <div onclick="selectCalendarDate(${year}, ${month},${day})" class="h-24 sm:h-32 border rounded-xl p-2 flex flex-col justify-between cursor-pointer transition-all duration-200 group ${todayClass}">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-mono font-bold ${isToday ? 'text-cyan-300 bg-cyan-900 px-2 py-0.5 rounded-md' : 'text-gray-300 group-hover:text-cyan-400'}">${day}</span>
-                            ${dayEvents.length > 0 ? `<span class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500 text-black font-extrabold shadow">${dayEvents.length}</span>` : ''}
+                            <span class="text-xs font-mono font-bold ${isToday ? 'text-cyan-300 bg-cyan-900 px-2 py-0.5 rounded-md' : 'text-gray-300 group-hover:text-cyan-400'}">${day}</span>${dayEvents.length > 0 ? `<span class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500 text-black font-extrabold shadow">${dayEvents.length}</span>` : ''}
                         </div>
                         <div class="space-y-1 overflow-y-auto max-h-16 pr-0.5">
                             ${dayEvents.slice(0, 2).map(ev => `
@@ -1701,8 +1603,7 @@
             detailsBox.classList.remove('hidden');
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             
-            dateTitle.innerText = `Briefing Logs for ${monthNames[month]} ${day}, ${year}`;
-            countEl.innerText = `${events.length} event(s)`;
+            dateTitle.innerText = `Briefing Logs for ${monthNames[month]}${day}, ${year}`; countEl.innerText = `${events.length} event(s)`;
             
             if (events.length === 0) {
                 listEl.innerHTML = `<div class="text-gray-500 italic p-4 text-center bg-black/30 rounded-xl border tac-border">No operational events or schedules logged for this date.</div>`;
@@ -1769,24 +1670,20 @@
             document.getElementById('cnt-jtf_realign').innerText = store.jtf_realign.length;
             document.getElementById('stat-active-deployments').innerText = store.jtf_deploy.length;
             document.getElementById('stat-branch-activities').innerText = store.iso_branch.length + store.ops_branch.length + store.hadr_branch.length + store.peace_branch.length;
-            document.getElementById('stat-messages-total').innerText = `${store.incoming.length} / ${store.outgoing.length}`;
+            document.getElementById('stat-messages-total').innerText = `${store.incoming.length} /${store.outgoing.length}`;
             document.getElementById('stat-vessel-directives').innerText = store.vessels.length;
             
             if (store.cmd_movements.length > 0) {
                 const latest = store.cmd_movements[0];
                 document.getElementById('dash-cmd-name').innerText = latest.name;
                 document.getElementById('dash-cmd-loc').innerText = latest.route;
-                document.getElementById('dash-cmd-status').outerHTML = `<div id="dash-cmd-status">${renderStatusBadge(latest.status)}</div>`;
-                document.getElementById('dash-cmd-timing').innerText = latest.timing;
-                document.getElementById('dash-cmd-remarks').innerText = `Remarks: ${latest.remarks || 'None'}`;
+                document.getElementById('dash-cmd-status').outerHTML = `<div id="dash-cmd-status">${renderStatusBadge(latest.status)}</div>`; document.getElementById('dash-cmd-timing').innerText = latest.timing; document.getElementById('dash-cmd-remarks').innerText = `Remarks: ${latest.remarks || 'None'}`;
             }
             if (store.dep_movements.length > 0) {
                 const latest = store.dep_movements[0];
                 document.getElementById('dash-dep-name').innerText = latest.name;
                 document.getElementById('dash-dep-loc').innerText = latest.route;
-                document.getElementById('dash-dep-status').outerHTML = `<div id="dash-dep-status">${renderStatusBadge(latest.status)}</div>`;
-                document.getElementById('dash-dep-timing').innerText = latest.timing;
-                document.getElementById('dash-dep-remarks').innerText = `Remarks: ${latest.remarks || 'None'}`;
+                document.getElementById('dash-dep-status').outerHTML = `<div id="dash-dep-status">${renderStatusBadge(latest.status)}</div>`; document.getElementById('dash-dep-timing').innerText = latest.timing; document.getElementById('dash-dep-remarks').innerText = `Remarks: ${latest.remarks || 'None'}`;
             }
             const recentBody = document.getElementById('dash-recent-activities-table');
             if (store.activities.length === 0) {
@@ -1811,8 +1708,8 @@
             return `
                 <td class="p-3 text-right admin-only">
                     <div class="flex items-center justify-end space-x-1">
-                        <button onclick="editRecord('${module}', ${index})" title="Edit" class="p-1 rounded hover:bg-cyan-500/20 text-cyan-400"><i class="ph-bold ph-pencil-simple text-base"></i></button>
-                        <button onclick="deleteRecord('${module}', ${index})" title="Delete" class="p-1 rounded hover:bg-red-500/20 text-red-400"><i class="ph-bold ph-trash text-base"></i></button>
+                        <button onclick="editRecord('${module}',${index})" title="Edit" class="p-1 rounded hover:bg-cyan-500/20 text-cyan-400"><i class="ph-bold ph-pencil-simple text-base"></i></button>
+                        <button onclick="deleteRecord('${module}',${index})" title="Delete" class="p-1 rounded hover:bg-red-500/20 text-red-400"><i class="ph-bold ph-trash text-base"></i></button>
                     </div>
                 </td>
             `;
@@ -1832,8 +1729,7 @@
                     <td class="p-3">${item.subject}</td>
                     <td class="p-3"><span class="px-2 py-0.5 text-[10px] rounded font-bold bg-amber-900/60 text-amber-200">${item.classification}</span></td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    ${getActionButtons('outgoing', idx)}
+                    <td class="p-3 text-gray-400 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('outgoing', idx)}
                 </tr>
             `).join('');
         }
@@ -1848,8 +1744,7 @@
                     <td class="p-3 font-medium">${item.origin}</td>
                     <td class="p-3">${item.subject}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    ${getActionButtons('incoming', idx)}
+                    <td class="p-3 text-gray-400 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('incoming', idx)}
                 </tr>
             `).join('');
         }
@@ -1864,8 +1759,7 @@
                     <td class="p-3 text-gray-300">${item.location}</td>
                     <td class="p-3"><span class="px-2 py-0.5 text-[10px] bg-cyan-900/40 text-cyan-200 rounded">${item.jtf}</span></td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-amber-300/80 italic">${item.remarks || '-'}</td>
-                    ${getActionButtons('activities', idx)}
+                    <td class="p-3 text-amber-300/80 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('activities', idx)}
                 </tr>
             `).join('');
         }
@@ -1879,8 +1773,7 @@
                     <td class="p-3 font-semibold text-rose-300">${item.title}</td>
                     <td class="p-3 text-gray-300">${item.location}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    ${getActionButtons('iso_branch', idx)}
+                    <td class="p-3 text-gray-400 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('iso_branch', idx)}
                 </tr>
             `).join('');
         }
@@ -1894,8 +1787,7 @@
                     <td class="p-3 font-semibold text-cyan-300">${item.title}</td>
                     <td class="p-3 text-gray-300">${item.location}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    ${getActionButtons('ops_branch', idx)}
+                    <td class="p-3 text-gray-400 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('ops_branch', idx)}
                 </tr>
             `).join('');
         }
@@ -1909,8 +1801,7 @@
                     <td class="p-3 font-semibold text-emerald-300">${item.title}</td>
                     <td class="p-3 text-gray-300">${item.location}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    ${getActionButtons('hadr_branch', idx)}
+                    <td class="p-3 text-gray-400 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('hadr_branch', idx)}
                 </tr>
             `).join('');
         }
@@ -1924,8 +1815,7 @@
                     <td class="p-3 font-semibold text-purple-300">${item.title}</td>
                     <td class="p-3 text-gray-300">${item.location}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    ${getActionButtons('peace_branch', idx)}
+                    <td class="p-3 text-gray-400 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('peace_branch', idx)}
                 </tr>
             `).join('');
         }
@@ -1940,8 +1830,7 @@
                     <td class="p-3 font-medium">${item.route}</td>
                     <td class="p-3 font-mono">${item.timing}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-300 italic">${item.remarks || '-'}</td>
-                    ${getActionButtons('cmd_movements', idx)}
+                    <td class="p-3 text-gray-300 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('cmd_movements', idx)}
                 </tr>
             `).join('');
         }
@@ -1956,8 +1845,7 @@
                     <td class="p-3 font-medium">${item.route}</td>
                     <td class="p-3 font-mono">${item.timing}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-300 italic">${item.remarks || '-'}</td>
-                    ${getActionButtons('dep_movements', idx)}
+                    <td class="p-3 text-gray-300 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('dep_movements', idx)}
                 </tr>
             `).join('');
         }
@@ -1966,144 +1854,4 @@
             if (!tbody) return;
             if (store.aircraft.length === 0) { tbody.innerHTML = renderEmptyRow(8); return; }
             tbody.innerHTML = store.aircraft.map((item, idx) => `
-                <tr class="hover:bg-white/5">
-                    <td class="p-3 font-mono text-cyan-400 font-bold">${item.id}</td>
-                    <td class="p-3 font-mono text-gray-300 whitespace-nowrap">${item.entry_date || '-'}</td>
-                    <td class="p-3 font-medium">${item.unit}</td>
-                    <td class="p-3 text-gray-300">${item.type}</td>
-                    <td class="p-3">${item.purpose}</td>
-                    <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    ${getActionButtons('aircraft', idx)}
-                </tr>
-            `).join('');
-        }
-        function renderVesselsTable() {
-            const tbody = document.getElementById('table-vessels');
-            if (!tbody) return;
-            if (store.vessels.length === 0) { tbody.innerHTML = renderEmptyRow(8); return; }
-            tbody.innerHTML = store.vessels.map((item, idx) => `
-                <tr class="hover:bg-white/5">
-                    <td class="p-3 font-mono text-blue-400 font-bold">${item.id}</td>
-                    <td class="p-3 font-mono text-gray-300 whitespace-nowrap">${item.entry_date || '-'}</td>
-                    <td class="p-3 font-medium">${item.vessel}</td>
-                    <td class="p-3 text-gray-300">${item.area}</td>
-                    <td class="p-3">${item.detail}</td>
-                    <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    ${getActionButtons('vessels', idx)}
-                </tr>
-            `).join('');
-        }
-        function renderJtfDeployTable() {
-            const tbody = document.getElementById('table-jtf_deploy');
-            if (!tbody) return;
-            if (store.jtf_deploy.length === 0) { tbody.innerHTML = renderEmptyRow(9); return; }
-            tbody.innerHTML = store.jtf_deploy.map((item, idx) => `
-                <tr class="hover:bg-white/5">
-                    <td class="p-3"><span class="px-2 py-0.5 text-[10px] bg-cyan-900/40 text-cyan-200 rounded font-bold">${item.jtf}</span></td>
-                    <td class="p-3 font-bold">${item.unit}</td>
-                    <td class="p-3 font-mono text-emerald-400 font-bold">${item.count} Pax</td>
-                    <td class="p-3 text-gray-300">${item.location}</td>
-                    <td class="p-3 font-mono text-gray-300 whitespace-nowrap">${item.date_deployed || '-'}</td>
-                    <td class="p-3 font-mono text-purple-300 whitespace-nowrap">${item.date_realigned || '-'}</td>
-                    <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    ${getActionButtons('jtf_deploy', idx)}
-                </tr>
-            `).join('');
-        }
-        function renderJtfRealignTable() {
-            const tbody = document.getElementById('table-jtf_realign');
-            if (!tbody) return;
-            if (store.jtf_realign.length === 0) { tbody.innerHTML = renderEmptyRow(9); return; }
-            tbody.innerHTML = store.jtf_realign.map((item, idx) => `
-                <tr class="hover:bg-white/5">
-                    <td class="p-3 font-mono text-purple-400 font-bold">${item.id}</td>
-                    <td class="p-3 font-semibold">${item.unit}</td>
-                    <td class="p-3 font-medium text-amber-300">${item.route}</td>
-                    <td class="p-3 font-mono text-emerald-400 whitespace-nowrap">${item.date_deployed || '-'}</td>
-                    <td class="p-3 font-mono text-purple-400 whitespace-nowrap">${item.date_realigned || '-'}</td>
-                    <td class="p-3 text-gray-300">${item.auth}</td>
-                    <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    ${getActionButtons('jtf_realign', idx)}
-                </tr>
-            `).join('');
-        }
-        function openModal(module, editIndex = null) {
-            const role = localStorage.getItem('tacCurrentRole');
-            if (role === 'client') {
-                showToast('Client account has view-only access.', 'error');
-                return;
-            }
-            document.getElementById('crud-modal').classList.remove('hidden');
-            document.getElementById('form-module').value = module;
-            document.getElementById('form-edit-index').value = editIndex !== null ? editIndex : '';
-            
-            const isEdit = editIndex !== null;
-            document.getElementById('modal-title').innerText = `${isEdit ? 'Edit' : 'Add'} ${module.replace('_', ' ').toUpperCase()} Record`;
-            
-            const container = document.getElementById('dynamic-form-fields');
-            container.innerHTML = '';
-            
-            const currentObj = isEdit ? store[module][editIndex] : {};
-            
-            const fieldConfigs = {
-                outgoing: [
-                    { name: 'id', label: 'Control #', type: 'text', val: currentObj.id || `MSG-OUT-${Math.floor(100 + Math.random()*900)}` },
-                    { name: 'entry_date', label: 'Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
-                    { name: 'recipient', label: 'Recipient Unit', type: 'text', val: currentObj.recipient || '' },
-                    { name: 'subject', label: 'Subject / Directives', type: 'text', val: currentObj.subject || '' },
-                    { name: 'classification', label: 'Classification', type: 'select', options: ['RESTRICTED', 'CONFIDENTIAL', 'SECRET', 'TOP SECRET'], val: currentObj.classification || 'SECRET' },
-                    { name: 'status', label: 'Transmission Status', type: 'select', options: ['FORWARDED', 'TRANSMITTED', 'WITH DIRECTIVE'], val: currentObj.status || 'TRANSMITTED' }
-                ],
-                incoming: [
-                    { name: 'id', label: 'Control #', type: 'text', val: currentObj.id || `MSG-INC-${Math.floor(100 + Math.random()*900)}` },
-                    { name: 'entry_date', label: 'Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
-                    { name: 'origin', label: 'Originating Unit', type: 'text', val: currentObj.origin || '' },
-                    { name: 'subject', label: 'Subject / Summary', type: 'text', val: currentObj.subject || '' },
-                    { name: 'status', label: 'Processing Status', type: 'select', options: ['RECEIVED', 'FOR ACTION', 'FOR APPROVAL', 'FORWARDED'], val: currentObj.status || 'PENDING ACTION' }
-                ],
-                activities: [
-                    { name: 'entry_date', label: 'Activity Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
-                    { name: 'title', label: 'Activity Title', type: 'text', val: currentObj.title || '' },
-                    { name: 'location', label: 'Field Location', type: 'text', val: currentObj.location || '' },
-                    { name: 'jtf', label: 'JTF Sector', type: 'select', options: ['JTF Zampelan', 'JTF Orion', 'JTF Poseidon', 'JTF Central'], val: currentObj.jtf || 'JTF Zampelan' },
-                    { name: 'status', label: 'Activity Status', type: 'select', options: ['ONGOING', 'COMPLETED', 'UPCOMING', 'PLANNING', 'HALTED'], val: currentObj.status || 'ONGOING' }
-                ],
-                iso_branch: [
-                    { name: 'date', label: 'Activity Date (mm/dd/yyyy)', type: 'date', val: currentObj.date || '' },
-                    { name: 'title', label: 'ISO Activity Title', type: 'text', val: currentObj.title || '', required: true },
-                    { name: 'location', label: 'AOR / Location', type: 'text', val: currentObj.location || '', required: true },
-                    { name: 'status', label: 'ISO Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLETED', 'PLANNING', 'UPCOMING', 'ON ROUTE'], val: currentObj.status || 'ONGOING' }
-                ],
-                ops_branch: [
-                    { name: 'entry_date', label: 'Operation Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
-                    { name: 'title', label: 'Operation Title', type: 'text', val: currentObj.title || '' },
-                    { name: 'location', label: 'Target / Sector', type: 'text', val: currentObj.location || '' },
-                    { name: 'status', label: 'Operation Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLETED', 'PLANNING', 'UPCOMING', 'ON ROUTE'], val: currentObj.status || 'ONGOING' }
-                ],
-                hadr_branch: [
-                    { name: 'entry_date', label: 'Mission Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
-                    { name: 'title', label: 'Relief / Rescue Mission', type: 'text', val: currentObj.title || '' },
-                    { name: 'location', label: 'Affected Area', type: 'text', val: currentObj.location || '' },
-                    { name: 'status', label: 'Mission Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLETED', 'PLANNING', 'UPCOMING', 'ON ROUTE'], val: currentObj.status || 'ACTIVE' }
-                ],
-                peace_branch: [
-                    { name: 'entry_date', label: 'Initiative Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
-                    { name: 'title', label: 'Dialogue / Initiative', type: 'text', val: currentObj.title || '' },
-                    { name: 'location', label: 'Community / Venue', type: 'text', val: currentObj.location || '' },
-                    { name: 'status', label: 'Peace Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLETED', 'PLANNING', 'UPCOMING', 'ON ROUTE', 'SCHEDULED'], val: currentObj.status || 'SCHEDULED' }
-                ],
-                cmd_movements: [
-                    { name: 'entry_date', label: 'Movement Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
-                    { name: 'name', label: 'Commander Name', type: 'text', val: currentObj.name || 'COMMANDER' },
-                    { name: 'route', label: 'Route / Location', type: 'text', val: currentObj.route || '' },
-                    { name: 'timing', label: 'Timing (ETD/ETA)', type: 'text', val: currentObj.timing || 'ETD: 0800H / ETA: 1200H' },
-                    { name: 'status', label: 'Movement Status', type: 'select', options: ['ONGOING', 'UPCOMING', 'COMPLETED'], val: currentObj.status || 'IN TRANSIT' }
-                ],
-                dep_movements: [
-                    { name: 'entry_date', label: 'Movement Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
-                    { name: 'name', label: 'Deputy Commander', type: 'text', val: currentObj.name || 'DEPUTY COMMANDER' },
-                    { name: 'route', label: 'Route / Location', type: 'text', val: currentObj.
+                <tr
