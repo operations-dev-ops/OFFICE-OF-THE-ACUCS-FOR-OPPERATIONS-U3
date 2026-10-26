@@ -2182,7 +2182,7 @@
                     { name: 'unit', label: 'Requesting Unit', type: 'text', val: currentObj.unit || '' },
                     { name: 'type', label: 'Aircraft Type', type: 'text', val: currentObj.type || 'UH-1H Huey' },
                     { name: 'purpose', label: 'Mission Purpose', type: 'text', val: currentObj.purpose || '' },
-                    { name: 'status', label: 'Air Request Status', type: 'select', options: ['APPROVE', 'FOR ACTION', 'PENDING', 'ON ROUTE', 'FORWARDED'], val: currentObj.status || 'PENDING' }
+                    { name: 'status', label: 'Air Request Status', type: 'select', options: ['APPROVED', 'FOR ACTION', 'PENDING', 'ON ROUTE', 'FORWARDED'], val: currentObj.status || 'PENDING' }
                 ],
                 vessels: [
                     { name: 'id', label: 'Directive #', type: 'text', val: currentObj.id || `DIR-PN-${Math.floor(10 + Math.random()*90)}` },
@@ -2190,7 +2190,7 @@
                     { name: 'vessel', label: 'Vessel Name', type: 'text', val: currentObj.vessel || '' },
                     { name: 'area', label: 'Patrol Area / AO', type: 'text', val: currentObj.area || '' },
                     { name: 'detail', label: 'Directive Detail', type: 'text', val: currentObj.detail || '' },
-                    { name: 'status', label: 'Naval Status', type: 'select', options: ['APPROVE', 'FOR ACTION', 'PENDING', 'ON ROUTE', 'FORWARDED'], val: currentObj.status || 'FOR ACTION' }
+                    { name: 'status', label: 'Naval Status', type: 'select', options: ['APPROVED', 'FOR ACTION', 'PENDING', 'ON ROUTE', 'FORWARDED'], val: currentObj.status || 'FOR ACTION' }
                 ],
                 jtf_deploy: [
                     { name: 'jtf', label: 'JTF Sector', type: 'select', options: ['JTF Zampelan', 'JTF Orion', 'JTF Poseidon', 'JTF Central'], val: currentObj.jtf || 'JTF Zampelan' },
