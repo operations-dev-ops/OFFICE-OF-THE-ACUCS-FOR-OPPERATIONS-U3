@@ -1527,7 +1527,8 @@
                 renderCalendar();
             }
         }
-        // ================= ROBUST CALENDAR LOGIC =================
+
+        // ================= ADVANCED MULTI-YEAR CALENDAR ENGINE =================
         function changeMonth(direction) {
             calendarDate.setMonth(calendarDate.getMonth() + direction);
             renderCalendar();
@@ -1541,47 +1542,43 @@
             dateStr = dateStr.toString().trim();
             let d = new Date(dateStr);
             if (!isNaN(d.getTime())) return d;
-            if (dateStr.includes('/')) {
-                let parts = dateStr.split('/');
-                if (parts.length === 3) {
-                    if (parts[0].length === 4) {
-                        d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
-                    } else {
-                        d = new Date(parseInt(parts[2]), parseInt(parts[0])-1, parseInt(parts[1]));
-                    }
-                    if (!isNaN(d.getTime())) return d;
-                }
-            } else if (dateStr.includes('-')) {
-                let parts = dateStr.split('-');
-                if (parts.length === 3) {
-                    if (parts[0].length === 4) {
-                        d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
-                    } else {
-                        d = new Date(parseInt(parts[2]), parseInt(parts[0])-1, parseInt(parts[1]));
-                    }
-                    if (!isNaN(d.getTime())) return d;
+            
+            // Handles mm/dd/yyyy, yyyy/mm/dd, mm-dd-yyyy, yyyy-mm-dd
+            const re = /^(\d{1,4})[\/\-](\d{1,2})[\/\-](\d{1,4})$/;
+            const match = dateStr.match(re);
+            if (match) {
+                let p1 = parseInt(match[1]), p2 = parseInt(match[2]), p3 = parseInt(match[3]);
+                if (p1 > 1000) { // yyyy-mm-dd
+                    return new Date(p1, p2 - 1, p3);
+                } else if (p3 > 1000) { // mm-dd-yyyy
+                    return new Date(p3, p1 - 1, p2);
                 }
             }
             return null;
         }
+
         function getEventsOnDate(targetDate) {
             let events = [];
             const checkAndPush = (list, titleKey, modName, badgeColor) => {
                 if (!list || !Array.isArray(list)) return;
                 list.forEach(item => {
-                    let dtStr = item.entry_date || item.date || item.date_deployed;
-                    let d = parseItemDate(dtStr);
-                    if (d && d.getFullYear() === targetDate.getFullYear() && d.getMonth() === targetDate.getMonth() && d.getDate() === targetDate.getDate()) {
-                        events.push({
-                            title: item[titleKey] || item.title || item.subject || item.id || item.unit || 'Operational Entry',
-                            module: modName,
-                            status: item.status || 'ACTIVE',
-                            color: badgeColor,
-                            remarks: item.remarks || item.location || item.area || '-'
-                        });
-                    }
+                    // Collect all possible date fields
+                    let rawDates = [item.entry_date, item.date, item.date_deployed, item.date_realigned];
+                    rawDates.forEach(dtStr => {
+                        let d = parseItemDate(dtStr);
+                        if (d && d.getFullYear() === targetDate.getFullYear() && d.getMonth() === targetDate.getMonth() && d.getDate() === targetDate.getDate()) {
+                            events.push({
+                                title: item[titleKey] || item.title || item.subject || item.id || item.unit || 'Operational Entry',
+                                module: modName,
+                                status: item.status || 'ACTIVE',
+                                color: badgeColor,
+                                remarks: item.remarks || item.location || item.area || '-'
+                            });
+                        }
+                    });
                 });
             };
+
             checkAndPush(store.activities, 'title', 'Field Activity', 'bg-amber-900/60 text-amber-200 border-amber-700');
             checkAndPush(store.iso_branch, 'title', 'ISO Branch', 'bg-rose-900/60 text-rose-200 border-rose-700');
             checkAndPush(store.ops_branch, 'title', 'Operations', 'bg-cyan-900/60 text-cyan-200 border-cyan-700');
@@ -1592,34 +1589,45 @@
             checkAndPush(store.aircraft, 'type', 'Aircraft Request', 'bg-orange-900/60 text-orange-200 border-orange-700');
             checkAndPush(store.vessels, 'vessel', 'Vessel Directive', 'bg-blue-900/60 text-blue-200 border-blue-700');
             checkAndPush(store.jtf_deploy, 'unit', 'JTF Deployment', 'bg-emerald-700/60 text-emerald-100 border-emerald-500');
+            checkAndPush(store.jtf_realign, 'unit', 'JTF Realignment', 'bg-purple-700/60 text-purple-100 border-purple-500');
             checkAndPush(store.outgoing, 'subject', 'Outgoing Message', 'bg-gray-800 text-gray-300 border-gray-700');
             checkAndPush(store.incoming, 'subject', 'Incoming Message', 'bg-blue-950 text-blue-300 border-blue-800');
+            
             return events;
         }
+
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             const monthYearLabel = document.getElementById('calendar-month-year');
             if (!grid || !monthYearLabel) return;
+            
             const year = calendarDate.getFullYear();
             const month = calendarDate.getMonth();
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
             monthYearLabel.innerText = `${monthNames[month]} ${year}`;
+            
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
             const prevTotalDays = new Date(year, month, 0).getDate();
+            
             let html = '';
             let totalEventsCount = 0;
+            
             for (let i = firstDayIndex; i > 0; i--) {
                 const dayNum = prevTotalDays - i + 1;
                 html += `<div class="h-24 sm:h-32 bg-black/10 border tac-border rounded-xl p-2 opacity-25 flex flex-col justify-between"><span class="text-[10px] font-mono text-gray-500">${dayNum}</span></div>`;
             }
+            
             const today = new Date();
             for (let day = 1; day <= totalDays; day++) {
                 const currentDate = new Date(year, month, day);
                 const dayEvents = getEventsOnDate(currentDate);
                 totalEventsCount += dayEvents.length;
+                
                 const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
                 const todayClass = isToday ? 'border-cyan-400 bg-cyan-950/30 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-400/50' : 'bg-slate-900/60 tac-border hover:border-cyan-500/40';
+                
                 html += `
                     <div onclick="selectCalendarDate(${year}, ${month}, ${day})" class="h-24 sm:h-32 border rounded-xl p-2 flex flex-col justify-between cursor-pointer transition-all duration-200 group ${todayClass}">
                         <div class="flex items-center justify-between">
@@ -1635,15 +1643,18 @@
                     </div>
                 `;
             }
+            
             const totalCellsSoFar = firstDayIndex + totalDays;
             const nextDaysCount = totalCellsSoFar <= 35 ? (35 - totalCellsSoFar) : (42 - totalCellsSoFar);
             for (let i = 1; i <= nextDaysCount; i++) {
                 html += `<div class="h-24 sm:h-32 bg-black/10 border tac-border rounded-xl p-2 opacity-25 flex flex-col justify-between"><span class="text-[10px] font-mono text-gray-500">${i}</span></div>`;
             }
+            
             grid.innerHTML = html;
             const cntEl = document.getElementById('cnt-calendar');
             if (cntEl) cntEl.innerText = totalEventsCount;
         }
+
         function selectCalendarDate(year, month, day) {
             const selectedDate = new Date(year, month, day);
             const events = getEventsOnDate(selectedDate);
@@ -1651,14 +1662,18 @@
             const dateTitle = document.getElementById('calendar-selected-date');
             const countEl = document.getElementById('calendar-selected-count');
             const listEl = document.getElementById('calendar-day-entries-list');
+            
             detailsBox.classList.remove('hidden');
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
             dateTitle.innerText = `Briefing Logs for ${monthNames[month]} ${day}, ${year}`;
             countEl.innerText = `${events.length} event(s)`;
+            
             if (events.length === 0) {
                 listEl.innerHTML = `<div class="text-gray-500 italic p-4 text-center bg-black/30 rounded-xl border tac-border">No operational events or schedules logged for this date.</div>`;
                 return;
             }
+            
             listEl.innerHTML = events.map(ev => `
                 <div class="p-3 rounded-xl bg-slate-950/60 border tac-border flex items-center justify-between hover:border-cyan-500/50 transition-all">
                     <div class="space-y-1">
@@ -1672,6 +1687,7 @@
                 </div>
             `).join('');
         }
+
         function setTheme(themeName) {
             document.body.className = "h-full flex overflow-hidden";
             document.body.style.backgroundColor = "";
