@@ -1471,10 +1471,89 @@
         }
         async function deleteAccount(index) {
             const targetAcc = registeredAccounts[index];
-            const confirmed = await showConfirmModal('DELETE ACCOUNT', `Are you sure you want to delete user "${targetAcc.username}" (${targetAcc.name})?`); if (confirmed) { registeredAccounts.splice(index, 1); await saveAccountsToStorage(); showToast('Account deleted permanently.', 'error'); renderAccountsListTable(); } } function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); } function switchTab(tabId) { closeSidebar(); document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('text-cyan-400', 'bg-cyan-500/10', 'border', 'border-cyan-500/20'));  const targetTab = document.getElementById(`tab-${tabId}`);
-            if (targetTab) targetTab.classList.remove('hidden');
+            const confirmed = await showConfirmModal('DELETE ACCOUNT', `Are you sure you want to delete user "${targetAcc.username}" (${targetAcc.name})?`);
+            if (confirmed) {
+                registeredAccounts.splice(index, 1);
+                await saveAccountsToStorage();
+                showToast('Account deleted permanently.', 'error');
+                renderAccountsListTable();
+            }
+        }
+        function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
+        function switchTab(tabId) {
+            closeSidebar();
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('text-cyan-400', 'bg-cyan-500/10', 'border', 'border-cyan-500/20'));
             
-            const navItem = document.getElementById(`nav-${tabId}`); if (navItem) navItem.classList.add('text-cyan-400', 'bg-cyan-500/10', 'border', 'border-cyan-500/20');  const titles = { dashboard: ['Dashboard Overview', 'Real-time situational awareness & operational tracking'], calendar: ['Operational Calendar', 'Schedule & date-based operational events tracking'], outgoing: ['Outgoing Messages', 'Log and track sent encrypted communications'], incoming: ['Incoming Messages', 'Receive and process incoming headquarters messages'], activities: ['Incoming Activities', 'Field operations, incidents, and situational logs'], iso_branch: ['ISO Branch Activities', 'Internal Security Operations monitoring & status logs'], ops_branch: ['Operations Branch', 'Tactical planning, execution, and branch coordination'], hadr_branch: ['HADR Branch Activities', 'Humanitarian Assistance and Disaster Relief missions'], peace_branch: ['Peace Development', 'Community dialogues, peace agreements, and initiatives'], cmd_movements: ['Movement of Commander', 'High-level movement tracking for Commander'], dep_movements: ['Movement of Deputy Commander', 'Movement tracking for Deputy Commander'], aircraft: ['Aircraft Requests', 'Air support, recon, and transport logistics'], vessels: ['PN Vessel Directives', 'Philippine Navy vessel operations and deployments'], jtf_deploy: ['JTF Force Deployment', 'JTF Zampelan, Orion, Poseidon, and Central roster'], jtf_realign: ['JTF Force Realignment', 'Force repositioning orders across sectors'] }; if (titles[tabId]) { document.getElementById('page-title').innerText = titles[tabId][0]; document.getElementById('page-subtitle').innerText = titles[tabId][1]; } if (tabId === 'calendar') { renderCalendar(); } } // ================= ADVANCED MULTI-YEAR CALENDAR ENGINE ================= function changeMonth(direction) { calendarDate.setMonth(calendarDate.getMonth() + direction); renderCalendar(); } function goToCurrentMonth() { calendarDate = new Date(); renderCalendar(); } function parseItemDate(dateStr) { if (!dateStr) return []; let str = dateStr.toString().trim(); let dates = [];  try { // 1. Multiple dates format: "26, 27, 28 and 31 October 2026" if (str.toLowerCase().includes('and') \vert{}\vert{} str.includes(',')) { let cleaned = str.replace(/and/gi, ','); let parts = cleaned.split(',').map(s => s.trim()).filter(Boolean); let lastPart = parts[parts.length - 1]; let matchMonthYear = lastPart.match(/([A-Za-z]+)\s+(\d{4})/); if (matchMonthYear) { let monthYear = matchMonthYear[0]; parts.forEach(p => { let dayMatch = p.match(/^(\d{1,2})/); if (dayMatch) { let d = new Date(`${dayMatch[1]} ${monthYear}`); if (!isNaN(d.getTime())) dates.push(d); } }); if (dates.length > 0) return dates; } }  // 2. Custom Military format: "27 1300 October 2026" let milMatch = str.match(/^(\d{1,2})\s+\d{4}\s+([A-Za-z]+)\s+(\d{4})$/); if (milMatch) { let d = new Date(`${milMatch[2]} ${milMatch[1]},${milMatch[3]}`);
+            const targetTab = document.getElementById(`tab-${tabId}`); if (targetTab) targetTab.classList.remove('hidden');  const navItem = document.getElementById(`nav-${tabId}`);
+            if (navItem) navItem.classList.add('text-cyan-400', 'bg-cyan-500/10', 'border', 'border-cyan-500/20');
+            
+            const titles = {
+                dashboard: ['Dashboard Overview', 'Real-time situational awareness & operational tracking'],
+                calendar: ['Operational Calendar', 'Schedule & date-based operational events tracking'],
+                outgoing: ['Outgoing Messages', 'Log and track sent encrypted communications'],
+                incoming: ['Incoming Messages', 'Receive and process incoming headquarters messages'],
+                activities: ['Incoming Activities', 'Field operations, incidents, and situational logs'],
+                iso_branch: ['ISO Branch Activities', 'Internal Security Operations monitoring & status logs'],
+                ops_branch: ['Operations Branch', 'Tactical planning, execution, and branch coordination'],
+                hadr_branch: ['HADR Branch Activities', 'Humanitarian Assistance and Disaster Relief missions'],
+                peace_branch: ['Peace Development', 'Community dialogues, peace agreements, and initiatives'],
+                cmd_movements: ['Movement of Commander', 'High-level movement tracking for Commander'],
+                dep_movements: ['Movement of Deputy Commander', 'Movement tracking for Deputy Commander'],
+                aircraft: ['Aircraft Requests', 'Air support, recon, and transport logistics'],
+                vessels: ['PN Vessel Directives', 'Philippine Navy vessel operations and deployments'],
+                jtf_deploy: ['JTF Force Deployment', 'JTF Zampelan, Orion, Poseidon, and Central roster'],
+                jtf_realign: ['JTF Force Realignment', 'Force repositioning orders across sectors']
+            };
+            if (titles[tabId]) {
+                document.getElementById('page-title').innerText = titles[tabId][0];
+                document.getElementById('page-subtitle').innerText = titles[tabId][1];
+            }
+            if (tabId === 'calendar') {
+                renderCalendar();
+            }
+        }
+
+        // ================= ADVANCED MULTI-YEAR CALENDAR ENGINE =================
+        function changeMonth(direction) {
+            calendarDate.setMonth(calendarDate.getMonth() + direction);
+            renderCalendar();
+        }
+        function goToCurrentMonth() {
+            calendarDate = new Date();
+            renderCalendar();
+        }
+
+        // NA-UPDATE NA PARSER (SUPPORTS MILITARY FORMATS & MULTIPLE DATES)
+        function parseItemDate(dateStr) {
+            if (!dateStr) return [];
+            let str = dateStr.toString().trim();
+            let dates = [];
+
+            try {
+                // 1. Multiple dates format: "26, 27, 28 and 31 October 2026"
+                if (str.toLowerCase().indexOf('and') !== -1 || str.indexOf(',') !== -1) {
+                    let cleaned = str.replace(/and/gi, ',');
+                    let parts = cleaned.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+                    let lastPart = parts[parts.length - 1];
+                    let matchMonthYear = lastPart.match(/([A-Za-z]+)\s+(\d{4})/);
+                    if (matchMonthYear) {
+                        let monthYear = matchMonthYear[0];
+                        parts.forEach(function(p) {
+                            let dayMatch = p.match(/^(\d{1,2})/);
+                            if (dayMatch) {
+                                let d = new Date(dayMatch[1] + ' ' + monthYear);
+                                if (!isNaN(d.getTime())) dates.push(d);
+                            }
+                        });
+                        if (dates.length > 0) return dates;
+                    }
+                }
+
+                // 2. Custom Military format: "27 1300 October 2026"
+                let milMatch = str.match(/^(\d{1,2})\s+\d{4}\s+([A-Za-z]+)\s+(\d{4})$/);
+                if (milMatch) {
+                    let d = new Date(milMatch[2] + ' ' + milMatch[1] + ', ' + milMatch[3]);
                     if (!isNaN(d.getTime())) return [d];
                 }
 
@@ -1496,15 +1575,16 @@
 
             return [];
         }
+
         function getEventsOnDate(targetDate) {
             let events = [];
-            const checkAndPush = (list, titleKey, modName, badgeColor) => {
+            const checkAndPush = function(list, titleKey, modName, badgeColor) {
                 if (!list || !Array.isArray(list)) return;
-                list.forEach(item => {
+                list.forEach(function(item) {
                     let rawDates = [item.entry_date, item.date, item.date_deployed, item.date_realigned];
-                    rawDates.forEach(dtStr => {
+                    rawDates.forEach(function(dtStr) {
                         let parsedDates = parseItemDate(dtStr);
-                        parsedDates.forEach(d => {
+                        parsedDates.forEach(function(d) {
                             if (d && d.getFullYear() === targetDate.getFullYear() && d.getMonth() === targetDate.getMonth() && d.getDate() === targetDate.getDate()) {
                                 events.push({
                                     title: item[titleKey] || item.title || item.subject || item.id || item.unit || 'Operational Entry',
@@ -1535,6 +1615,7 @@
             
             return events;
         }
+
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             const monthYearLabel = document.getElementById('calendar-month-year');
@@ -1830,28 +1911,4 @@
                     <td class="p-3 font-medium">${item.route}</td>
                     <td class="p-3 font-mono">${item.timing}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-300 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('cmd_movements', idx)}
-                </tr>
-            `).join('');
-        }
-        function renderDepMovementsTable() {
-            const tbody = document.getElementById('table-dep_movements');
-            if (!tbody) return;
-            if (store.dep_movements.length === 0) { tbody.innerHTML = renderEmptyRow(7); return; }
-            tbody.innerHTML = store.dep_movements.map((item, idx) => `
-                <tr class="hover:bg-white/5">
-                    <td class="p-3 font-mono text-gray-300 whitespace-nowrap">${item.entry_date || '-'}</td>
-                    <td class="p-3 font-bold text-cyan-400">${item.name}</td>
-                    <td class="p-3 font-medium">${item.route}</td>
-                    <td class="p-3 font-mono">${item.timing}</td>
-                    <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-300 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('dep_movements', idx)}
-                </tr>
-            `).join('');
-        }
-        function renderAircraftTable() {
-            const tbody = document.getElementById('table-aircraft');
-            if (!tbody) return;
-            if (store.aircraft.length === 0) { tbody.innerHTML = renderEmptyRow(8); return; }
-            tbody.innerHTML = store.aircraft.map((item, idx) => `
-                <tr
+                    <td class="p-3 text-gray-300 italic">${item.remarks || '-'}
