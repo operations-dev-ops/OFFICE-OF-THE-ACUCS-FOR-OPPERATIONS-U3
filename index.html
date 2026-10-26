@@ -1527,7 +1527,6 @@
                 renderCalendar();
             }
         }
-
         // ================= ADVANCED MULTI-YEAR CALENDAR ENGINE =================
         function changeMonth(direction) {
             calendarDate.setMonth(calendarDate.getMonth() + direction);
@@ -1538,47 +1537,85 @@
             renderCalendar();
         }
         function parseItemDate(dateStr) {
-            if (!dateStr) return null;
+            if (!dateStr) return [];
             dateStr = dateStr.toString().trim();
-            let d = new Date(dateStr);
-            if (!isNaN(d.getTime())) return d;
             
-            // Handles mm/dd/yyyy, yyyy/mm/dd, mm-dd-yyyy, yyyy-mm-dd
+            let dates = [];
+
+            // 1. Mag-handle ng multiple dates tulad ng "26, 27, 28 and 31 October 2026"
+            if (dateStr.toLowerCase().includes('and') || dateStr.includes(',')) {
+                let cleaned = dateStr.replace(/\sand\s/gi, ', ');
+                let parts = cleaned.split(',').map(s => s.trim());
+                let lastPart = parts[parts.length - 1];
+                let matchMonthYear = lastPart.match(/([A-Za-z]+)\s+(\d{4})/);
+                if (matchMonthYear) {
+                    let monthYear = `${matchMonthYear[1]} ${matchMonthYear[2]}`;
+                    parts.forEach(p => {
+                        let dayMatch = p.match(/^(\d{1,2})/);
+                        if (dayMatch) {
+                            let fullStr = `${dayMatch[1]} ${monthYear}`;
+                            let d = new Date(fullStr);
+                            if (!isNaN(d.getTime())) dates.push(d);
+                        }
+                    });
+                    if (dates.length > 0) return dates;
+                }
+            }
+
+            // 2. Mag-handle ng custom format tulad ng "27 1300 October 2026" (Day Time Month Year)
+            const customRegex = /^(\d{1,2})\s+(?:\d{4}\s+)?([A-Za-z]+)\s+(\d{4})$/;
+            const matchCustom = dateStr.match(customRegex);
+            if (matchCustom) {
+                let day = matchCustom[1];
+                let month = matchCustom[2];
+                let year = matchCustom[3];
+                let parsed = new Date(`${month} ${day}, ${year}`);
+                if (!isNaN(parsed.getTime())) return [parsed];
+            }
+
+            // 3. Standard single date parsing
+            let d = new Date(dateStr);
+            if (!isNaN(d.getTime())) return [d];
+
+            // 4. Standard YYYY-MM-DD o MM-DD-YYYY
             const re = /^(\d{1,4})[\/\-](\d{1,2})[\/\-](\d{1,4})$/;
             const match = dateStr.match(re);
             if (match) {
                 let p1 = parseInt(match[1]), p2 = parseInt(match[2]), p3 = parseInt(match[3]);
-                if (p1 > 1000) { // yyyy-mm-dd
-                    return new Date(p1, p2 - 1, p3);
-                } else if (p3 > 1000) { // mm-dd-yyyy
-                    return new Date(p3, p1 - 1, p2);
+                let parsed;
+                if (p1 > 1000) {
+                    parsed = new Date(p1, p2 - 1, p3);
+                } else if (p3 > 1000) {
+                    parsed = new Date(p3, p1 - 1, p2);
                 }
+                if (parsed && !isNaN(parsed.getTime())) return [parsed];
             }
-            return null;
-        }
 
+            return [];
+        }
         function getEventsOnDate(targetDate) {
             let events = [];
             const checkAndPush = (list, titleKey, modName, badgeColor) => {
                 if (!list || !Array.isArray(list)) return;
                 list.forEach(item => {
-                    // Collect all possible date fields
                     let rawDates = [item.entry_date, item.date, item.date_deployed, item.date_realigned];
                     rawDates.forEach(dtStr => {
-                        let d = parseItemDate(dtStr);
-                        if (d && d.getFullYear() === targetDate.getFullYear() && d.getMonth() === targetDate.getMonth() && d.getDate() === targetDate.getDate()) {
-                            events.push({
-                                title: item[titleKey] || item.title || item.subject || item.id || item.unit || 'Operational Entry',
-                                module: modName,
-                                status: item.status || 'ACTIVE',
-                                color: badgeColor,
-                                remarks: item.remarks || item.location || item.area || '-'
-                            });
-                        }
+                        let parsedDates = parseItemDate(dtStr);
+                        parsedDates.forEach(d => {
+                            if (d && d.getFullYear() === targetDate.getFullYear() && d.getMonth() === targetDate.getMonth() && d.getDate() === targetDate.getDate()) {
+                                events.push({
+                                    title: item[titleKey] || item.title || item.subject || item.id || item.unit || 'Operational Entry',
+                                    module: modName,
+                                    status: item.status || 'ACTIVE',
+                                    color: badgeColor,
+                                    remarks: item.remarks || item.location || item.area || '-'
+                                });
+                            }
+                        });
                     });
                 });
             };
-
+            
             checkAndPush(store.activities, 'title', 'Field Activity', 'bg-amber-900/60 text-amber-200 border-amber-700');
             checkAndPush(store.iso_branch, 'title', 'ISO Branch', 'bg-rose-900/60 text-rose-200 border-rose-700');
             checkAndPush(store.ops_branch, 'title', 'Operations', 'bg-cyan-900/60 text-cyan-200 border-cyan-700');
@@ -1595,7 +1632,6 @@
             
             return events;
         }
-
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             const monthYearLabel = document.getElementById('calendar-month-year');
@@ -1654,7 +1690,6 @@
             const cntEl = document.getElementById('cnt-calendar');
             if (cntEl) cntEl.innerText = totalEventsCount;
         }
-
         function selectCalendarDate(year, month, day) {
             const selectedDate = new Date(year, month, day);
             const events = getEventsOnDate(selectedDate);
@@ -1687,7 +1722,6 @@
                 </div>
             `).join('');
         }
-
         function setTheme(themeName) {
             document.body.className = "h-full flex overflow-hidden";
             document.body.style.backgroundColor = "";
@@ -2072,195 +2106,4 @@
                 dep_movements: [
                     { name: 'entry_date', label: 'Movement Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
                     { name: 'name', label: 'Deputy Commander', type: 'text', val: currentObj.name || 'DEPUTY COMMANDER' },
-                    { name: 'route', label: 'Route / Location', type: 'text', val: currentObj.route || '' },
-                    { name: 'timing', label: 'Timing (ETD/ETA)', type: 'text', val: currentObj.timing || 'ETD: N/A / ETA: N/A' },
-                    { name: 'status', label: 'Movement Status', type: 'select', options: ['ONGOING', 'UPCOMING', 'COMPLETED'], val: currentObj.status || 'STATIONARY' }
-                ],
-                aircraft: [
-                    { name: 'id', label: 'Request ID', type: 'text', val: currentObj.id || `AC-REQ-${Math.floor(10 + Math.random()*90)}` },
-                    { name: 'entry_date', label: 'Date Requested (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
-                    { name: 'unit', label: 'Requesting Unit', type: 'text', val: currentObj.unit || '' },
-                    { name: 'type', label: 'Aircraft Type', type: 'text', val: currentObj.type || 'UH-1H Huey' },
-                    { name: 'purpose', label: 'Mission Purpose', type: 'text', val: currentObj.purpose || '' },
-                    { name: 'status', label: 'Air Request Status', type: 'select', options: ['APPROVED', 'FOR ACTION', 'PENDING', 'ON ROUTE', 'FORWARDED'], val: currentObj.status || 'PENDING' }
-                ],
-                vessels: [
-                    { name: 'id', label: 'Directive #', type: 'text', val: currentObj.id || `DIR-PN-${Math.floor(10 + Math.random()*90)}` },
-                    { name: 'entry_date', label: 'Date Issued (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
-                    { name: 'vessel', label: 'Vessel Name', type: 'text', val: currentObj.vessel || '' },
-                    { name: 'area', label: 'Patrol Area / AO', type: 'text', val: currentObj.area || '' },
-                    { name: 'detail', label: 'Directive Detail', type: 'text', val: currentObj.detail || '' },
-                    { name: 'status', label: 'Naval Status', type: 'select', options: ['APPROVED', 'FOR ACTION', 'PENDING', 'ON ROUTE', 'FORWARDED'], val: currentObj.status || 'FOR ACTION' }
-                ],
-                jtf_deploy: [
-                    { name: 'jtf', label: 'JTF Sector', type: 'select', options: ['JTF Zampelan', 'JTF Orion', 'JTF Poseidon', 'JTF Central'], val: currentObj.jtf || 'JTF Zampelan' },
-                    { name: 'unit', label: 'Unit Name', type: 'text', val: currentObj.unit || '', required: true },
-                    { name: 'count', label: 'Personnel Count', type: 'text', val: currentObj.count || '100', required: true },
-                    { name: 'location', label: 'Assigned Location', type: 'text', val: currentObj.location || '', required: true },
-                    { name: 'date_deployed', label: 'Date Deployed (mm/dd/yyyy)', type: 'date', val: currentObj.date_deployed || '' },
-                    { name: 'date_realigned', label: 'Date Re-deployed (mm/dd/yyyy - Optional)', type: 'date', val: currentObj.date_realigned || '' },
-                    { name: 'status', label: 'Deployment Status', type: 'select', options: ['DEPLOYED', 'STANDBY', 'RE_DEPLOYING', 'STAND_DOWN', 'CANCELLED'], val: currentObj.status || 'DEPLOYED' }
-                ],
-                jtf_realign: [
-                    { name: 'id', label: 'Order #', type: 'text', val: currentObj.id || `ORD-RL-${Math.floor(10 + Math.random()*90)}` },
-                    { name: 'unit', label: 'Unit Realigned', type: 'text', val: currentObj.unit || '', required: true },
-                    { name: 'route', label: 'From JTF -> To JTF', type: 'text', val: currentObj.route || 'JTF Orion -> JTF Zampelan', required: true },
-                    { name: 'date_deployed', label: 'Date Deployed (mm/dd/yyyy)', type: 'date', val: currentObj.date_deployed || '' },
-                    { name: 'date_realigned', label: 'Date Re-deployed (mm/dd/yyyy - Optional)', type: 'date', val: currentObj.date_realigned || '' },
-                    { name: 'auth', label: 'Authorization', type: 'text', val: currentObj.auth || 'COMMANDER', required: true },
-                    { name: 'status', label: 'Realignment Status', type: 'select', options: ['APPROVED', 'PENDING', 'EXECUTED', 'CANCELLED'], val: currentObj.status || 'APPROVED' }
-                ]
-            };
-            const fields = fieldConfigs[module] || [];
-            fields.forEach(f => {
-                const div = document.createElement('div');
-                if (f.type === 'select') {
-                    div.innerHTML = `
-                        <label class="block text-gray-400 mb-1 font-semibold uppercase">${f.label}</label>
-                        <select data-field="${f.name}" class="w-full p-2.5 rounded-lg bg-black/40 border tac-border focus:border-cyan-500 text-white font-bold text-xs">
-                            ${f.options.map(opt => `<option value="${opt}" ${f.val === opt ? 'selected' : ''}>${opt}</option>`).join('')}
-                        </select>
-                    `;
-                } else if (f.type === 'date') {
-                    div.innerHTML = `
-                        <label class="block text-gray-400 mb-1 font-semibold uppercase">${f.label}</label>
-                        <input type="text" data-field="${f.name}" value="${f.val}" placeholder="mm/dd/yyyy" class="w-full p-2.5 rounded-lg bg-black/40 border tac-border focus:border-cyan-500 text-white text-xs">
-                    `;
-                } else {
-                    div.innerHTML = `
-                        <label class="block text-gray-400 mb-1 font-semibold uppercase">${f.label}</label>
-                        <input type="text" data-field="${f.name}" value="${f.val}" ${f.required ? 'required' : ''} class="w-full p-2.5 rounded-lg bg-black/40 border tac-border focus:border-cyan-500 text-white text-xs">
-                    `;
-                }
-                container.appendChild(div);
-            });
-            document.getElementById('form-field-remarks').value = currentObj.remarks || '';
-        }
-        function closeModal() { document.getElementById('crud-modal').classList.add('hidden'); }
-        async function handleFormSubmit(e) {
-            e.preventDefault();
-            const role = localStorage.getItem('tacCurrentRole');
-            if (role === 'client') {
-                showToast('Client account is not allowed to edit or add data.', 'error');
-                return;
-            }
-            const module = document.getElementById('form-module').value;
-            const editIdxStr = document.getElementById('form-edit-index').value;
-            const isEdit = editIdxStr !== '';
-            
-            const inputs = document.querySelectorAll('#dynamic-form-fields input, #dynamic-form-fields select');
-            const newObj = {};
-            
-            inputs.forEach(input => { newObj[input.getAttribute('data-field')] = input.value; });
-            newObj.remarks = document.getElementById('form-field-remarks').value;
-            if (isEdit) {
-                store[module][parseInt(editIdxStr)] = newObj;
-                showToast(`Record updated successfully`, 'success');
-            } else {
-                store[module].unshift(newObj);
-                showToast(`New record added to ${module.toUpperCase()}`, 'success');
-            }
-            await saveToLocalStorage();
-            renderAllTables();
-            closeModal();
-        }
-        function editRecord(module, index) { openModal(module, index); }
-        async function deleteRecord(module, index) {
-            const role = localStorage.getItem('tacCurrentRole');
-            if (role === 'client') {
-                showToast('Client account cannot delete records.', 'error');
-                return;
-            }
-            const confirmed = await showConfirmModal('DELETE OPERATIONAL LOG', 'Are you sure you want to permanently delete this record?');
-            if (confirmed) {
-                store[module].splice(index, 1);
-                await saveToLocalStorage();
-                renderAllTables();
-                showToast('Record deleted permanently', 'error');
-            }
-        }
-        function filterTable(module, query) {
-            const trs = document.querySelectorAll(`#table-${module} tr`);
-            const q = query.toLowerCase();
-            trs.forEach(tr => { tr.style.display = tr.innerText.toLowerCase().includes(q) ? '' : 'none'; });
-        }
-        function exportDashboardData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(store, null, 2));
-            const dlAnchor = document.createElement('a');
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", `TACCOM_Data_Backup.json`);
-            document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            dlAnchor.remove();
-            showToast('Operational data exported as JSON!', 'success');
-        }
-        function importDashboardData(event) {
-            const role = localStorage.getItem('tacCurrentRole');
-            if (role === 'client') {
-                showToast('Client account cannot import data.', 'error');
-                return;
-            }
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    if (typeof imported === 'object' && imported !== null) {
-                        store = imported;
-                        registeredAccounts = store.accounts || [];
-                        await saveToLocalStorage();
-                        renderAllTables();
-                        showToast('Data imported successfully!', 'success');
-                    } else {
-                        showToast('Invalid backup file format.', 'error');
-                    }
-                } catch(err) {
-                    showToast('Failed to parse JSON backup file.', 'error');
-                }
-            };
-            reader.readAsText(file);
-        }
-        function initChart() {
-            const ctx = document.getElementById('jtfChart');
-            if (!ctx) return;
-            
-            const jtfSectors = ['JTF Zampelan', 'JTF Orion', 'JTF Poseidon', 'JTF Central'];
-            const counts = jtfSectors.map(jtf => store.jtf_deploy.filter(d => d.jtf === jtf).length);
-            
-            jtfChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: jtfSectors,
-                    datasets: [{
-                        label: 'Deployed Units Count',
-                        data: counts,
-                        backgroundColor: 'rgba(6, 182, 212, 0.4)',
-                        borderColor: '#06b6d4',
-                        borderWidth: 2,
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { labels: { color: '#9ca3af', font: { size: 10 } } }
-                    },
-                    scales: {
-                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af', font: { size: 9 } } },
-                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af', font: { size: 9 }, stepSize: 1 } }
-                    }
-                }
-            });
-        }
-        function updateChartData() {
-            if (!jtfChartInstance) return;
-            const jtfSectors = ['JTF Zampelan', 'JTF Orion', 'JTF Poseidon', 'JTF Central'];
-            const counts = jtfSectors.map(jtf => store.jtf_deploy.filter(d => d.jtf === jtf).length);
-            jtfChartInstance.data.datasets[0].data = counts;
-            jtfChartInstance.update();
-        }
-    </script>
-</body>
-</html>
+                    { name: 'route', label: 'Route / Location', type: 'text', val: currentObj.
