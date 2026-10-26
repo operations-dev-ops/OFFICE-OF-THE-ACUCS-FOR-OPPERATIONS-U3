@@ -1275,7 +1275,18 @@
             if (role === 'client') return;
             try {
                 store.accounts = registeredAccounts;
-                await fetch(`${API_URL}/api/data`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(store) }); } catch (err) { console.error('Failed to sync data with server:', err); } } async function loadFromLocalStorage() { try { const response = await fetch(`${API_URL}/api/data`);
+                await fetch(`${API_URL}/api/data`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(store)
+                });
+            } catch (err) {
+                console.error('Failed to sync data with server:', err);
+            }
+        }
+        async function loadFromLocalStorage() {
+            try {
+                const response = await fetch(`${API_URL}/api/data`);
                 const data = await response.json();
                 if (data && typeof data === 'object') {
                     store = {
@@ -1485,7 +1496,10 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('text-cyan-400', 'bg-cyan-500/10', 'border', 'border-cyan-500/20'));
             
-            const targetTab = document.getElementById(`tab-${tabId}`); if (targetTab) targetTab.classList.remove('hidden');  const navItem = document.getElementById(`nav-${tabId}`);
+            const targetTab = document.getElementById(`tab-${tabId}`);
+            if (targetTab) targetTab.classList.remove('hidden');
+            
+            const navItem = document.getElementById(`nav-${tabId}`);
             if (navItem) navItem.classList.add('text-cyan-400', 'bg-cyan-500/10', 'border', 'border-cyan-500/20');
             
             const titles = {
@@ -1514,7 +1528,7 @@
             }
         }
 
-        // ================= ADVANCED MULTI-YEAR CALENDAR ENGINE =================
+        // ================= ADVANCED DATE RANGE & MULTI-DATE PARSER ENGINE =================
         function changeMonth(direction) {
             calendarDate.setMonth(calendarDate.getMonth() + direction);
             renderCalendar();
@@ -1524,67 +1538,86 @@
             renderCalendar();
         }
 
-        // NA-UPDATE NA PARSER (SUPPORTS MILITARY FORMATS & MULTIPLE DATES)
-        function parseItemDate(dateStr) {
+        function parseItemDates(dateStr) {
             if (!dateStr) return [];
-            let str = dateStr.toString().trim();
+            dateStr = dateStr.toString().trim();
             let dates = [];
 
-            try {
-                // 1. Multiple dates format: "26, 27, 28 and 31 October 2026"
-                if (str.toLowerCase().indexOf('and') !== -1 || str.indexOf(',') !== -1) {
-                    let cleaned = str.replace(/and/gi, ',');
-                    let parts = cleaned.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
-                    let lastPart = parts[parts.length - 1];
-                    let matchMonthYear = lastPart.match(/([A-Za-z]+)\s+(\d{4})/);
-                    if (matchMonthYear) {
-                        let monthYear = matchMonthYear[0];
-                        parts.forEach(function(p) {
-                            let dayMatch = p.match(/^(\d{1,2})/);
-                            if (dayMatch) {
-                                let d = new Date(dayMatch[1] + ' ' + monthYear);
-                                if (!isNaN(d.getTime())) dates.push(d);
-                            }
-                        });
-                        if (dates.length > 0) return dates;
+            const addDate = (d) => {
+                if (d && !isNaN(d.getTime())) {
+                    if (!dates.some(existing => existing.getTime() === d.getTime())) {
+                        dates.push(d);
                     }
                 }
+            };
 
-                // 2. Custom Military format: "27 1300 October 2026"
-                let milMatch = str.match(/^(\d{1,2})\s+\d{4}\s+([A-Za-z]+)\s+(\d{4})$/);
-                if (milMatch) {
-                    let d = new Date(milMatch[2] + ' ' + milMatch[1] + ', ' + milMatch[3]);
-                    if (!isNaN(d.getTime())) return [d];
+            // 1. Check for ranges like "01 - 15 November 2026", "15 TO 30 October 2026", "01-15 November 2026"
+            const rangeRegex1 = /^(\d{1,2})\s*(?:-|to|TO)\s*(\d{1,2})\s+([a-zA-Z]+),?\s+(\d{4})$/i;
+            let match = dateStr.match(rangeRegex1);
+            if (match) {
+                let startDay = parseInt(match[1]);
+                let endDay = parseInt(match[2]);
+                let monthStr = match[3];
+                let year = parseInt(match[4]);
+                let tempDate = new Date(`${monthStr} 1, ${year}`);
+                let monthIndex = tempDate.getMonth();
+                if (!isNaN(monthIndex)) {
+                    for (let d = startDay; d <= endDay; d++) {
+                        addDate(new Date(year, monthIndex, d));
+                    }
+                    return dates;
                 }
-
-                // 3. Standard JS parsing
-                let d = new Date(str);
-                if (!isNaN(d.getTime())) return [d];
-
-                // 4. Slash / Dash parsing (YYYY-MM-DD or MM/DD/YYYY)
-                let re = /^(\d{1,4})[\/\-](\d{1,2})[\/\-](\d{1,4})$/;
-                let match = str.match(re);
-                if (match) {
-                    let p1 = parseInt(match[1]), p2 = parseInt(match[2]), p3 = parseInt(match[3]);
-                    let parsed = p1 > 1000 ? new Date(p1, p2 - 1, p3) : new Date(p3, p1 - 1, p2);
-                    if (!isNaN(parsed.getTime())) return [parsed];
-                }
-            } catch (err) {
-                console.error("Error parsing date:", err);
             }
 
-            return [];
+            // 2. Check for multiple comma/and separated dates with shared month/year like "26, 27, 28 and 31 October 2026" or "26 and 27 October 2026"
+            let normalized = dateStr.replace(/\s+and\s+/gi, ', ');
+            const multiRegex = /^([\d,\s]+)\s+([a-zA-Z]+),?\s+(\d{4})$/i;
+            let multiMatch = normalized.match(multiRegex);
+            if (multiMatch) {
+                let daysPart = multiMatch[1];
+                let monthStr = multiMatch[2];
+                let year = parseInt(multiMatch[3]);
+                let tempDate = new Date(`${monthStr} 1, ${year}`);
+                let monthIndex = tempDate.getMonth();
+                if (!isNaN(monthIndex)) {
+                    let dayStrs = daysPart.split(',');
+                    dayStrs.forEach(ds => {
+                        let dNum = parseInt(ds.trim());
+                        if (!isNaN(dNum)) {
+                            addDate(new Date(year, monthIndex, dNum));
+                        }
+                    });
+                    return dates;
+                }
+            }
+
+            // 3. Fallback to standard single dates or comma-separated independent dates
+            let parts = dateStr.split(/[,;]/);
+            parts.forEach(part => {
+                let cleanPart = part.trim();
+                if (cleanPart.toLowerCase().includes(' and ')) {
+                    cleanPart.split(/and/i).forEach(sub => {
+                        let d = new Date(sub.trim());
+                        addDate(d);
+                    });
+                } else {
+                    let d = new Date(cleanPart);
+                    addDate(d);
+                }
+            });
+
+            return dates;
         }
 
         function getEventsOnDate(targetDate) {
             let events = [];
-            const checkAndPush = function(list, titleKey, modName, badgeColor) {
+            const checkAndPush = (list, titleKey, modName, badgeColor) => {
                 if (!list || !Array.isArray(list)) return;
-                list.forEach(function(item) {
+                list.forEach(item => {
                     let rawDates = [item.entry_date, item.date, item.date_deployed, item.date_realigned];
-                    rawDates.forEach(function(dtStr) {
-                        let parsedDates = parseItemDate(dtStr);
-                        parsedDates.forEach(function(d) {
+                    rawDates.forEach(dtStr => {
+                        let datesArray = parseItemDates(dtStr);
+                        datesArray.forEach(d => {
                             if (d && d.getFullYear() === targetDate.getFullYear() && d.getMonth() === targetDate.getMonth() && d.getDate() === targetDate.getDate()) {
                                 events.push({
                                     title: item[titleKey] || item.title || item.subject || item.id || item.unit || 'Operational Entry',
@@ -1598,7 +1631,7 @@
                     });
                 });
             };
-            
+
             checkAndPush(store.activities, 'title', 'Field Activity', 'bg-amber-900/60 text-amber-200 border-amber-700');
             checkAndPush(store.iso_branch, 'title', 'ISO Branch', 'bg-rose-900/60 text-rose-200 border-rose-700');
             checkAndPush(store.ops_branch, 'title', 'Operations', 'bg-cyan-900/60 text-cyan-200 border-cyan-700');
@@ -1625,7 +1658,7 @@
             const month = calendarDate.getMonth();
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             
-            monthYearLabel.innerText = `${monthNames[month]}${year}`;
+            monthYearLabel.innerText = `${monthNames[month]} ${year}`;
             
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
@@ -1649,9 +1682,10 @@
                 const todayClass = isToday ? 'border-cyan-400 bg-cyan-950/30 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-400/50' : 'bg-slate-900/60 tac-border hover:border-cyan-500/40';
                 
                 html += `
-                    <div onclick="selectCalendarDate(${year}, ${month},${day})" class="h-24 sm:h-32 border rounded-xl p-2 flex flex-col justify-between cursor-pointer transition-all duration-200 group ${todayClass}">
+                    <div onclick="selectCalendarDate(${year}, ${month}, ${day})" class="h-24 sm:h-32 border rounded-xl p-2 flex flex-col justify-between cursor-pointer transition-all duration-200 group ${todayClass}">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-mono font-bold ${isToday ? 'text-cyan-300 bg-cyan-900 px-2 py-0.5 rounded-md' : 'text-gray-300 group-hover:text-cyan-400'}">${day}</span>${dayEvents.length > 0 ? `<span class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500 text-black font-extrabold shadow">${dayEvents.length}</span>` : ''}
+                            <span class="text-xs font-mono font-bold ${isToday ? 'text-cyan-300 bg-cyan-900 px-2 py-0.5 rounded-md' : 'text-gray-300 group-hover:text-cyan-400'}">${day}</span>
+                            ${dayEvents.length > 0 ? `<span class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500 text-black font-extrabold shadow">${dayEvents.length}</span>` : ''}
                         </div>
                         <div class="space-y-1 overflow-y-auto max-h-16 pr-0.5">
                             ${dayEvents.slice(0, 2).map(ev => `
@@ -1673,6 +1707,7 @@
             const cntEl = document.getElementById('cnt-calendar');
             if (cntEl) cntEl.innerText = totalEventsCount;
         }
+
         function selectCalendarDate(year, month, day) {
             const selectedDate = new Date(year, month, day);
             const events = getEventsOnDate(selectedDate);
@@ -1684,7 +1719,8 @@
             detailsBox.classList.remove('hidden');
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             
-            dateTitle.innerText = `Briefing Logs for ${monthNames[month]}${day}, ${year}`; countEl.innerText = `${events.length} event(s)`;
+            dateTitle.innerText = `Briefing Logs for ${monthNames[month]} ${day}, ${year}`;
+            countEl.innerText = `${events.length} event(s)`;
             
             if (events.length === 0) {
                 listEl.innerHTML = `<div class="text-gray-500 italic p-4 text-center bg-black/30 rounded-xl border tac-border">No operational events or schedules logged for this date.</div>`;
@@ -1704,6 +1740,7 @@
                 </div>
             `).join('');
         }
+
         function setTheme(themeName) {
             document.body.className = "h-full flex overflow-hidden";
             document.body.style.backgroundColor = "";
@@ -1751,20 +1788,24 @@
             document.getElementById('cnt-jtf_realign').innerText = store.jtf_realign.length;
             document.getElementById('stat-active-deployments').innerText = store.jtf_deploy.length;
             document.getElementById('stat-branch-activities').innerText = store.iso_branch.length + store.ops_branch.length + store.hadr_branch.length + store.peace_branch.length;
-            document.getElementById('stat-messages-total').innerText = `${store.incoming.length} /${store.outgoing.length}`;
+            document.getElementById('stat-messages-total').innerText = `${store.incoming.length} / ${store.outgoing.length}`;
             document.getElementById('stat-vessel-directives').innerText = store.vessels.length;
             
             if (store.cmd_movements.length > 0) {
                 const latest = store.cmd_movements[0];
                 document.getElementById('dash-cmd-name').innerText = latest.name;
                 document.getElementById('dash-cmd-loc').innerText = latest.route;
-                document.getElementById('dash-cmd-status').outerHTML = `<div id="dash-cmd-status">${renderStatusBadge(latest.status)}</div>`; document.getElementById('dash-cmd-timing').innerText = latest.timing; document.getElementById('dash-cmd-remarks').innerText = `Remarks: ${latest.remarks || 'None'}`;
+                document.getElementById('dash-cmd-status').outerHTML = `<div id="dash-cmd-status">${renderStatusBadge(latest.status)}</div>`;
+                document.getElementById('dash-cmd-timing').innerText = latest.timing;
+                document.getElementById('dash-cmd-remarks').innerText = `Remarks: ${latest.remarks || 'None'}`;
             }
             if (store.dep_movements.length > 0) {
                 const latest = store.dep_movements[0];
                 document.getElementById('dash-dep-name').innerText = latest.name;
                 document.getElementById('dash-dep-loc').innerText = latest.route;
-                document.getElementById('dash-dep-status').outerHTML = `<div id="dash-dep-status">${renderStatusBadge(latest.status)}</div>`; document.getElementById('dash-dep-timing').innerText = latest.timing; document.getElementById('dash-dep-remarks').innerText = `Remarks: ${latest.remarks || 'None'}`;
+                document.getElementById('dash-dep-status').outerHTML = `<div id="dash-dep-status">${renderStatusBadge(latest.status)}</div>`;
+                document.getElementById('dash-dep-timing').innerText = latest.timing;
+                document.getElementById('dash-dep-remarks').innerText = `Remarks: ${latest.remarks || 'None'}`;
             }
             const recentBody = document.getElementById('dash-recent-activities-table');
             if (store.activities.length === 0) {
@@ -1789,8 +1830,8 @@
             return `
                 <td class="p-3 text-right admin-only">
                     <div class="flex items-center justify-end space-x-1">
-                        <button onclick="editRecord('${module}',${index})" title="Edit" class="p-1 rounded hover:bg-cyan-500/20 text-cyan-400"><i class="ph-bold ph-pencil-simple text-base"></i></button>
-                        <button onclick="deleteRecord('${module}',${index})" title="Delete" class="p-1 rounded hover:bg-red-500/20 text-red-400"><i class="ph-bold ph-trash text-base"></i></button>
+                        <button onclick="editRecord('${module}', ${index})" title="Edit" class="p-1 rounded hover:bg-cyan-500/20 text-cyan-400"><i class="ph-bold ph-pencil-simple text-base"></i></button>
+                        <button onclick="deleteRecord('${module}', ${index})" title="Delete" class="p-1 rounded hover:bg-red-500/20 text-red-400"><i class="ph-bold ph-trash text-base"></i></button>
                     </div>
                 </td>
             `;
@@ -1810,7 +1851,8 @@
                     <td class="p-3">${item.subject}</td>
                     <td class="p-3"><span class="px-2 py-0.5 text-[10px] rounded font-bold bg-amber-900/60 text-amber-200">${item.classification}</span></td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-400 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('outgoing', idx)}
+                    <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
+                    ${getActionButtons('outgoing', idx)}
                 </tr>
             `).join('');
         }
@@ -1825,7 +1867,8 @@
                     <td class="p-3 font-medium">${item.origin}</td>
                     <td class="p-3">${item.subject}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-400 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('incoming', idx)}
+                    <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
+                    ${getActionButtons('incoming', idx)}
                 </tr>
             `).join('');
         }
@@ -1840,7 +1883,8 @@
                     <td class="p-3 text-gray-300">${item.location}</td>
                     <td class="p-3"><span class="px-2 py-0.5 text-[10px] bg-cyan-900/40 text-cyan-200 rounded">${item.jtf}</span></td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-amber-300/80 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('activities', idx)}
+                    <td class="p-3 text-amber-300/80 italic">${item.remarks || '-'}</td>
+                    ${getActionButtons('activities', idx)}
                 </tr>
             `).join('');
         }
@@ -1854,7 +1898,8 @@
                     <td class="p-3 font-semibold text-rose-300">${item.title}</td>
                     <td class="p-3 text-gray-300">${item.location}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-400 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('iso_branch', idx)}
+                    <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
+                    ${getActionButtons('iso_branch', idx)}
                 </tr>
             `).join('');
         }
@@ -1868,7 +1913,8 @@
                     <td class="p-3 font-semibold text-cyan-300">${item.title}</td>
                     <td class="p-3 text-gray-300">${item.location}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-400 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('ops_branch', idx)}
+                    <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
+                    ${getActionButtons('ops_branch', idx)}
                 </tr>
             `).join('');
         }
@@ -1882,7 +1928,8 @@
                     <td class="p-3 font-semibold text-emerald-300">${item.title}</td>
                     <td class="p-3 text-gray-300">${item.location}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-400 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('hadr_branch', idx)}
+                    <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
+                    ${getActionButtons('hadr_branch', idx)}
                 </tr>
             `).join('');
         }
@@ -1896,19 +1943,10 @@
                     <td class="p-3 font-semibold text-purple-300">${item.title}</td>
                     <td class="p-3 text-gray-300">${item.location}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-400 italic">${item.remarks \vert{}\vert{} '-'}</td>${getActionButtons('peace_branch', idx)}
+                    <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
+                    ${getActionButtons('peace_branch', idx)}
                 </tr>
             `).join('');
         }
         function renderCmdMovementsTable() {
-            const tbody = document.getElementById('table-cmd_movements');
-            if (!tbody) return;
-            if (store.cmd_movements.length === 0) { tbody.innerHTML = renderEmptyRow(7); return; }
-            tbody.innerHTML = store.cmd_movements.map((item, idx) => `
-                <tr class="hover:bg-white/5">
-                    <td class="p-3 font-mono text-gray-300 whitespace-nowrap">${item.entry_date || '-'}</td>
-                    <td class="p-3 font-bold text-amber-400">${item.name}</td>
-                    <td class="p-3 font-medium">${item.route}</td>
-                    <td class="p-3 font-mono">${item.timing}</td>
-                    <td class="p-3">${renderStatusBadge(item.status)}</td>
-                    <td class="p-3 text-gray-300 italic">${item.remarks || '-'}
+            const tbody = document
