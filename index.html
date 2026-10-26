@@ -137,7 +137,6 @@
             <!-- LOGIN SECTION -->
             <div id="loginSection" class="p-6 sm:p-8">
                 <div class="text-center mb-6">
-                    <!-- LOGIN IMAGE LOGO -->
                     <div class="flex justify-center mb-3">
                         <img src="U3.png" alt="TAC-COM Logo" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-cyan-500/40 shadow-lg bg-cyan-950/30">
                     </div>
@@ -146,6 +145,21 @@
                 </div>
                 <div id="loginAlert" class="hidden mb-4 px-4 py-3 rounded-lg text-xs sm:text-sm flex items-center gap-2"></div>
                 <form id="loginForm" class="space-y-4" onsubmit="handleLogin(event)">
+                    <!-- ACCESS ROLE SELECTION -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-1.5">Select Access Role</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="flex items-center justify-center p-2.5 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer hover:border-cyan-500 text-xs text-slate-300 font-bold has-[:checked]:border-cyan-500 has-[:checked]:bg-cyan-950/40 has-[:checked]:text-cyan-400">
+                                <input type="radio" name="loginRole" value="admin" checked class="hidden">
+                                <i class="ph-bold ph-shield-check text-base mr-1.5"></i> Admin / Operator
+                            </label>
+                            <label class="flex items-center justify-center p-2.5 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer hover:border-cyan-500 text-xs text-slate-300 font-bold has-[:checked]:border-cyan-500 has-[:checked]:bg-cyan-950/40 has-[:checked]:text-cyan-400">
+                                <input type="radio" name="loginRole" value="client" class="hidden">
+                                <i class="ph-bold ph-eye text-base mr-1.5"></i> Client / Viewer
+                            </label>
+                        </div>
+                    </div>
+
                     <div>
                         <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-1.5">Username</label>
                         <div class="relative">
@@ -169,7 +183,7 @@
                     </div>
                     <button type="submit" id="loginBtn"
                         class="w-full py-3 px-4 bg-cyan-600 hover:bg-cyan-500 text-black font-bold rounded-lg shadow-lg shadow-cyan-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer text-sm">
-                        <span>Enter</span>
+                        <span>Enter Command Dashboard</span>
                         <i class="fa-solid fa-arrow-right text-sm"></i>
                     </button>
                 </form>
@@ -230,10 +244,11 @@
             </div>
         </div>
     </div>
+
     <!-- ================= TAC-COM OPERATIONAL COMMAND DASHBOARD ================= -->
     <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2 pointer-events-none max-w-xs sm:max-w-sm"></div>
-    <!-- MOBILE BACKDROP -->
     <div id="mobile-backdrop" class="fixed inset-0 bg-black/60 z-20 md:hidden hidden transition-opacity" onclick="closeSidebar()"></div>
+    
     <!-- SIDEBAR NAVIGATION -->
     <aside id="sidebar" class="fixed md:static inset-y-0 left-0 w-64 tac-panel flex flex-col flex-shrink-0 z-30 border-r -translate-x-full md:translate-x-0 transition-transform duration-300 bg-slate-900/95 md:bg-opacity-95">
         <div class="h-16 flex items-center justify-between px-4 border-b tac-border">
@@ -381,6 +396,7 @@
             </div>
         </div>
     </aside>
+
     <!-- MAIN CONTENT AREA -->
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header class="h-16 tac-panel border-b tac-border flex items-center justify-between px-3 sm:px-6 z-10 bg-opacity-90">
@@ -394,8 +410,8 @@
                 </div>
             </div>
             <div class="flex items-center space-x-2 sm:space-x-3">
-                <!-- IMPORT DATA DIRECTLY -->
-                <label title="Import Operational Data (JSON)" class="p-2 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 flex items-center space-x-1.5 text-xs cursor-pointer shadow-lg">
+                <!-- IMPORT DATA DIRECTLY (Admin Only) -->
+                <label id="btn-import-data" title="Import Operational Data (JSON)" class="p-2 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 flex items-center space-x-1.5 text-xs cursor-pointer shadow-lg">
                     <i class="ph-bold ph-upload-simple text-sm sm:text-emerald-400"></i>
                     <span class="hidden md:inline font-bold">Import</span>
                     <input type="file" id="import-file-input" accept=".json" onchange="importDashboardData(event)" class="hidden">
@@ -427,11 +443,12 @@
                     <div id="headerFallbackPlaceholder" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-cyan-600/30 border border-cyan-500/50 hidden items-center justify-center font-bold text-cyan-300 text-xs">HQ</div>
                     <div class="hidden lg:block text-left">
                         <div class="text-xs font-bold leading-none" id="headerOperatorName">OPERATOR</div>
-                        <div class="text-[10px] text-gray-400 leading-tight"><span class="text-emerald-400 font-semibold">ONLINE</span></div>
+                        <div class="text-[10px] leading-tight mt-0.5" id="headerRoleBadge"><span class="text-emerald-400 font-semibold">ADMIN</span></div>
                     </div>
                 </div>
             </div>
         </header>
+
         <!-- MAIN SCROLLABLE BODY -->
         <main class="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6" id="printable-area">
             <!-- TAB 1: DASHBOARD OVERVIEW -->
@@ -549,11 +566,12 @@
                     </div>
                 </div>
             </div>
+
             <!-- TAB: OUTGOING MESSAGES -->
             <div id="tab-outgoing" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <input type="text" onkeyup="filterTable('outgoing', this.value)" placeholder="Search outgoing..." class="px-3 py-2 text-xs rounded-lg bg-black/30 border tac-border focus:outline-none focus:border-cyan-500 text-gray-200 w-full sm:w-64">
-                    <button onclick="openModal('outgoing')" class="tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 shadow-lg w-full sm:w-auto">
+                    <button onclick="openModal('outgoing')" class="admin-only tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 shadow-lg w-full sm:w-auto">
                         <i class="ph-bold ph-plus-circle text-base"></i>
                         <span>Transmit Outgoing Message</span>
                     </button>
@@ -570,7 +588,7 @@
                                     <th class="p-3">Classification</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3">Remarks</th>
-                                    <th class="p-3 text-right">Actions</th>
+                                    <th class="p-3 text-right admin-only">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="table-outgoing" class="divide-y tac-border"></tbody>
@@ -578,11 +596,12 @@
                     </div>
                 </div>
             </div>
+
             <!-- TAB: INCOMING MESSAGES -->
             <div id="tab-incoming" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <input type="text" onkeyup="filterTable('incoming', this.value)" placeholder="Search incoming..." class="px-3 py-2 text-xs rounded-lg bg-black/30 border tac-border focus:outline-none focus:border-cyan-500 text-gray-200 w-full sm:w-64">
-                    <button onclick="openModal('incoming')" class="tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 shadow-lg w-full sm:w-auto">
+                    <button onclick="openModal('incoming')" class="admin-only tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 shadow-lg w-full sm:w-auto">
                         <i class="ph-bold ph-plus-circle text-base"></i>
                         <span>Log Incoming Message</span>
                     </button>
@@ -598,7 +617,7 @@
                                     <th class="p-3">Subject / Summary</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3">Remarks</th>
-                                    <th class="p-3 text-right">Actions</th>
+                                    <th class="p-3 text-right admin-only">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="table-incoming" class="divide-y tac-border"></tbody>
@@ -606,11 +625,12 @@
                     </div>
                 </div>
             </div>
+
             <!-- TAB: INCOMING ACTIVITIES -->
             <div id="tab-activities" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <input type="text" onkeyup="filterTable('activities', this.value)" placeholder="Search activities..." class="px-3 py-2 text-xs rounded-lg bg-black/30 border tac-border focus:outline-none focus:border-cyan-500 text-gray-200 w-full sm:w-64">
-                    <button onclick="openModal('activities')" class="tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 shadow-lg w-full sm:w-auto">
+                    <button onclick="openModal('activities')" class="admin-only tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 shadow-lg w-full sm:w-auto">
                         <i class="ph-bold ph-plus-circle text-base"></i>
                         <span>Log Field Activity</span>
                     </button>
@@ -626,7 +646,7 @@
                                     <th class="p-3">JTF Sector</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3">Remarks</th>
-                                    <th class="p-3 text-right">Actions</th>
+                                    <th class="p-3 text-right admin-only">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="table-activities" class="divide-y tac-border"></tbody>
@@ -634,11 +654,12 @@
                     </div>
                 </div>
             </div>
+
             <!-- TAB: ISO BRANCH ACTIVITIES -->
             <div id="tab-iso_branch" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <input type="text" onkeyup="filterTable('iso_branch', this.value)" placeholder="Search ISO activities..." class="px-3 py-2 text-xs rounded-lg bg-black/30 border tac-border focus:outline-none focus:border-cyan-500 text-gray-200 w-full sm:w-64">
-                    <button onclick="openModal('iso_branch')" class="tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 shadow-lg w-full sm:w-auto">
+                    <button onclick="openModal('iso_branch')" class="admin-only tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 shadow-lg w-full sm:w-auto">
                         <i class="ph-bold ph-plus-circle text-base"></i>
                         <span>Add ISO Activity</span>
                     </button>
@@ -653,7 +674,7 @@
                                     <th class="p-3">AOR / Location</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3">Remarks</th>
-                                    <th class="p-3 text-right">Actions</th>
+                                    <th class="p-3 text-right admin-only">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="table-iso_branch" class="divide-y tac-border"></tbody>
@@ -661,11 +682,12 @@
                     </div>
                 </div>
             </div>
+
             <!-- TAB: OPERATIONS BRANCH ACTIVITIES -->
             <div id="tab-ops_branch" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <input type="text" onkeyup="filterTable('ops_branch', this.value)" placeholder="Search operations..." class="px-3 py-2 text-xs rounded-lg bg-black/30 border tac-border focus:outline-none focus:border-cyan-500 text-gray-200 w-full sm:w-64">
-                    <button onclick="openModal('ops_branch')" class="tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 shadow-lg w-full sm:w-auto">
+                    <button onclick="openModal('ops_branch')" class="admin-only tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 shadow-lg w-full sm:w-auto">
                         <i class="ph-bold ph-plus-circle text-base"></i>
                         <span>Add Operations Activity</span>
                     </button>
@@ -675,12 +697,12 @@
                         <table class="w-full text-left text-xs min-w-[650px]">
                             <thead class="bg-cyan-950 text-cyan-300 border-b-2 border-cyan-500 uppercase font-mono">
                                 <tr>
-                                    <th class="p-3">Date </th>
+                                    <th class="p-3">Date</th>
                                     <th class="p-3">Operation Title</th>
                                     <th class="p-3">Target / Sector</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3">Remarks</th>
-                                    <th class="p-3 text-right">Actions</th>
+                                    <th class="p-3 text-right admin-only">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="table-ops_branch" class="divide-y tac-border"></tbody>
@@ -688,11 +710,12 @@
                     </div>
                 </div>
             </div>
+
             <!-- TAB: HADR BRANCH ACTIVITIES -->
             <div id="tab-hadr_branch" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <input type="text" onkeyup="filterTable('hadr_branch', this.value)" placeholder="Search HADR..." class="px-3 py-2 text-xs rounded-lg bg-black/30 border tac-border focus:outline-none focus:border-cyan-500 text-gray-200 w-full sm:w-64">
-                    <button onclick="openModal('hadr_branch')" class="tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 shadow-lg w-full sm:w-auto">
+                    <button onclick="openModal('hadr_branch')" class="admin-only tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 shadow-lg w-full sm:w-auto">
                         <i class="ph-bold ph-plus-circle text-base"></i>
                         <span>Add HADR Mission</span>
                     </button>
@@ -707,7 +730,7 @@
                                     <th class="p-3">Affected Area</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3">Remarks</th>
-                                    <th class="p-3 text-right">Actions</th>
+                                    <th class="p-3 text-right admin-only">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="table-hadr_branch" class="divide-y tac-border"></tbody>
@@ -715,11 +738,12 @@
                     </div>
                 </div>
             </div>
+
             <!-- TAB: PEACE DEVELOPMENT BRANCH -->
             <div id="tab-peace_branch" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <input type="text" onkeyup="filterTable('peace_branch', this.value)" placeholder="Search peace initiatives..." class="px-3 py-2 text-xs rounded-lg bg-black/30 border tac-border focus:outline-none focus:border-cyan-500 text-gray-200 w-full sm:w-64">
-                    <button onclick="openModal('peace_branch')" class="tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 shadow-lg w-full sm:w-auto">
+                    <button onclick="openModal('peace_branch')" class="admin-only tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 shadow-lg w-full sm:w-auto">
                         <i class="ph-bold ph-plus-circle text-base"></i>
                         <span>Add Peace Activity</span>
                     </button>
@@ -734,7 +758,7 @@
                                     <th class="p-3">Community / Venue</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3">Remarks</th>
-                                    <th class="p-3 text-right">Actions</th>
+                                    <th class="p-3 text-right admin-only">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="table-peace_branch" class="divide-y tac-border"></tbody>
@@ -742,11 +766,12 @@
                     </div>
                 </div>
             </div>
+
             <!-- TAB: COMMANDER MOVEMENTS -->
             <div id="tab-cmd_movements" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <h3 class="font-bold text-xs sm:text-sm uppercase">Commander Movement Logs</h3>
-                    <button onclick="openModal('cmd_movements')" class="tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 w-full sm:w-auto">
+                    <button onclick="openModal('cmd_movements')" class="admin-only tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 w-full sm:w-auto">
                         <i class="ph-bold ph-plus-circle text-base"></i>
                         <span>Add Movement Entry</span>
                     </button>
@@ -762,7 +787,7 @@
                                     <th class="p-3">ETD / ETA</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3">Remarks</th>
-                                    <th class="p-3 text-right">Actions</th>
+                                    <th class="p-3 text-right admin-only">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="table-cmd_movements" class="divide-y tac-border"></tbody>
@@ -770,11 +795,12 @@
                     </div>
                 </div>
             </div>
+
             <!-- TAB: DEPUTY COMMANDER MOVEMENTS -->
             <div id="tab-dep_movements" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <h3 class="font-bold text-xs sm:text-sm uppercase">Deputy Commander Movement Logs</h3>
-                    <button onclick="openModal('dep_movements')" class="tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 w-full sm:w-auto">
+                    <button onclick="openModal('dep_movements')" class="admin-only tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 w-full sm:w-auto">
                         <i class="ph-bold ph-plus-circle text-base"></i>
                         <span>Add Movement Entry</span>
                     </button>
@@ -790,7 +816,7 @@
                                     <th class="p-3">ETD / ETA</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3">Remarks</th>
-                                    <th class="p-3 text-right">Actions</th>
+                                    <th class="p-3 text-right admin-only">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="table-dep_movements" class="divide-y tac-border"></tbody>
@@ -798,11 +824,12 @@
                     </div>
                 </div>
             </div>
+
             <!-- TAB: AIRCRAFT REQUESTS -->
             <div id="tab-aircraft" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <h3 class="font-bold text-xs sm:text-sm uppercase">Air Asset & Recon Requests</h3>
-                    <button onclick="openModal('aircraft')" class="tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 w-full sm:w-auto">
+                    <button onclick="openModal('aircraft')" class="admin-only tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 w-full sm:w-auto">
                         <i class="ph-bold ph-plus-circle text-base"></i>
                         <span>New Aircraft Request</span>
                     </button>
@@ -819,7 +846,7 @@
                                     <th class="p-3">Mission Purpose</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3">Remarks</th>
-                                    <th class="p-3 text-right">Actions</th>
+                                    <th class="p-3 text-right admin-only">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="table-aircraft" class="divide-y tac-border"></tbody>
@@ -827,11 +854,12 @@
                     </div>
                 </div>
             </div>
+
             <!-- TAB: PN VESSEL DIRECTIVES -->
             <div id="tab-vessels" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <h3 class="font-bold text-xs sm:text-sm uppercase">Philippine Navy Vessel Directives</h3>
-                    <button onclick="openModal('vessels')" class="tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 w-full sm:w-auto">
+                    <button onclick="openModal('vessels')" class="admin-only tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 w-full sm:w-auto">
                         <i class="ph-bold ph-plus-circle text-base"></i>
                         <span>New Vessel Directive</span>
                     </button>
@@ -848,7 +876,7 @@
                                     <th class="p-3">Directive Details</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3">Remarks</th>
-                                    <th class="p-3 text-right">Actions</th>
+                                    <th class="p-3 text-right admin-only">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="table-vessels" class="divide-y tac-border"></tbody>
@@ -856,11 +884,12 @@
                     </div>
                 </div>
             </div>
+
             <!-- TAB: JTF FORCE DEPLOYMENT -->
             <div id="tab-jtf_deploy" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <h3 class="font-bold text-xs sm:text-sm uppercase">Joint Task Force Deployment Roster</h3>
-                    <button onclick="openModal('jtf_deploy')" class="tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 w-full sm:w-auto">
+                    <button onclick="openModal('jtf_deploy')" class="admin-only tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 w-full sm:w-auto">
                         <i class="ph-bold ph-plus-circle text-base"></i>
                         <span>Add Deployment Entry</span>
                     </button>
@@ -878,7 +907,7 @@
                                     <th class="p-3">Date Re-deployed</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3">Remarks</th>
-                                    <th class="p-3 text-right">Actions</th>
+                                    <th class="p-3 text-right admin-only">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="table-jtf_deploy" class="divide-y tac-border"></tbody>
@@ -886,11 +915,12 @@
                     </div>
                 </div>
             </div>
+
             <!-- TAB: JTF FORCE REALIGNMENT -->
             <div id="tab-jtf_realign" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <h3 class="font-bold text-xs sm:text-sm uppercase">Joint Task Force Force Realignment Roster</h3>
-                    <button onclick="openModal('jtf_realign')" class="tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 w-full sm:w-auto">
+                    <button onclick="openModal('jtf_realign')" class="admin-only tac-btn-accent font-bold px-4 py-2.5 rounded-lg text-xs flex items-center justify-center space-x-2 w-full sm:w-auto">
                         <i class="ph-bold ph-plus-circle text-base"></i>
                         <span>Add Realignment Log</span>
                     </button>
@@ -908,7 +938,7 @@
                                     <th class="p-3">Authorization</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3">Remarks</th>
-                                    <th class="p-3 text-right">Actions</th>
+                                    <th class="p-3 text-right admin-only">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="table-jtf_realign" class="divide-y tac-border"></tbody>
@@ -918,6 +948,7 @@
             </div>
         </main>
     </div>
+
     <!-- DYNAMIC FORM MODAL -->
     <div id="crud-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
         <div class="tac-panel w-full max-w-lg rounded-2xl border shadow-2xl p-4 sm:p-6 space-y-4 my-auto max-h-[92vh] overflow-y-auto">
@@ -941,6 +972,7 @@
             </form>
         </div>
     </div>
+
     <!-- CONFIRM MODAL -->
     <div id="confirm-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="tac-panel w-full max-w-sm rounded-2xl border shadow-2xl p-6 space-y-4 text-center">
@@ -955,6 +987,7 @@
             </div>
         </div>
     </div>
+
     <!-- SETTINGS / HELP MODAL -->
     <div id="settings-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="tac-panel w-full max-w-md rounded-2xl border shadow-2xl p-6 space-y-4">
@@ -968,6 +1001,7 @@
             </div>
         </div>
     </div>
+
     <!-- JAVASCRIPT LOGIC -->
     <script>
         const API_URL = window.location.origin;
@@ -1004,11 +1038,13 @@
         }
         let jtfChartInstance = null;
         let confirmResolver = null;
+
         window.addEventListener('DOMContentLoaded', async () => {
             await checkAuthSession();
             updateLiveClock();
             setInterval(updateLiveClock, 1000);
         });
+
         function openSidebar() {
             document.getElementById('sidebar').classList.remove('-translate-x-full');
             document.getElementById('mobile-backdrop').classList.remove('hidden');
@@ -1017,13 +1053,27 @@
             document.getElementById('sidebar').classList.add('-translate-x-full');
             document.getElementById('mobile-backdrop').classList.add('hidden');
         }
+
         async function checkAuthSession() {
             const currentUser = localStorage.getItem('tacCurrentOperator');
+            const userRole = localStorage.getItem('tacCurrentRole') || 'admin';
             const authContainer = document.getElementById('authContainer');
+            
             if (currentUser) {
                 authContainer.classList.add('hidden');
                 const opEl = document.getElementById('headerOperatorName');
                 if (opEl) opEl.innerText = currentUser.toUpperCase();
+
+                const roleBadge = document.getElementById('headerRoleBadge');
+                if (roleBadge) {
+                    if (userRole === 'client') {
+                        roleBadge.innerHTML = '<span class="text-amber-400 font-semibold">CLIENT (VIEW-ONLY)</span>';
+                    } else {
+                        roleBadge.innerHTML = '<span class="text-emerald-400 font-semibold">ADMIN (FULL ACCESS)</span>';
+                    }
+                }
+
+                applyRolePermissions(userRole);
                 await loadFromLocalStorage();
                 renderAllTables();
                 if (!jtfChartInstance) initChart();
@@ -1031,6 +1081,16 @@
                 authContainer.classList.remove('hidden');
             }
         }
+
+        function applyRolePermissions(role) {
+            const adminElements = document.querySelectorAll('.admin-only, #btn-import-data');
+            if (role === 'client') {
+                adminElements.forEach(el => el.classList.add('hidden'));
+            } else {
+                adminElements.forEach(el => el.classList.remove('hidden'));
+            }
+        }
+
         function switchAuthTab(tab) {
             const loginSec = document.getElementById('loginSection');
             const signupSec = document.getElementById('signupSection');
@@ -1046,6 +1106,7 @@
                 loginSec.classList.remove('hidden');
             }
         }
+
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -1059,6 +1120,7 @@
                 icon.classList.add('fa-eye');
             }
         }
+
         function showAuthAlert(type, message, section) {
             const alertBox = document.getElementById(section + 'Alert');
             alertBox.className = `mb-4 px-4 py-3 rounded-lg text-xs sm:text-sm flex items-center gap-2 ${
@@ -1067,6 +1129,7 @@
             alertBox.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i> <span>${message}</span>`;
             alertBox.classList.remove('hidden');
         }
+
         async function handleSignup(event) {
             event.preventDefault();
             const name = document.getElementById('signupName').value.trim();
@@ -1092,10 +1155,13 @@
                 showAuthAlert('error', 'Server error during registration.', 'signup');
             }
         }
+
         async function handleLogin(event) {
             event.preventDefault();
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
+            const selectedRole = document.querySelector('input[name="loginRole"]:checked').value;
+
             try {
                 const response = await fetch(`${API_URL}/api/auth/login`, {
                     method: 'POST',
@@ -1105,8 +1171,9 @@
                 const result = await response.json();
                 if (result.success) {
                     localStorage.setItem('tacCurrentOperator', result.name);
+                    localStorage.setItem('tacCurrentRole', selectedRole);
                     await checkAuthSession();
-                    showToast(`Welcome back, operator ${result.name}`, 'success');
+                    showToast(`Welcome back, ${selectedRole === 'client' ? 'Viewer' : 'Operator'} ${result.name}`, 'success');
                 } else {
                     showAuthAlert('error', result.message, 'login');
                 }
@@ -1114,19 +1181,26 @@
                 showAuthAlert('error', 'Server error during sign in.', 'login');
             }
         }
+
         function handleLogout() {
             showConfirmModal('SIGN OUT', 'Are you sure you want to log out of TAC-COM Command?').then(confirmed => {
                 if (confirmed) {
                     localStorage.removeItem('tacCurrentOperator');
+                    localStorage.removeItem('tacCurrentRole');
                     checkAuthSession();
                 }
             });
         }
+
         function updateLiveClock() {
             const now = new Date();
             document.getElementById('live-clock').innerText = now.toISOString().substring(11, 19) + ' Z';
         }
+
         async function saveToLocalStorage() {
+            const role = localStorage.getItem('tacCurrentRole');
+            if (role === 'client') return; // Prevents clients from saving/overwriting data
+
             try {
                 await fetch(`${API_URL}/api/data`, {
                     method: 'POST',
@@ -1137,6 +1211,7 @@
                 console.error('Failed to sync data with server:', err);
             }
         }
+
         async function loadFromLocalStorage() {
             try {
                 const response = await fetch(`${API_URL}/api/data`);
@@ -1162,6 +1237,7 @@
                 console.error('Failed to load data from server:', err);
             }
         }
+
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             if (!container) return;
@@ -1177,6 +1253,7 @@
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
+
         function showConfirmModal(title, message, isDanger = true) {
             return new Promise((resolve) => {
                 confirmResolver = resolve;
@@ -1194,10 +1271,12 @@
                 document.getElementById('confirm-modal').classList.remove('hidden');
             });
         }
+
         function closeConfirmModal(result) {
             document.getElementById('confirm-modal').classList.add('hidden');
             if (confirmResolver) { confirmResolver(result); confirmResolver = null; }
         }
+
         function openSettingsModal(type) {
             const modal = document.getElementById('settings-modal');
             const title = document.getElementById('settings-modal-title');
@@ -1209,7 +1288,7 @@
                     <div class="space-y-3 max-h-[60vh] overflow-y-auto pr-2 text-xs">
                         <h4 class="font-bold text-cyan-300 uppercase tracking-wide">I. HELP CENTER (Guide & Quick Solutions)</h4>
                         <p>The <strong>TAC-COM Operational Command Dashboard</strong> provides real-time situational awareness and unit management for U3 operations.</p>
-                        <p><strong>1. Date Input:</strong> Dates can be left optional and added or updated later using the Edit action button.</p>
+                        <p><strong>1. Access Roles:</strong> Admin mode allows editing/adding records. Client mode allows view-only access to operational logs.</p>
                         <p><strong>2. Mobile Optimization:</strong> Accessible on mobile browsers. Use top navigation drawer for switching operational modules.</p>
                     </div>
                 `;
@@ -1223,7 +1302,9 @@
                 `;
             }
         }
+
         function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
+
         function switchTab(tabId) {
             closeSidebar();
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -1256,16 +1337,19 @@
                 document.getElementById('page-subtitle').innerText = titles[tabId][1];
             }
         }
+
         function setTheme(themeName) {
             document.body.className = "h-full flex overflow-hidden";
             document.body.style.backgroundColor = "";
             if (themeName !== 'default') { document.body.classList.add(`theme-${themeName}`); }
             showToast(`Theme changed to ${themeName.toUpperCase()}`, 'info');
         }
+
         function toggleExportMenu() {
             const dropdown = document.getElementById('export-dropdown');
             dropdown.classList.toggle('hidden');
         }
+
         function downloadAsPDF() {
             const element = document.getElementById('printable-area');
             const opt = {
@@ -1280,7 +1364,9 @@
                 showToast('PDF Report downloaded!', 'success');
             });
         }
+
         function printCurrentModule() { window.print(); }
+
         function renderAllTables() {
             renderOutgoingTable(); renderIncomingTable(); renderActivitiesTable();
             renderIsoTable(); renderOpsTable(); renderHadrTable(); renderPeaceTable();
@@ -1288,6 +1374,7 @@
             renderVesselsTable(); renderJtfDeployTable(); renderJtfRealignTable();
             updateDashboardCounters();
         }
+
         function updateDashboardCounters() {
             document.getElementById('cnt-outgoing').innerText = store.outgoing.length;
             document.getElementById('cnt-incoming').innerText = store.incoming.length;
@@ -1338,17 +1425,24 @@
             }
             if (jtfChartInstance) updateChartData();
         }
+
         function getActionButtons(module, index) {
+            const role = localStorage.getItem('tacCurrentRole');
+            if (role === 'client') return ''; // Returns empty string for client view
             return `
-                <div class="flex items-center justify-end space-x-1">
-                    <button onclick="editRecord('${module}', ${index})" title="Edit" class="p-1 rounded hover:bg-cyan-500/20 text-cyan-400"><i class="ph-bold ph-pencil-simple text-base"></i></button>
-                    <button onclick="deleteRecord('${module}', ${index})" title="Delete" class="p-1 rounded hover:bg-red-500/20 text-red-400"><i class="ph-bold ph-trash text-base"></i></button>
-                </div>
+                <td class="p-3 text-right admin-only">
+                    <div class="flex items-center justify-end space-x-1">
+                        <button onclick="editRecord('${module}', ${index})" title="Edit" class="p-1 rounded hover:bg-cyan-500/20 text-cyan-400"><i class="ph-bold ph-pencil-simple text-base"></i></button>
+                        <button onclick="deleteRecord('${module}', ${index})" title="Delete" class="p-1 rounded hover:bg-red-500/20 text-red-400"><i class="ph-bold ph-trash text-base"></i></button>
+                    </div>
+                </td>
             `;
         }
+
         function renderEmptyRow(colspan, text = "No logs available. Click Add button to create entry.") {
             return `<tr><td colspan="${colspan}" class="p-6 text-center text-gray-500 italic font-mono text-xs">${text}</td></tr>`;
         }
+
         function renderOutgoingTable() {
             const tbody = document.getElementById('table-outgoing');
             if (!tbody) return;
@@ -1362,10 +1456,11 @@
                     <td class="p-3"><span class="px-2 py-0.5 text-[10px] rounded font-bold bg-amber-900/60 text-amber-200">${item.classification}</span></td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
                     <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    <td class="p-3 text-right">${getActionButtons('outgoing', idx)}</td>
+                    ${getActionButtons('outgoing', idx)}
                 </tr>
             `).join('');
         }
+
         function renderIncomingTable() {
             const tbody = document.getElementById('table-incoming');
             if (!tbody) return;
@@ -1378,10 +1473,11 @@
                     <td class="p-3">${item.subject}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
                     <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    <td class="p-3 text-right">${getActionButtons('incoming', idx)}</td>
+                    ${getActionButtons('incoming', idx)}
                 </tr>
             `).join('');
         }
+
         function renderActivitiesTable() {
             const tbody = document.getElementById('table-activities');
             if (!tbody) return;
@@ -1394,10 +1490,11 @@
                     <td class="p-3"><span class="px-2 py-0.5 text-[10px] bg-cyan-900/40 text-cyan-200 rounded">${item.jtf}</span></td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
                     <td class="p-3 text-amber-300/80 italic">${item.remarks || '-'}</td>
-                    <td class="p-3 text-right">${getActionButtons('activities', idx)}</td>
+                    ${getActionButtons('activities', idx)}
                 </tr>
             `).join('');
         }
+
         function renderIsoTable() {
             const tbody = document.getElementById('table-iso_branch');
             if (!tbody) return;
@@ -1409,10 +1506,11 @@
                     <td class="p-3 text-gray-300">${item.location}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
                     <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    <td class="p-3 text-right">${getActionButtons('iso_branch', idx)}</td>
+                    ${getActionButtons('iso_branch', idx)}
                 </tr>
             `).join('');
         }
+
         function renderOpsTable() {
             const tbody = document.getElementById('table-ops_branch');
             if (!tbody) return;
@@ -1424,10 +1522,11 @@
                     <td class="p-3 text-gray-300">${item.location}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
                     <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    <td class="p-3 text-right">${getActionButtons('ops_branch', idx)}</td>
+                    ${getActionButtons('ops_branch', idx)}
                 </tr>
             `).join('');
         }
+
         function renderHadrTable() {
             const tbody = document.getElementById('table-hadr_branch');
             if (!tbody) return;
@@ -1439,10 +1538,11 @@
                     <td class="p-3 text-gray-300">${item.location}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
                     <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    <td class="p-3 text-right">${getActionButtons('hadr_branch', idx)}</td>
+                    ${getActionButtons('hadr_branch', idx)}
                 </tr>
             `).join('');
         }
+
         function renderPeaceTable() {
             const tbody = document.getElementById('table-peace_branch');
             if (!tbody) return;
@@ -1454,10 +1554,11 @@
                     <td class="p-3 text-gray-300">${item.location}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
                     <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    <td class="p-3 text-right">${getActionButtons('peace_branch', idx)}</td>
+                    ${getActionButtons('peace_branch', idx)}
                 </tr>
             `).join('');
         }
+
         function renderCmdMovementsTable() {
             const tbody = document.getElementById('table-cmd_movements');
             if (!tbody) return;
@@ -1470,10 +1571,11 @@
                     <td class="p-3 font-mono">${item.timing}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
                     <td class="p-3 text-gray-300 italic">${item.remarks || '-'}</td>
-                    <td class="p-3 text-right">${getActionButtons('cmd_movements', idx)}</td>
+                    ${getActionButtons('cmd_movements', idx)}
                 </tr>
             `).join('');
         }
+
         function renderDepMovementsTable() {
             const tbody = document.getElementById('table-dep_movements');
             if (!tbody) return;
@@ -1486,10 +1588,11 @@
                     <td class="p-3 font-mono">${item.timing}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
                     <td class="p-3 text-gray-300 italic">${item.remarks || '-'}</td>
-                    <td class="p-3 text-right">${getActionButtons('dep_movements', idx)}</td>
+                    ${getActionButtons('dep_movements', idx)}
                 </tr>
             `).join('');
         }
+
         function renderAircraftTable() {
             const tbody = document.getElementById('table-aircraft');
             if (!tbody) return;
@@ -1503,10 +1606,11 @@
                     <td class="p-3">${item.purpose}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
                     <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    <td class="p-3 text-right">${getActionButtons('aircraft', idx)}</td>
+                    ${getActionButtons('aircraft', idx)}
                 </tr>
             `).join('');
         }
+
         function renderVesselsTable() {
             const tbody = document.getElementById('table-vessels');
             if (!tbody) return;
@@ -1520,10 +1624,11 @@
                     <td class="p-3">${item.detail}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
                     <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    <td class="p-3 text-right">${getActionButtons('vessels', idx)}</td>
+                    ${getActionButtons('vessels', idx)}
                 </tr>
             `).join('');
         }
+
         function renderJtfDeployTable() {
             const tbody = document.getElementById('table-jtf_deploy');
             if (!tbody) return;
@@ -1538,10 +1643,11 @@
                     <td class="p-3 font-mono text-purple-300 whitespace-nowrap">${item.date_realigned || '-'}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
                     <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    <td class="p-3 text-right">${getActionButtons('jtf_deploy', idx)}</td>
+                    ${getActionButtons('jtf_deploy', idx)}
                 </tr>
             `).join('');
         }
+
         function renderJtfRealignTable() {
             const tbody = document.getElementById('table-jtf_realign');
             if (!tbody) return;
@@ -1556,11 +1662,18 @@
                     <td class="p-3 text-gray-300">${item.auth}</td>
                     <td class="p-3">${renderStatusBadge(item.status)}</td>
                     <td class="p-3 text-gray-400 italic">${item.remarks || '-'}</td>
-                    <td class="p-3 text-right">${getActionButtons('jtf_realign', idx)}</td>
+                    ${getActionButtons('jtf_realign', idx)}
                 </tr>
             `).join('');
         }
+
         function openModal(module, editIndex = null) {
+            const role = localStorage.getItem('tacCurrentRole');
+            if (role === 'client') {
+                showToast('Client account has view-only access.', 'error');
+                return;
+            }
+
             document.getElementById('crud-modal').classList.remove('hidden');
             document.getElementById('form-module').value = module;
             document.getElementById('form-edit-index').value = editIndex !== null ? editIndex : '';
@@ -1694,9 +1807,17 @@
             });
             document.getElementById('form-field-remarks').value = currentObj.remarks || '';
         }
+
         function closeModal() { document.getElementById('crud-modal').classList.add('hidden'); }
+
         async function handleFormSubmit(e) {
             e.preventDefault();
+            const role = localStorage.getItem('tacCurrentRole');
+            if (role === 'client') {
+                showToast('Client account is not allowed to edit or add data.', 'error');
+                return;
+            }
+
             const module = document.getElementById('form-module').value;
             const editIdxStr = document.getElementById('form-edit-index').value;
             const isEdit = editIdxStr !== '';
@@ -1717,8 +1838,16 @@
             renderAllTables();
             closeModal();
         }
+
         function editRecord(module, index) { openModal(module, index); }
+
         async function deleteRecord(module, index) {
+            const role = localStorage.getItem('tacCurrentRole');
+            if (role === 'client') {
+                showToast('Client account cannot delete records.', 'error');
+                return;
+            }
+
             const confirmed = await showConfirmModal('DELETE OPERATIONAL LOG', 'Are you sure you want to permanently delete this record?');
             if (confirmed) {
                 store[module].splice(index, 1);
@@ -1727,11 +1856,13 @@
                 showToast('Record deleted permanently', 'error');
             }
         }
+
         function filterTable(module, query) {
             const trs = document.querySelectorAll(`#table-${module} tr`);
             const q = query.toLowerCase();
             trs.forEach(tr => { tr.style.display = tr.innerText.toLowerCase().includes(q) ? '' : 'none'; });
         }
+
         function exportDashboardData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(store, null, 2));
             const dlAnchor = document.createElement('a');
@@ -1742,7 +1873,14 @@
             dlAnchor.remove();
             showToast('Operational data exported as JSON!', 'success');
         }
+
         function importDashboardData(event) {
+            const role = localStorage.getItem('tacCurrentRole');
+            if (role === 'client') {
+                showToast('Client account cannot import data.', 'error');
+                return;
+            }
+
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
@@ -1763,6 +1901,7 @@
             };
             reader.readAsText(file);
         }
+
         function initChart() {
             const ctx = document.getElementById('jtfChart');
             if (!ctx) return;
@@ -1796,6 +1935,7 @@
                 }
             });
         }
+
         function updateChartData() {
             if (!jtfChartInstance) return;
             const jtfSectors = ['JTF Zampelan', 'JTF Orion', 'JTF Poseidon', 'JTF Central'];
