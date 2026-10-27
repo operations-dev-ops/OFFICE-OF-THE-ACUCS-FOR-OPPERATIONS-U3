@@ -2013,7 +2013,7 @@
             const fieldConfigs = {
                 outgoing: [
                     { name: 'id', label: 'Control #', type: 'text', val: currentObj.id || `MSG-OUT-${Math.floor(100 + Math.random()*900)}` },
-                    { name: 'entry_date', label: 'Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
+                    { name: 'entry_date', label: 'Date (dd/mm/yyyy)', type: 'date', val: currentObj.entry_date || '' },
                     { name: 'recipient', label: 'Recipient Unit', type: 'text', val: currentObj.recipient || '' },
                     { name: 'subject', label: 'Subject / Directives', type: 'text', val: currentObj.subject || '' },
                     { name: 'classification', label: 'Classification', type: 'select', options: ['RESTRICTED', 'CONFIDENTIAL', 'SECRET', 'TOP SECRET'], val: currentObj.classification || 'SECRET' },
@@ -2021,51 +2021,51 @@
                 ],
                 incoming: [
                     { name: 'id', label: 'Control #', type: 'text', val: currentObj.id || `MSG-INC-${Math.floor(100 + Math.random()*900)}` },
-                    { name: 'entry_date', label: 'Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
+                    { name: 'entry_date', label: 'Date (dd/mm/yyyy)', type: 'date', val: currentObj.entry_date || '' },
                     { name: 'origin', label: 'Originating Unit', type: 'text', val: currentObj.origin || '' },
                     { name: 'subject', label: 'Subject / Summary', type: 'text', val: currentObj.subject || '' },
                     { name: 'status', label: 'Processing Status', type: 'select', options: ['RECEIVED', 'FOR ACTION', 'FOR APPROVAL', 'FORWARDED'], val: currentObj.status || 'PENDING ACTION' }
                 ],
                 activities: [
-                    { name: 'entry_date', label: 'Activity Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
+                    { name: 'entry_date', label: 'Activity Date (dd/mm/yyyy)', type: 'date', val: currentObj.entry_date || '' },
                     { name: 'title', label: 'Activity Title', type: 'text', val: currentObj.title || '' },
                     { name: 'location', label: 'Field Location', type: 'text', val: currentObj.location || '' },
                     { name: 'jtf', label: 'JTF Sector', type: 'select', options: ['JTF Zampelan', 'JTF Orion', 'JTF Poseidon', 'JTF Central'], val: currentObj.jtf || 'JTF Zampelan' },
                     { name: 'status', label: 'Activity Status', type: 'select', options: ['ONGOING', 'COMPLETED', 'UPCOMING', 'PLANNING', 'HALTED'], val: currentObj.status || 'ONGOING' }
                 ],
                 iso_branch: [
-                    { name: 'date', label: 'Activity Date (mm/dd/yyyy)', type: 'date', val: currentObj.date || '' },
+                    { name: 'date', label: 'Activity Date (dd/mm/yyyy)', type: 'date', val: currentObj.date || '' },
                     { name: 'title', label: 'ISO Activity Title', type: 'text', val: currentObj.title || '', required: true },
                     { name: 'location', label: 'AOR / Location', type: 'text', val: currentObj.location || '', required: true },
                     { name: 'status', label: 'ISO Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLETED', 'PLANNING', 'UPCOMING', 'ON ROUTE'], val: currentObj.status || 'ONGOING' }
                 ],
                 ops_branch: [
-                    { name: 'entry_date', label: 'Operation Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
+                    { name: 'entry_date', label: 'Operation Date (dd/mm/yyyy)', type: 'date', val: currentObj.entry_date || '' },
                     { name: 'title', label: 'Operation Title', type: 'text', val: currentObj.title || '' },
                     { name: 'location', label: 'Target / Sector', type: 'text', val: currentObj.location || '' },
                     { name: 'status', label: 'Operation Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLETED', 'PLANNING', 'UPCOMING', 'ON ROUTE'], val: currentObj.status || 'ONGOING' }
                 ],
                 hadr_branch: [
-                    { name: 'entry_date', label: 'Mission Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
+                    { name: 'entry_date', label: 'Mission Date (dd/mm/yyyy)', type: 'date', val: currentObj.entry_date || '' },
                     { name: 'title', label: 'Relief / Rescue Mission', type: 'text', val: currentObj.title || '' },
                     { name: 'location', label: 'Affected Area', type: 'text', val: currentObj.location || '' },
                     { name: 'status', label: 'Mission Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLETED', 'PLANNING', 'UPCOMING', 'ON ROUTE'], val: currentObj.status || 'ACTIVE' }
                 ],
                 peace_branch: [
-                    { name: 'entry_date', label: 'Initiative Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
+                    { name: 'entry_date', label: 'Initiative Date (dd/mm/yyyy)', type: 'date', val: currentObj.entry_date || '' },
                     { name: 'title', label: 'Dialogue / Initiative', type: 'text', val: currentObj.title || '' },
                     { name: 'location', label: 'Community / Venue', type: 'text', val: currentObj.location || '' },
                     { name: 'status', label: 'Peace Status', type: 'select', options: ['FOR ACTION', 'RECURRENT', 'COMPLETED', 'PLANNING', 'UPCOMING', 'ON ROUTE', 'SCHEDULED'], val: currentObj.status || 'SCHEDULED' }
                 ],
                 cmd_movements: [
-                    { name: 'entry_date', label: 'Movement Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
+                    { name: 'entry_date', label: 'Movement Date (dd/mm/yyyy)', type: 'date', val: currentObj.entry_date || '' },
                     { name: 'name', label: 'Commander Name', type: 'text', val: currentObj.name || 'COMMANDER' },
                     { name: 'route', label: 'Route / Location', type: 'text', val: currentObj.route || '' },
                     { name: 'timing', label: 'Timing (ETD/ETA)', type: 'text', val: currentObj.timing || 'ETD: 0800H / ETA: 1200H' },
                     { name: 'status', label: 'Movement Status', type: 'select', options: ['ONGOING', 'UPCOMING', 'COMPLETED'], val: currentObj.status || 'IN TRANSIT' }
                 ],
                 dep_movements: [
-                    { name: 'entry_date', label: 'Movement Date (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
+                    { name: 'entry_date', label: 'Movement Date (dd/mm/yyyy)', type: 'date', val: currentObj.entry_date || '' },
                     { name: 'name', label: 'Deputy Commander', type: 'text', val: currentObj.name || 'DEPUTY COMMANDER' },
                     { name: 'route', label: 'Route / Location', type: 'text', val: currentObj.route || '' },
                     { name: 'timing', label: 'Timing (ETD/ETA)', type: 'text', val: currentObj.timing || 'ETD: N/A / ETA: N/A' },
@@ -2073,7 +2073,7 @@
                 ],
                 aircraft: [
                     { name: 'id', label: 'Request ID', type: 'text', val: currentObj.id || `AC-REQ-${Math.floor(10 + Math.random()*90)}` },
-                    { name: 'entry_date', label: 'Date Requested (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
+                    { name: 'entry_date', label: 'Date Requested (dd/mm/yyyy)', type: 'date', val: currentObj.entry_date || '' },
                     { name: 'unit', label: 'Requesting Unit', type: 'text', val: currentObj.unit || '' },
                     { name: 'type', label: 'Aircraft Type', type: 'text', val: currentObj.type || 'UH-1H Huey' },
                     { name: 'purpose', label: 'Mission Purpose', type: 'text', val: currentObj.purpose || '' },
@@ -2081,7 +2081,7 @@
                 ],
                 vessels: [
                     { name: 'id', label: 'Directive #', type: 'text', val: currentObj.id || `DIR-PN-${Math.floor(10 + Math.random()*90)}` },
-                    { name: 'entry_date', label: 'Date Issued (mm/dd/yyyy)', type: 'date', val: currentObj.entry_date || '' },
+                    { name: 'entry_date', label: 'Date Issued (dd/mm/yyyy)', type: 'date', val: currentObj.entry_date || '' },
                     { name: 'vessel', label: 'Vessel Name', type: 'text', val: currentObj.vessel || '' },
                     { name: 'area', label: 'Patrol Area / AO', type: 'text', val: currentObj.area || '' },
                     { name: 'detail', label: 'Directive Detail', type: 'text', val: currentObj.detail || '' },
@@ -2092,16 +2092,16 @@
                     { name: 'unit', label: 'Unit Name', type: 'text', val: currentObj.unit || '', required: true },
                     { name: 'count', label: 'Personnel Count', type: 'text', val: currentObj.count || '100', required: true },
                     { name: 'location', label: 'Assigned Location', type: 'text', val: currentObj.location || '', required: true },
-                    { name: 'date_deployed', label: 'Date Deployed (mm/dd/yyyy)', type: 'date', val: currentObj.date_deployed || '' },
-                    { name: 'date_realigned', label: 'Date Re-deployed (mm/dd/yyyy - Optional)', type: 'date', val: currentObj.date_realigned || '' },
+                    { name: 'date_deployed', label: 'Date Deployed (dd/mm/yyyy)', type: 'date', val: currentObj.date_deployed || '' },
+                    { name: 'date_realigned', label: 'Date Re-deployed (dd/mm/yyyy - Optional)', type: 'date', val: currentObj.date_realigned || '' },
                     { name: 'status', label: 'Deployment Status', type: 'select', options: ['DEPLOYED', 'STANDBY', 'RE_DEPLOYING', 'STAND_DOWN', 'CANCELLED'], val: currentObj.status || 'DEPLOYED' }
                 ],
                 jtf_realign: [
                     { name: 'id', label: 'Order #', type: 'text', val: currentObj.id || `ORD-RL-${Math.floor(10 + Math.random()*90)}` },
                     { name: 'unit', label: 'Unit Realigned', type: 'text', val: currentObj.unit || '', required: true },
                     { name: 'route', label: 'From JTF -> To JTF', type: 'text', val: currentObj.route || 'JTF Orion -> JTF Zampelan', required: true },
-                    { name: 'date_deployed', label: 'Date Deployed (mm/dd/yyyy)', type: 'date', val: currentObj.date_deployed || '' },
-                    { name: 'date_realigned', label: 'Date Re-deployed (mm/dd/yyyy - Optional)', type: 'date', val: currentObj.date_realigned || '' },
+                    { name: 'date_deployed', label: 'Date Deployed (dd/mm/yyyy)', type: 'date', val: currentObj.date_deployed || '' },
+                    { name: 'date_realigned', label: 'Date Re-deployed (dd/mm/yyyy - Optional)', type: 'date', val: currentObj.date_realigned || '' },
                     { name: 'auth', label: 'Authorization', type: 'text', val: currentObj.auth || 'COMMANDER', required: true },
                     { name: 'status', label: 'Realignment Status', type: 'select', options: ['APPROVED', 'PENDING', 'EXECUTED', 'CANCELLED'], val: currentObj.status || 'APPROVED' }
                 ]
