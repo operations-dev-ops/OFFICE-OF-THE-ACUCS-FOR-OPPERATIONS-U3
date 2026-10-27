@@ -131,7 +131,6 @@
     </style>
 </head>
 <body class="h-full flex overflow-hidden relative">
-
     <!-- ================= AUTHENTICATION MODAL OVERLAY ================= -->
     <div id="authContainer" class="fixed inset-0 z-50 bg-slate-900/95 backdrop-blur-md flex items-center justify-center p-4 font-sans overflow-y-auto">
         <div class="max-w-md w-full bg-slate-800 rounded-2xl shadow-2xl overflow-hidden border border-slate-700 my-auto relative z-10">
@@ -180,7 +179,6 @@
                     Need command access? <button type="button" onclick="switchAuthTab('signup')" class="text-cyan-400 hover:text-cyan-300 font-bold underline cursor-pointer">Register Account</button>
                 </div>
             </div>
-
             <!-- SIGN UP SECTION -->
             <div id="signupSection" class="p-6 sm:p-8 hidden">
                 <div class="text-center mb-6">
@@ -249,7 +247,6 @@
             </div>
         </div>
     </div>
-
     <!-- ================= TAC-COM OPERATIONAL COMMAND DASHBOARD ================= -->
     <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2 pointer-events-none max-w-xs sm:max-w-sm"></div>
     <div id="mobile-backdrop" class="fixed inset-0 bg-black/60 z-20 md:hidden hidden transition-opacity" onclick="closeSidebar()"></div>
@@ -411,7 +408,6 @@
             </div>
         </div>
     </aside>
-
     <!-- MAIN CONTENT AREA -->
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header class="h-16 tac-panel border-b tac-border flex items-center justify-between px-3 sm:px-6 z-10 bg-opacity-90">
@@ -461,7 +457,6 @@
                 </div>
             </div>
         </header>
-
         <!-- MAIN SCROLLABLE BODY -->
         <main class="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6" id="printable-area">
             <!-- TAB 1: DASHBOARD OVERVIEW -->
@@ -579,7 +574,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- TAB: OPERATIONAL CALENDAR -->
             <div id="tab-calendar" class="tab-content hidden space-y-4">
                 <div class="tac-panel p-5 rounded-2xl border bg-gradient-to-r from-slate-900 via-slate-900/90 to-cyan-950/40 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -627,7 +621,6 @@
                     <div id="calendar-day-entries-list" class="space-y-2.5 text-xs max-h-60 overflow-y-auto pr-1"></div>
                 </div>
             </div>
-
             <!-- OTHER MODULE TABS -->
             <div id="tab-outgoing" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -657,7 +650,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="tab-incoming" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <input type="text" onkeyup="filterTable('incoming', this.value)" placeholder="Search incoming..." class="px-3 py-2 text-xs rounded-lg bg-black/30 border tac-border focus:outline-none focus:border-cyan-500 text-gray-200 w-full sm:w-64">
@@ -685,7 +677,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="tab-activities" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <input type="text" onkeyup="filterTable('activities', this.value)" placeholder="Search activities..." class="px-3 py-2 text-xs rounded-lg bg-black/30 border tac-border focus:outline-none focus:border-cyan-500 text-gray-200 w-full sm:w-64">
@@ -713,7 +704,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="tab-iso_branch" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <input type="text" onkeyup="filterTable('iso_branch', this.value)" placeholder="Search ISO activities..." class="px-3 py-2 text-xs rounded-lg bg-black/30 border tac-border focus:outline-none focus:border-cyan-500 text-gray-200 w-full sm:w-64">
@@ -740,7 +730,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="tab-ops_branch" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <input type="text" onkeyup="filterTable('ops_branch', this.value)" placeholder="Search operations..." class="px-3 py-2 text-xs rounded-lg bg-black/30 border tac-border focus:outline-none focus:border-cyan-500 text-gray-200 w-full sm:w-64">
@@ -767,7 +756,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="tab-hadr_branch" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <input type="text" onkeyup="filterTable('hadr_branch', this.value)" placeholder="Search HADR..." class="px-3 py-2 text-xs rounded-lg bg-black/30 border tac-border focus:outline-none focus:border-cyan-500 text-gray-200 w-full sm:w-64">
@@ -794,7 +782,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="tab-peace_branch" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <input type="text" onkeyup="filterTable('peace_branch', this.value)" placeholder="Search peace initiatives..." class="px-3 py-2 text-xs rounded-lg bg-black/30 border tac-border focus:outline-none focus:border-cyan-500 text-gray-200 w-full sm:w-64">
@@ -821,7 +808,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="tab-cmd_movements" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <h3 class="font-bold text-xs sm:text-sm uppercase">Commander Movement Logs</h3>
@@ -849,7 +835,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="tab-dep_movements" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <h3 class="font-bold text-xs sm:text-sm uppercase">Deputy Commander Movement Logs</h3>
@@ -877,7 +862,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="tab-aircraft" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <h3 class="font-bold text-xs sm:text-sm uppercase">Air Asset & Recon Requests</h3>
@@ -906,7 +890,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="tab-vessels" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <h3 class="font-bold text-xs sm:text-sm uppercase">Philippine Navy Vessel Directives</h3>
@@ -935,7 +918,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="tab-jtf_deploy" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <h3 class="font-bold text-xs sm:text-sm uppercase">Joint Task Force Deployment Roster</h3>
@@ -965,7 +947,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="tab-jtf_realign" class="tab-content hidden space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <h3 class="font-bold text-xs sm:text-sm uppercase">Joint Task Force Force Realignment Roster</h3>
@@ -997,7 +978,6 @@
             </div>
         </main>
     </div>
-
     <!-- DYNAMIC FORM MODAL -->
     <div id="crud-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
         <div class="tac-panel w-full max-w-lg rounded-2xl border shadow-2xl p-4 sm:p-6 space-y-4 my-auto max-h-[92vh] overflow-y-auto">
@@ -1021,7 +1001,6 @@
             </form>
         </div>
     </div>
-
     <!-- CONFIRM MODAL -->
     <div id="confirm-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="tac-panel w-full max-w-sm rounded-2xl border shadow-2xl p-6 space-y-4 text-center">
@@ -1036,7 +1015,6 @@
             </div>
         </div>
     </div>
-
     <!-- SETTINGS MASTER MODAL -->
     <div id="settings-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="tac-panel w-full max-w-2xl rounded-2xl border shadow-2xl p-6 space-y-4 my-auto max-h-[90vh] overflow-y-auto">
@@ -1065,7 +1043,6 @@
             </div>
         </div>
     </div>
-
     <!-- EDIT ACCOUNT SUB-MODAL -->
     <div id="edit-account-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
         <div class="tac-panel w-full max-w-sm rounded-2xl border shadow-2xl p-5 space-y-4">
@@ -1101,7 +1078,6 @@
             </form>
         </div>
     </div>
-
     <!-- JAVASCRIPT LOGIC -->
     <script>
         const API_URL = window.location.origin;
@@ -1136,37 +1112,30 @@
             'IN TRANSIT': 'bg-emerald-900/80 text-emerald-300 border-emerald-500/50',
             'STATIONARY': 'bg-gray-800 text-gray-300 border-gray-700'
         };
-
         function renderStatusBadge(status) {
             const style = STATUS_BADGE_MAP[status] || 'bg-gray-800 text-gray-300 border-gray-700';
             return `<span class="px-2 py-0.5 text-[10px] rounded font-bold border ${style}">${status || 'N/A'}</span>`;
         }
-
         let jtfChartInstance = null;
         let confirmResolver = null;
-
         window.addEventListener('DOMContentLoaded', async () => {
             await loadFromLocalStorage();
             await checkAuthSession();
             updateLiveClock();
             setInterval(updateLiveClock, 1000);
         });
-
         async function saveAccountsToStorage() {
             store.accounts = registeredAccounts;
             await saveToLocalStorage();
         }
-
         function openSidebar() {
             document.getElementById('sidebar').classList.remove('-translate-x-full');
             document.getElementById('mobile-backdrop').classList.remove('hidden');
         }
-
         function closeSidebar() {
             document.getElementById('sidebar').classList.add('-translate-x-full');
             document.getElementById('mobile-backdrop').classList.add('hidden');
         }
-
         async function checkAuthSession() {
             const currentUser = localStorage.getItem('tacCurrentOperator');
             const userRole = localStorage.getItem('tacCurrentRole') || 'admin';
@@ -1192,7 +1161,6 @@
                 authContainer.classList.remove('hidden');
             }
         }
-
         function applyRolePermissions(role) {
             const adminElements = document.querySelectorAll('.admin-only, #btn-import-data');
             if (role === 'client') {
@@ -1201,7 +1169,6 @@
                 adminElements.forEach(el => el.classList.remove('hidden'));
             }
         }
-
         function switchAuthTab(tab) {
             const loginSec = document.getElementById('loginSection');
             const signupSec = document.getElementById('signupSection');
@@ -1217,7 +1184,6 @@
                 loginSec.classList.remove('hidden');
             }
         }
-
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -1231,7 +1197,6 @@
                 icon.classList.add('fa-eye');
             }
         }
-
         function showAuthAlert(type, message, section) {
             const alertBox = document.getElementById(section + 'Alert');
             alertBox.className = `mb-4 px-4 py-3 rounded-lg text-xs sm:text-sm flex items-center gap-2 ${
@@ -1240,7 +1205,6 @@
             alertBox.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i> <span>${message}</span>`;
             alertBox.classList.remove('hidden');
         }
-
         async function handleSignup(event) {
             event.preventDefault();
             const name = document.getElementById('signupName').value.trim();
@@ -1248,7 +1212,6 @@
             const password = document.getElementById('signupPassword').value;
             const roleEl = document.querySelector('input[name="signupRole"]:checked');
             const role = roleEl ? roleEl.value : 'admin';
-
             const exists = registeredAccounts.some(acc => acc.username.toLowerCase() === username.toLowerCase());
             if (exists) {
                 showAuthAlert('error', 'Username already taken. Please choose another.', 'signup');
@@ -1262,7 +1225,6 @@
                 document.getElementById('loginUsername').value = username;
             }, 1200);
         }
-
         async function handleLogin(event) {
             event.preventDefault();
             const username = document.getElementById('loginUsername').value.trim();
@@ -1279,7 +1241,6 @@
                 showAuthAlert('error', 'Invalid username or password credentials.', 'login');
             }
         }
-
         function handleLogout() {
             showConfirmModal('SIGN OUT', 'Are you sure you want to log out of TAC-COM Command?').then(confirmed => {
                 if (confirmed) {
@@ -1289,12 +1250,10 @@
                 }
             });
         }
-
         function updateLiveClock() {
             const now = new Date();
             document.getElementById('live-clock').innerText = now.toISOString().substring(11, 19) + ' Z';
         }
-
         async function saveToLocalStorage() {
             const role = localStorage.getItem('tacCurrentRole');
             if (role === 'client') return;
@@ -1309,7 +1268,6 @@
                 console.error('Failed to sync data with server:', err);
             }
         }
-
         async function loadFromLocalStorage() {
             try {
                 const response = await fetch(`${API_URL}/api/data`);
@@ -1337,7 +1295,6 @@
                 console.error('Failed to load data from server:', err);
             }
         }
-
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             if (!container) return;
@@ -1353,7 +1310,6 @@
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
-
         function showConfirmModal(title, message, isDanger = true) {
             return new Promise((resolve) => {
                 confirmResolver = resolve;
@@ -1371,12 +1327,10 @@
                 document.getElementById('confirm-modal').classList.remove('hidden');
             });
         }
-
         function closeConfirmModal(result) {
             document.getElementById('confirm-modal').classList.add('hidden');
             if (confirmResolver) { confirmResolver(result); confirmResolver = null; }
         }
-
         async function openSettingsModal(defaultTab = 'main') {
             const role = localStorage.getItem('tacCurrentRole');
             await loadFromLocalStorage();
@@ -1387,7 +1341,6 @@
                 switchSettingsSubTab(defaultTab === 'main' ? 'accounts' : defaultTab);
             }
         }
-
         function switchSettingsSubTab(tab) {
             const role = localStorage.getItem('tacCurrentRole');
             const btns = {
@@ -1426,7 +1379,6 @@
                 `;
             }
         }
-
         function renderAccountsListTable() {
             const content = document.getElementById('settings-sub-content');
             if (registeredAccounts.length === 0) {
@@ -1479,7 +1431,6 @@
                 </div>
             `;
         }
-
         function openEditAccountModal(index) {
             const acc = registeredAccounts[index];
             document.getElementById('editAccIndex').value = index;
@@ -1489,11 +1440,9 @@
             document.getElementById('editAccRole').value = acc.role || 'admin';
             document.getElementById('edit-account-modal').classList.remove('hidden');
         }
-
         function closeEditAccountModal() {
             document.getElementById('edit-account-modal').classList.add('hidden');
         }
-
         async function saveAccountEdit(e) {
             e.preventDefault();
             const idx = parseInt(document.getElementById('editAccIndex').value);
@@ -1512,7 +1461,6 @@
             closeEditAccountModal();
             renderAccountsListTable();
         }
-
         async function deleteAccount(index) {
             const targetAcc = registeredAccounts[index];
             const confirmed = await showConfirmModal('DELETE ACCOUNT', `Are you sure you want to delete user "${targetAcc.username}" (${targetAcc.name})?`);
@@ -1523,9 +1471,7 @@
                 renderAccountsListTable();
             }
         }
-
         function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
-
         function switchTab(tabId) {
             closeSidebar();
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -1541,34 +1487,71 @@
                 renderCalendar();
             }
         }
-
         function changeMonth(direction) {
             calendarDate.setMonth(calendarDate.getMonth() + direction);
             renderCalendar();
         }
-
         function goToCurrentMonth() {
             calendarDate = new Date();
             renderCalendar();
         }
 
+        // --- FIXED CALENDAR PARSING FUNCTIONS ---
         function parseItemDate(dateStr) {
-            if (!dateStr) return null;
+            if (!dateStr) return [];
             dateStr = dateStr.toString().trim();
-            if (dateStr.includes(' ')) {
-                dateStr = dateStr.split(' ')[0];
+            let dates = [];
+
+            if (dateStr.includes('and') || dateStr.includes(',')) {
+                let cleaned = dateStr.replace(/and/g, ',');
+                let parts = cleaned.split(',');
+                let baseMonthYear = "";
+                for (let i = parts.length - 1; i >= 0; i--) {
+                    let p = parts[i].trim();
+                    let parsedTest = new Date(p);
+                    if (!isNaN(parsedTest.getTime())) {
+                        baseMonthYear = ` ${parsedTest.toLocaleString('en', { month: 'long' })} ${parsedTest.getFullYear()}`;
+                        break;
+                    }
+                }
+                parts.forEach(part => {
+                    let numClean = part.replace(/[^\d]/g, '');
+                    if (numClean) {
+                        let fullStr = `${numClean}${baseMonthYear}`;
+                        let d = new Date(fullStr);
+                        if (!isNaN(d.getTime())) dates.push(d);
+                    }
+                });
+                return dates;
             }
-            let d = new Date(dateStr);
-            if (!isNaN(d.getTime())) return d;
-            
-            const re = /^(\d{1,4})[\/\-](\d{1,2})[\/\-](\d{1,4})$/;
-            const match = dateStr.match(re);
-            if (match) {
-                let p1 = parseInt(match[1]), p2 = parseInt(match[2]), p3 = parseInt(match[3]);
-                if (p1 > 1000) return new Date(p1, p2 - 1, p3);
-                else if (p3 > 1000) return new Date(p3, p1 - 1, p2);
+
+            if (dateStr.includes('-') || dateStr.toLowerCase().includes('to')) {
+                let separator = dateStr.includes('-') ? '-' : 'to';
+                let splitRange = dateStr.split(separator);
+                if (splitRange.length === 2) {
+                    let startPart = splitRange[0].trim();
+                    let endPart = splitRange[1].trim();
+                    if (!isNaN(startPart) && !isNaN(new Date(endPart).getTime())) {
+                        let endDateObj = new Date(endPart);
+                        let startD = new Date(endDateObj.getFullYear(), endDateObj.getMonth(), parseInt(startPart));
+                        let endD = endDateObj;
+                        if (!isNaN(startD.getTime()) && !isNaN(endD.getTime())) {
+                            let curr = new Date(startD);
+                            while (curr <= endD) {
+                                dates.push(new Date(curr));
+                                curr.setDate(curr.getDate() + 1);
+                            }
+                            return dates;
+                        }
+                    }
+                }
             }
-            return null;
+
+            let singleDate = new Date(dateStr);
+            if (!isNaN(singleDate.getTime())) {
+                dates.push(singleDate);
+            }
+            return dates;
         }
 
         function getEventsOnDate(targetDate) {
@@ -1578,18 +1561,21 @@
                 list.forEach(item => {
                     let rawDates = [item.entry_date, item.date, item.date_deployed, item.date_realigned, item.start_date, item.end_date];
                     rawDates.forEach(dtStr => {
-                        let d = parseItemDate(dtStr);
-                        if (d && d.getFullYear() === targetDate.getFullYear() && d.getMonth() === targetDate.getMonth() && d.getDate() === targetDate.getDate()) {
-                            const eventTitle = item[titleKey] || item.title || item.subject || item.id || item.unit || 'Operational Entry';
-                            const alreadyExists = events.some(ev => ev.title === eventTitle && ev.module === modName);
-                            if (!alreadyExists) {
-                                events.push({ title: eventTitle, module: modName, status: item.status || 'ACTIVE', color: badgeColor, remarks: item.remarks || item.location || item.area || '-' });
+                        if (!dtStr) return;
+                        let parsedDatesList = parseItemDate(dtStr);
+                        parsedDatesList.forEach(d => {
+                            if (d && d.getFullYear() === targetDate.getFullYear() && d.getMonth() === targetDate.getMonth() && d.getDate() === targetDate.getDate()) {
+                                const eventTitle = item[titleKey] || item.title || item.subject || item.id || item.unit || 'Operational Entry';
+                                const alreadyExists = events.some(ev => ev.title === eventTitle && ev.module === modName);
+                                if (!alreadyExists) {
+                                    events.push({ title: eventTitle, module: modName, status: item.status || 'ACTIVE', color: badgeColor, remarks: item.remarks || item.location || item.area || '-' });
+                                }
                             }
-                        }
+                        });
                     });
                 });
             };
-
+            
             checkAndPush(store.activities, 'title', 'Field Activity', 'bg-amber-900/60 text-amber-200 border-amber-700');
             checkAndPush(store.iso_branch, 'title', 'ISO Branch', 'bg-rose-900/60 text-rose-200 border-rose-700');
             checkAndPush(store.ops_branch, 'title', 'Operations', 'bg-cyan-900/60 text-cyan-200 border-cyan-700');
@@ -1665,7 +1651,6 @@
             const cntEl = document.getElementById('cnt-calendar');
             if (cntEl) cntEl.innerText = totalEventsCount;
         }
-
         function selectCalendarDate(year, month, day) {
             const selectedDate = new Date(year, month, day);
             const events = getEventsOnDate(selectedDate);
@@ -1698,19 +1683,16 @@
                 </div>
             `).join('');
         }
-
         function setTheme(themeName) {
             document.body.className = "h-full flex overflow-hidden relative";
             document.body.style.backgroundColor = "";
             if (themeName !== 'default') { document.body.classList.add(`theme-${themeName}`); }
             showToast(`Theme changed to ${themeName.toUpperCase()}`, 'info');
         }
-
         function toggleExportMenu() {
             const dropdown = document.getElementById('export-dropdown');
             dropdown.classList.toggle('hidden');
         }
-
         function downloadAsPDF() {
             const element = document.getElementById('printable-area');
             const opt = {
@@ -1725,9 +1707,7 @@
                 showToast('PDF Report downloaded!', 'success');
             });
         }
-
         function printCurrentModule() { window.print(); }
-
         function renderAllTables() {
             renderOutgoingTable(); renderIncomingTable(); renderActivitiesTable();
             renderIsoTable(); renderOpsTable(); renderHadrTable(); renderPeaceTable();
@@ -1736,7 +1716,6 @@
             updateDashboardCounters();
             renderCalendar();
         }
-
         function updateDashboardCounters() {
             document.getElementById('cnt-outgoing').innerText = store.outgoing.length;
             document.getElementById('cnt-incoming').innerText = store.incoming.length;
@@ -1787,7 +1766,6 @@
             }
             if (jtfChartInstance) updateChartData();
         }
-
         function getActionButtons(module, index) {
             const role = localStorage.getItem('tacCurrentRole');
             if (role === 'client') return '';
@@ -1800,11 +1778,9 @@
                 </td>
             `;
         }
-
         function renderEmptyRow(colspan, text = "No logs available. Click Add button to create entry.") {
             return `<tr><td colspan="${colspan}" class="p-6 text-center text-gray-500 italic font-mono text-xs">${text}</td></tr>`;
         }
-
         function renderOutgoingTable() {
             const tbody = document.getElementById('table-outgoing');
             if (!tbody) return;
@@ -1822,7 +1798,6 @@
                 </tr>
             `).join('');
         }
-
         function renderIncomingTable() {
             const tbody = document.getElementById('table-incoming');
             if (!tbody) return;
@@ -1839,7 +1814,6 @@
                 </tr>
             `).join('');
         }
-
         function renderActivitiesTable() {
             const tbody = document.getElementById('table-activities');
             if (!tbody) return;
@@ -1856,7 +1830,6 @@
                 </tr>
             `).join('');
         }
-
         function renderIsoTable() {
             const tbody = document.getElementById('table-iso_branch');
             if (!tbody) return;
@@ -1872,7 +1845,6 @@
                 </tr>
             `).join('');
         }
-
         function renderOpsTable() {
             const tbody = document.getElementById('table-ops_branch');
             if (!tbody) return;
@@ -1888,7 +1860,6 @@
                 </tr>
             `).join('');
         }
-
         function renderHadrTable() {
             const tbody = document.getElementById('table-hadr_branch');
             if (!tbody) return;
@@ -1904,7 +1875,6 @@
                 </tr>
             `).join('');
         }
-
         function renderPeaceTable() {
             const tbody = document.getElementById('table-peace_branch');
             if (!tbody) return;
@@ -1920,7 +1890,6 @@
                 </tr>
             `).join('');
         }
-
         function renderCmdMovementsTable() {
             const tbody = document.getElementById('table-cmd_movements');
             if (!tbody) return;
@@ -1937,7 +1906,6 @@
                 </tr>
             `).join('');
         }
-
         function renderDepMovementsTable() {
             const tbody = document.getElementById('table-dep_movements');
             if (!tbody) return;
@@ -1954,7 +1922,6 @@
                 </tr>
             `).join('');
         }
-
         function renderAircraftTable() {
             const tbody = document.getElementById('table-aircraft');
             if (!tbody) return;
@@ -1972,7 +1939,6 @@
                 </tr>
             `).join('');
         }
-
         function renderVesselsTable() {
             const tbody = document.getElementById('table-vessels');
             if (!tbody) return;
@@ -1990,7 +1956,6 @@
                 </tr>
             `).join('');
         }
-
         function renderJtfDeployTable() {
             const tbody = document.getElementById('table-jtf_deploy');
             if (!tbody) return;
@@ -2009,7 +1974,6 @@
                 </tr>
             `).join('');
         }
-
         function renderJtfRealignTable() {
             const tbody = document.getElementById('table-jtf_realign');
             if (!tbody) return;
@@ -2028,7 +1992,6 @@
                 </tr>
             `).join('');
         }
-
         function openModal(module, editIndex = null) {
             const role = localStorage.getItem('tacCurrentRole');
             if (role === 'client') {
@@ -2168,9 +2131,7 @@
             });
             document.getElementById('form-field-remarks').value = currentObj.remarks || '';
         }
-
         function closeModal() { document.getElementById('crud-modal').classList.add('hidden'); }
-
         async function handleFormSubmit(e) {
             e.preventDefault();
             const role = localStorage.getItem('tacCurrentRole');
@@ -2198,9 +2159,7 @@
             renderAllTables();
             closeModal();
         }
-
         function editRecord(module, index) { openModal(module, index); }
-
         async function deleteRecord(module, index) {
             const role = localStorage.getItem('tacCurrentRole');
             if (role === 'client') {
@@ -2215,13 +2174,11 @@
                 showToast('Record deleted permanently', 'error');
             }
         }
-
         function filterTable(module, query) {
             const trs = document.querySelectorAll(`#table-${module} tr`);
             const q = query.toLowerCase();
             trs.forEach(tr => { tr.style.display = tr.innerText.toLowerCase().includes(q) ? '' : 'none'; });
         }
-
         function exportDashboardData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(store, null, 2));
             const dlAnchor = document.createElement('a');
@@ -2232,7 +2189,6 @@
             dlAnchor.remove();
             showToast('Operational data exported as JSON!', 'success');
         }
-
         function importDashboardData(event) {
             const role = localStorage.getItem('tacCurrentRole');
             if (role === 'client') {
@@ -2260,7 +2216,6 @@
             };
             reader.readAsText(file);
         }
-
         function initChart() {
             const ctx = document.getElementById('jtfChart');
             if (!ctx) return;
@@ -2294,7 +2249,6 @@
                 }
             });
         }
-
         function updateChartData() {
             if (!jtfChartInstance) return;
             const jtfSectors = ['JTF Zampelan', 'JTF Orion', 'JTF Poseidon', 'JTF Central'];
