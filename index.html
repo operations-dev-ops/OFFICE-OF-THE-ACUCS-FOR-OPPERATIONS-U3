@@ -987,7 +987,7 @@
             </div>
             <form id="crud-form" onsubmit="handleFormSubmit(event)" class="space-y-3.5 text-xs">
                 <input type="hidden" id="form-module">
-                <input type="hidden" id="form-edit-index">
+                <input type="hidden" id="form-edit-id">
                 
                 <div id="dynamic-form-fields" class="space-y-3"></div>
                 <div>
@@ -1051,7 +1051,7 @@
                 <button onclick="closeEditAccountModal()" class="text-gray-400 hover:text-white"><i class="ph-bold ph-x text-base"></i></button>
             </div>
             <form onsubmit="saveAccountEdit(event)" class="space-y-3 text-xs">
-                <input type="hidden" id="editAccIndex">
+                <input type="hidden" id="editAccId">
                 <div>
                     <label class="block text-gray-400 mb-1 font-semibold uppercase">Full Name</label>
                     <input type="text" id="editAccName" required class="w-full p-2.5 rounded-lg bg-black/40 border tac-border text-white focus:border-cyan-500">
@@ -1078,9 +1078,10 @@
             </form>
         </div>
     </div>
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT LOGIC CONNECTED TO MONGODB BACKEND -->
     <script>
-        const API_URL = window.location.origin;
+        const API_URL = ''; // Ilagay ang URL ng inyong backend server dito kung hiwalay (hal. 'https://your-backend.onrender.com') o iwanang blanko kung same domain.
+
         let store = {
             outgoing: [], incoming: [], activities: [], iso_branch: [],
             ops_branch: [], hadr_branch: [], peace_branch: [],
@@ -1118,16 +1119,70 @@
         }
         let jtfChartInstance = null;
         let confirmResolver = null;
+
         window.addEventListener('DOMContentLoaded', async () => {
-            await loadFromLocalStorage();
+            await fetchStoreData();
             await checkAuthSession();
             updateLiveClock();
             setInterval(updateLiveClock, 1000);
         });
+
+        // --- MONGODB BACKEND API SYNC FUNCTIONS ---
+        async function fetchStoreData() {
+            try {
+                const response = await fetch(`${API_URL}/api/data`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && typeof data === 'object') {
+                        store = {
+                            outgoing: data.outgoing || [],
+                            incoming: data.incoming || [],
+                            activities: data.activities || [],
+                            iso_branch: data.iso_branch || [],
+                            ops_branch: data.ops_branch || [],
+                            hadr_branch: data.hadr_branch || [],
+                            peace_branch: data.peace_branch || [],
+                            cmd_movements: data.cmd_movements || [],
+                            dep_movements: data.dep_movements || [],
+                            aircraft: data.aircraft || [],
+                            vessels: data.vessels || [],
+                            jtf_deploy: data.jtf_deploy || [],
+                            jtf_realign: data.jtf_realign || [],
+                            accounts: data.accounts || []
+                        };
+                        registeredAccounts = store.accounts;
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to fetch data from MongoDB backend:', err);
+                showToast('Failed to connect to database server.', 'error');
+            }
+        }
+
+        async function saveStoreData() {
+            const role = localStorage.getItem('tacCurrentRole');
+            if (role === 'client') return;
+            try {
+                store.accounts = registeredAccounts;
+                const response = await fetch(`${API_URL}/api/data`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(store)
+                });
+                if (!response.ok) {
+                    throw new Error('Server responded with error');
+                }
+            } catch (err) {
+                console.error('Failed to save data to MongoDB backend:', err);
+                showToast('Error saving to database.', 'error');
+            }
+        }
+
         async function saveAccountsToStorage() {
             store.accounts = registeredAccounts;
-            await saveToLocalStorage();
+            await saveStoreData();
         }
+
         function openSidebar() {
             document.getElementById('sidebar').classList.remove('-translate-x-full');
             document.getElementById('mobile-backdrop').classList.remove('hidden');
@@ -1212,6 +1267,8 @@
             const password = document.getElementById('signupPassword').value;
             const roleEl = document.querySelector('input[name="signupRole"]:checked');
             const role = roleEl ? roleEl.value : 'admin';
+            
+            await fetchStoreData();
             const exists = registeredAccounts.some(acc => acc.username.toLowerCase() === username.toLowerCase());
             if (exists) {
                 showAuthAlert('error', 'Username already taken. Please choose another.', 'signup');
@@ -1229,7 +1286,7 @@
             event.preventDefault();
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
-            await loadFromLocalStorage();
+            await fetchStoreData();
             
             const user = registeredAccounts.find(acc => acc.username.toLowerCase() === username.toLowerCase() && acc.password === password);
             if (user) {
@@ -1254,47 +1311,7 @@
             const now = new Date();
             document.getElementById('live-clock').innerText = now.toISOString().substring(11, 19) + ' Z';
         }
-        async function saveToLocalStorage() {
-            const role = localStorage.getItem('tacCurrentRole');
-            if (role === 'client') return;
-            try {
-                store.accounts = registeredAccounts;
-                await fetch(`${API_URL}/api/data`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(store)
-                });
-            } catch (err) {
-                console.error('Failed to sync data with server:', err);
-            }
-        }
-        async function loadFromLocalStorage() {
-            try {
-                const response = await fetch(`${API_URL}/api/data`);
-                const data = await response.json();
-                if (data && typeof data === 'object') {
-                    store = {
-                        outgoing: data.outgoing || [],
-                        incoming: data.incoming || [],
-                        activities: data.activities || [],
-                        iso_branch: data.iso_branch || [],
-                        ops_branch: data.ops_branch || [],
-                        hadr_branch: data.hadr_branch || [],
-                        peace_branch: data.peace_branch || [],
-                        cmd_movements: data.cmd_movements || [],
-                        dep_movements: data.dep_movements || [],
-                        aircraft: data.aircraft || [],
-                        vessels: data.vessels || [],
-                        jtf_deploy: data.jtf_deploy || [],
-                        jtf_realign: data.jtf_realign || [],
-                        accounts: data.accounts || []
-                    };
-                    registeredAccounts = store.accounts;
-                }
-            } catch (err) {
-                console.error('Failed to load data from server:', err);
-            }
-        }
+
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             if (!container) return;
@@ -1333,7 +1350,7 @@
         }
         async function openSettingsModal(defaultTab = 'main') {
             const role = localStorage.getItem('tacCurrentRole');
-            await loadFromLocalStorage();
+            await fetchStoreData();
             document.getElementById('settings-modal').classList.remove('hidden');
             if (role === 'client') {
                 switchSettingsSubTab('help');
@@ -1433,7 +1450,7 @@
         }
         function openEditAccountModal(index) {
             const acc = registeredAccounts[index];
-            document.getElementById('editAccIndex').value = index;
+            document.getElementById('editAccId').value = index;
             document.getElementById('editAccName').value = acc.name || '';
             document.getElementById('editAccUsername').value = acc.username;
             document.getElementById('editAccPassword').value = acc.password;
@@ -1445,7 +1462,7 @@
         }
         async function saveAccountEdit(e) {
             e.preventDefault();
-            const idx = parseInt(document.getElementById('editAccIndex').value);
+            const idx = parseInt(document.getElementById('editAccId').value);
             const name = document.getElementById('editAccName').value.trim();
             const username = document.getElementById('editAccUsername').value.trim();
             const password = document.getElementById('editAccPassword').value;
@@ -1496,14 +1513,47 @@
             renderCalendar();
         }
 
-        // --- FIXED CALENDAR PARSING FUNCTIONS ---
+        // --- ROBUST CALENDAR DATE PARSER ---
         function parseItemDate(dateStr) {
             if (!dateStr) return [];
             dateStr = dateStr.toString().trim();
             let dates = [];
 
-            if (dateStr.includes('and') || dateStr.includes(',')) {
-                let cleaned = dateStr.replace(/and/g, ',');
+            let separator = null;
+            if (dateStr.includes(' - ')) separator = ' - ';
+            else if (dateStr.includes('-') && !dateStr.startsWith('-')) separator = '-';
+            else if (dateStr.toLowerCase().includes(' to ')) separator = ' to ';
+
+            if (separator) {
+                let parts = dateStr.split(separator);
+                if (parts.length === 2) {
+                    let startStr = parts[0].trim();
+                    let endStr = parts[1].trim();
+
+                    let startD = new Date(startStr);
+                    let endD = new Date(endStr);
+
+                    if (isNaN(startD.getTime()) && !isNaN(endD.getTime()) && !isNaN(startStr)) {
+                        startD = new Date(endD.getFullYear(), endD.getMonth(), parseInt(startStr));
+                    }
+                    if (!isNaN(startD.getTime()) && isNaN(endD.getTime()) && !isNaN(endStr)) {
+                        endD = new Date(startD.getFullYear(), startD.getMonth(), parseInt(endStr));
+                    }
+
+                    if (!isNaN(startD.getTime()) && !isNaN(endD.getTime())) {
+                        let curr = new Date(Math.min(startD, endD));
+                        let finalEnd = new Date(Math.max(startD, endD));
+                        while (curr <= finalEnd) {
+                            dates.push(new Date(curr));
+                            curr.setDate(curr.getDate() + 1);
+                        }
+                        return dates;
+                    }
+                }
+            }
+
+            if (dateStr.includes(',') || dateStr.toLowerCase().includes(' and ')) {
+                let cleaned = dateStr.replace(/and/gi, ',');
                 let parts = cleaned.split(',');
                 let baseMonthYear = "";
                 for (let i = parts.length - 1; i >= 0; i--) {
@@ -1515,36 +1565,20 @@
                     }
                 }
                 parts.forEach(part => {
-                    let numClean = part.replace(/[^\d]/g, '');
-                    if (numClean) {
-                        let fullStr = `${numClean}${baseMonthYear}`;
-                        let d = new Date(fullStr);
-                        if (!isNaN(d.getTime())) dates.push(d);
-                    }
-                });
-                return dates;
-            }
-
-            if (dateStr.includes('-') || dateStr.toLowerCase().includes('to')) {
-                let separator = dateStr.includes('-') ? '-' : 'to';
-                let splitRange = dateStr.split(separator);
-                if (splitRange.length === 2) {
-                    let startPart = splitRange[0].trim();
-                    let endPart = splitRange[1].trim();
-                    if (!isNaN(startPart) && !isNaN(new Date(endPart).getTime())) {
-                        let endDateObj = new Date(endPart);
-                        let startD = new Date(endDateObj.getFullYear(), endDateObj.getMonth(), parseInt(startPart));
-                        let endD = endDateObj;
-                        if (!isNaN(startD.getTime()) && !isNaN(endD.getTime())) {
-                            let curr = new Date(startD);
-                            while (curr <= endD) {
-                                dates.push(new Date(curr));
-                                curr.setDate(curr.getDate() + 1);
-                            }
-                            return dates;
+                    let trimmed = part.trim();
+                    let d = new Date(trimmed);
+                    if (!isNaN(d.getTime())) {
+                        dates.push(d);
+                    } else {
+                        let numClean = trimmed.replace(/[^\d]/g, '');
+                        if (numClean && baseMonthYear) {
+                            let fullStr = `${numClean}${baseMonthYear}`;
+                            let d2 = new Date(fullStr);
+                            if (!isNaN(d2.getTime())) dates.push(d2);
                         }
                     }
-                }
+                });
+                if (dates.length > 0) return dates;
             }
 
             let singleDate = new Date(dateStr);
@@ -1592,7 +1626,6 @@
             
             return events;
         }
-
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             const monthYearLabel = document.getElementById('calendar-month-year');
@@ -2000,7 +2033,7 @@
             }
             document.getElementById('crud-modal').classList.remove('hidden');
             document.getElementById('form-module').value = module;
-            document.getElementById('form-edit-index').value = editIndex !== null ? editIndex : '';
+            document.getElementById('form-edit-id').value = editIndex !== null ? editIndex : '';
             
             const isEdit = editIndex !== null;
             document.getElementById('modal-title').innerText = `${isEdit ? 'Edit' : 'Add'} ${module.replace('_', ' ').toUpperCase()} Record`;
@@ -2089,173 +2122,4 @@
                 ],
                 jtf_deploy: [
                     { name: 'jtf', label: 'JTF Sector', type: 'select', options: ['JTF Zampelan', 'JTF Orion', 'JTF Poseidon', 'JTF Central'], val: currentObj.jtf || 'JTF Zampelan' },
-                    { name: 'unit', label: 'Unit Name', type: 'text', val: currentObj.unit || '', required: true },
-                    { name: 'count', label: 'Personnel Count', type: 'text', val: currentObj.count || '100', required: true },
-                    { name: 'location', label: 'Assigned Location', type: 'text', val: currentObj.location || '', required: true },
-                    { name: 'date_deployed', label: 'Date Deployed (mm/dd/yyyy)', type: 'date', val: currentObj.date_deployed || '' },
-                    { name: 'date_realigned', label: 'Date Re-deployed (mm/dd/yyyy - Optional)', type: 'date', val: currentObj.date_realigned || '' },
-                    { name: 'status', label: 'Deployment Status', type: 'select', options: ['DEPLOYED', 'STANDBY', 'RE_DEPLOYING', 'STAND_DOWN', 'CANCELLED'], val: currentObj.status || 'DEPLOYED' }
-                ],
-                jtf_realign: [
-                    { name: 'id', label: 'Order #', type: 'text', val: currentObj.id || `ORD-RL-${Math.floor(10 + Math.random()*90)}` },
-                    { name: 'unit', label: 'Unit Realigned', type: 'text', val: currentObj.unit || '', required: true },
-                    { name: 'route', label: 'From JTF -> To JTF', type: 'text', val: currentObj.route || 'JTF Orion -> JTF Zampelan', required: true },
-                    { name: 'date_deployed', label: 'Date Deployed (mm/dd/yyyy)', type: 'date', val: currentObj.date_deployed || '' },
-                    { name: 'date_realigned', label: 'Date Re-deployed (mm/dd/yyyy - Optional)', type: 'date', val: currentObj.date_realigned || '' },
-                    { name: 'auth', label: 'Authorization', type: 'text', val: currentObj.auth || 'COMMANDER', required: true },
-                    { name: 'status', label: 'Realignment Status', type: 'select', options: ['APPROVED', 'PENDING', 'EXECUTED', 'CANCELLED'], val: currentObj.status || 'APPROVED' }
-                ]
-            };
-            const fields = fieldConfigs[module] || [];
-            fields.forEach(f => {
-                const div = document.createElement('div');
-                if (f.type === 'select') {
-                    div.innerHTML = `
-                        <label class="block text-gray-400 mb-1 font-semibold uppercase">${f.label}</label>
-                        <select data-field="${f.name}" class="w-full p-2.5 rounded-lg bg-black/40 border tac-border focus:border-cyan-500 text-white font-bold text-xs">
-                            ${f.options.map(opt => `<option value="${opt}" ${f.val === opt ? 'selected' : ''}>${opt}</option>`).join('')}
-                        </select>
-                    `;
-                } else if (f.type === 'date') {
-                    div.innerHTML = `
-                        <label class="block text-gray-400 mb-1 font-semibold uppercase">${f.label}</label>
-                        <input type="text" data-field="${f.name}" value="${f.val}" placeholder="mm/dd/yyyy" class="w-full p-2.5 rounded-lg bg-black/40 border tac-border focus:border-cyan-500 text-white text-xs">
-                    `;
-                } else {
-                    div.innerHTML = `
-                        <label class="block text-gray-400 mb-1 font-semibold uppercase">${f.label}</label>
-                        <input type="text" data-field="${f.name}" value="${f.val}" ${f.required ? 'required' : ''} class="w-full p-2.5 rounded-lg bg-black/40 border tac-border focus:border-cyan-500 text-white text-xs">
-                    `;
-                }
-                container.appendChild(div);
-            });
-            document.getElementById('form-field-remarks').value = currentObj.remarks || '';
-        }
-        function closeModal() { document.getElementById('crud-modal').classList.add('hidden'); }
-        async function handleFormSubmit(e) {
-            e.preventDefault();
-            const role = localStorage.getItem('tacCurrentRole');
-            if (role === 'client') {
-                showToast('Client account is not allowed to edit or add data.', 'error');
-                return;
-            }
-            const module = document.getElementById('form-module').value;
-            const editIdxStr = document.getElementById('form-edit-index').value;
-            const isEdit = editIdxStr !== '';
-            
-            const inputs = document.querySelectorAll('#dynamic-form-fields input, #dynamic-form-fields select');
-            const newObj = {};
-            
-            inputs.forEach(input => { newObj[input.getAttribute('data-field')] = input.value; });
-            newObj.remarks = document.getElementById('form-field-remarks').value;
-            if (isEdit) {
-                store[module][parseInt(editIdxStr)] = newObj;
-                showToast(`Record updated successfully`, 'success');
-            } else {
-                store[module].unshift(newObj);
-                showToast(`New record added to ${module.toUpperCase()}`, 'success');
-            }
-            await saveToLocalStorage();
-            renderAllTables();
-            closeModal();
-        }
-        function editRecord(module, index) { openModal(module, index); }
-        async function deleteRecord(module, index) {
-            const role = localStorage.getItem('tacCurrentRole');
-            if (role === 'client') {
-                showToast('Client account cannot delete records.', 'error');
-                return;
-            }
-            const confirmed = await showConfirmModal('DELETE OPERATIONAL LOG', 'Are you sure you want to permanently delete this record?');
-            if (confirmed) {
-                store[module].splice(index, 1);
-                await saveToLocalStorage();
-                renderAllTables();
-                showToast('Record deleted permanently', 'error');
-            }
-        }
-        function filterTable(module, query) {
-            const trs = document.querySelectorAll(`#table-${module} tr`);
-            const q = query.toLowerCase();
-            trs.forEach(tr => { tr.style.display = tr.innerText.toLowerCase().includes(q) ? '' : 'none'; });
-        }
-        function exportDashboardData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(store, null, 2));
-            const dlAnchor = document.createElement('a');
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", `TACCOM_Data_Backup.json`);
-            document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            dlAnchor.remove();
-            showToast('Operational data exported as JSON!', 'success');
-        }
-        function importDashboardData(event) {
-            const role = localStorage.getItem('tacCurrentRole');
-            if (role === 'client') {
-                showToast('Client account cannot import data.', 'error');
-                return;
-            }
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    if (typeof imported === 'object' && imported !== null) {
-                        store = imported;
-                        registeredAccounts = store.accounts || [];
-                        await saveToLocalStorage();
-                        renderAllTables();
-                        showToast('Data imported successfully!', 'success');
-                    } else {
-                        showToast('Invalid backup file format.', 'error');
-                    }
-                } catch(err) {
-                    showToast('Failed to parse JSON backup file.', 'error');
-                }
-            };
-            reader.readAsText(file);
-        }
-        function initChart() {
-            const ctx = document.getElementById('jtfChart');
-            if (!ctx) return;
-            
-            const jtfSectors = ['JTF Zampelan', 'JTF Orion', 'JTF Poseidon', 'JTF Central'];
-            const counts = jtfSectors.map(jtf => store.jtf_deploy.filter(d => d.jtf === jtf).length);
-            
-            jtfChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: jtfSectors,
-                    datasets: [{
-                        label: 'Deployed Units Count',
-                        data: counts,
-                        backgroundColor: 'rgba(6, 182, 212, 0.4)',
-                        borderColor: '#06b6d4',
-                        borderWidth: 2,
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { labels: { color: '#9ca3af', font: { size: 10 } } }
-                    },
-                    scales: {
-                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af', font: { size: 9 } } },
-                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af', font: { size: 9 }, stepSize: 1 } }
-                    }
-                }
-            });
-        }
-        function updateChartData() {
-            if (!jtfChartInstance) return;
-            const jtfSectors = ['JTF Zampelan', 'JTF Orion', 'JTF Poseidon', 'JTF Central'];
-            const counts = jtfSectors.map(jtf => store.jtf_deploy.filter(d => d.jtf === jtf).length);
-            jtfChartInstance.data.datasets[0].data = counts;
-            jtfChartInstance.update();
-        }
-    </script>
-</body>
-</html>
+                    { name: 'unit
