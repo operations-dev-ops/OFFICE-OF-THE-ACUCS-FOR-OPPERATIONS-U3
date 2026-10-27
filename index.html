@@ -1496,14 +1496,49 @@
             renderCalendar();
         }
 
-        // --- FIXED CALENDAR PARSING FUNCTIONS ---
+        // --- ENHANCED ROBUST CALENDAR DATE PARSER (UPGRADED FOR ALL YEARS & FORMATS) ---
         function parseItemDate(dateStr) {
             if (!dateStr) return [];
             dateStr = dateStr.toString().trim();
             let dates = [];
 
-            if (dateStr.includes('and') || dateStr.includes(',')) {
-                let cleaned = dateStr.replace(/and/g, ',');
+            // 1. Handle date ranges (e.g., "04/25/2026 - 04/30/2026", "April 25 - 30, 2026", "2026-04-25 to 2026-04-30")
+            let separator = null;
+            if (dateStr.includes(' - ')) separator = ' - ';
+            else if (dateStr.includes('-') && !dateStr.startsWith('-')) separator = '-';
+            else if (dateStr.toLowerCase().includes(' to ')) separator = ' to ';
+
+            if (separator) {
+                let parts = dateStr.split(separator);
+                if (parts.length === 2) {
+                    let startStr = parts[0].trim();
+                    let endStr = parts[1].trim();
+
+                    let startD = new Date(startStr);
+                    let endD = new Date(endStr);
+
+                    if (isNaN(startD.getTime()) && !isNaN(endD.getTime()) && !isNaN(startStr)) {
+                        startD = new Date(endD.getFullYear(), endD.getMonth(), parseInt(startStr));
+                    }
+                    if (!isNaN(startD.getTime()) && isNaN(endD.getTime()) && !isNaN(endStr)) {
+                        endD = new Date(startD.getFullYear(), startD.getMonth(), parseInt(endStr));
+                    }
+
+                    if (!isNaN(startD.getTime()) && !isNaN(endD.getTime())) {
+                        let curr = new Date(Math.min(startD, endD));
+                        let finalEnd = new Date(Math.max(startD, endD));
+                        while (curr <= finalEnd) {
+                            dates.push(new Date(curr));
+                            curr.setDate(curr.getDate() + 1);
+                        }
+                        return dates;
+                    }
+                }
+            }
+
+            // 2. Handle comma or 'and' separated multiple dates (e.g., "April 25, 2026, May 1, 2026")
+            if (dateStr.includes(',') || dateStr.toLowerCase().includes(' and ')) {
+                let cleaned = dateStr.replace(/and/gi, ',');
                 let parts = cleaned.split(',');
                 let baseMonthYear = "";
                 for (let i = parts.length - 1; i >= 0; i--) {
@@ -1515,38 +1550,23 @@
                     }
                 }
                 parts.forEach(part => {
-                    let numClean = part.replace(/[^\d]/g, '');
-                    if (numClean) {
-                        let fullStr = `${numClean}${baseMonthYear}`;
-                        let d = new Date(fullStr);
-                        if (!isNaN(d.getTime())) dates.push(d);
-                    }
-                });
-                return dates;
-            }
-
-            if (dateStr.includes('-') || dateStr.toLowerCase().includes('to')) {
-                let separator = dateStr.includes('-') ? '-' : 'to';
-                let splitRange = dateStr.split(separator);
-                if (splitRange.length === 2) {
-                    let startPart = splitRange[0].trim();
-                    let endPart = splitRange[1].trim();
-                    if (!isNaN(startPart) && !isNaN(new Date(endPart).getTime())) {
-                        let endDateObj = new Date(endPart);
-                        let startD = new Date(endDateObj.getFullYear(), endDateObj.getMonth(), parseInt(startPart));
-                        let endD = endDateObj;
-                        if (!isNaN(startD.getTime()) && !isNaN(endD.getTime())) {
-                            let curr = new Date(startD);
-                            while (curr <= endD) {
-                                dates.push(new Date(curr));
-                                curr.setDate(curr.getDate() + 1);
-                            }
-                            return dates;
+                    let trimmed = part.trim();
+                    let d = new Date(trimmed);
+                    if (!isNaN(d.getTime())) {
+                        dates.push(d);
+                    } else {
+                        let numClean = trimmed.replace(/[^\d]/g, '');
+                        if (numClean && baseMonthYear) {
+                            let fullStr = `${numClean}${baseMonthYear}`;
+                            let d2 = new Date(fullStr);
+                            if (!isNaN(d2.getTime())) dates.push(d2);
                         }
                     }
-                }
+                });
+                if (dates.length > 0) return dates;
             }
 
+            // 3. Single standard date fallback (Supports 2026, 2030, 2050, etc.)
             let singleDate = new Date(dateStr);
             if (!isNaN(singleDate.getTime())) {
                 dates.push(singleDate);
@@ -1592,7 +1612,6 @@
             
             return events;
         }
-
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             const monthYearLabel = document.getElementById('calendar-month-year');
